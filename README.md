@@ -22,7 +22,7 @@ they implement leveraging this library, including what to include from this libr
 
 ## License
 
-The code in this repository is licensed under **Version 3 of the GNU Public License**.
+The code in this repository is licensed under **Version 3 of the GNU General Public License**.
 
 The full text of the license is available in the [`COPYING` file].
 
