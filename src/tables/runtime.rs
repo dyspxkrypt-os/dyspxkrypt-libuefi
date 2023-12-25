@@ -65,6 +65,36 @@ pub struct EFI_RUNTIME_SERVICES {
         Time: *mut EFI_TIME,
         Capabilities: *mut EFI_TIME_CAPABILITIES
     ),
+    /// Sets the current local time and date information.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter     | Description                                                                                                                                                                               |
+    /// | ------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `Time` | A pointer to the current time. Full error checking is performed on the different fields of the `EFI_TIME` structure and `EFI_INVALID_PARAMETER` is returned if any field is out of range. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetTime()` function sets the real time clock device to the supplied time, and records
+    /// the current time zone and daylight savings time information. The `SetTime()` function is not
+    /// allowed to loop based on the current time. For example, if the device does not support a hardware
+    /// reset for the sub-resolution time, the code is not to implement the feature by waiting for the
+    /// time to wrap.
+    ///
+    /// During runtime, if a PC-AT CMOS device is present in the platform the caller must synchronize
+    /// access to the device before calling `SetTime()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`           | The operation completed successfully.                                                                                                                                                                       |
+    /// | `EFI_INVALID_PARAMETER` | A `Time` field is out of range.                                                                                                                                                                             |
+    /// | `EFI_DEVICE_ERROR`      | The time could not be set due to a hardware error.                                                                                                                                                          |
+    /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub SetTime: unsafe extern "efiapi" fn(
+        Time: *mut EFI_TIME,
+    ),
 }
 
 /// A snapshot of the current time.
