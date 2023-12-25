@@ -62,7 +62,10 @@ pub struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
     /// | ------------------ | --------------------------------------------------------------- |
     /// | `EFI_SUCCESS`      | The device was reset.                                           |
     /// | `EFI_DEVICE_ERROR` | The device is not functioning correctly and could not be reset. |
-    pub Reset: unsafe extern "efiapi" fn(This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL, ExtendedVerification: BOOLEAN) -> EFI_STATUS,
+    pub Reset: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
     /// Reads the next keystroke from the input device.
     ///
     /// ## Parameters
@@ -87,7 +90,10 @@ pub struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
     /// | `EFI_NOT_READY`    | There was no keystroke data available.                             |
     /// | `EFI_DEVICE_ERROR` | The keystroke information was not returned due to hardware errors. |
     /// | `EFI_UNSUPPORTED`  | The device does not support the ability to read keystroke data.    |
-    pub ReadKeyStroke: unsafe extern "efiapi" fn(This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL, Key: *mut EFI_INPUT_KEY),
+    pub ReadKeyStroke: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
+        Key: *mut EFI_INPUT_KEY,
+    ),
     /// An event to use with the `EFI_BOOT_SERVICES.WaitForEvent()` function to wait for a key to be
     /// available.
     pub WaitForKey: EFI_EVENT,
