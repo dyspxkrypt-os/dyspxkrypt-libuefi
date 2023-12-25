@@ -1,7 +1,7 @@
 # Dyspxkrypt LibUEFI
 
-![Crates.io Version](https://img.shields.io/crates/v/dyspxkrupt-libuefi?style=for-the-badge)
-![docs.rs](https://img.shields.io/docsrs/dyspxkrupt-libuefi?style=for-the-badge)
+![Crates.io Version](https://img.shields.io/crates/v/dyspxkrypt-libuefi?style=for-the-badge)
+![docs.rs](https://img.shields.io/docsrs/dyspxkrypt-libuefi?style=for-the-badge)
 ![GitHub Repo stars](https://img.shields.io/github/stars/dyspxkrypt-os/dyspxkrypt-libuefi?style=for-the-badge)
 ![GitHub License](https://img.shields.io/github/license/dyspxkrypt-os/dyspxkrypt-libuefi?style=for-the-badge)
 
