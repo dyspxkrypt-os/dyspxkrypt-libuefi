@@ -1,6 +1,7 @@
 [package]
 name = "dyspxkrypt-libuefi"
 description = "Raw bindings of UEFI that conforms to the definitions of the UEFI Specification."
+categories = ["external-ffi-bindings", "no-std"]
 version = "0.1.0-alpha.1"
 edition = "2021"
 authors = ["HTGAzureX1212."]
