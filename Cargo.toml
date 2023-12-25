@@ -1,0 +1,10 @@
+[package]
+name = "dyspxkrypt-libuefi"
+version = "0.1.0"
+edition = "2021"
+authors = ["HTGAzureX1212."]
+readme = "README.md"
+license = "GPL-3"
+repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
+
+[dependencies]
