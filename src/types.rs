@@ -103,7 +103,7 @@ pub type VOID = c_void;
 /// A 128-bit buffer containing a globally-unique identifier value.
 ///
 /// Unless otherwise specified, aligned on a 64-bit boundary.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EFI_GUID {
     /// The timestamp.
@@ -133,22 +133,22 @@ pub type EFI_LBA = UINT64;
 pub type EFI_TPL = UINTN;
 
 /// A 32-byte buffer containing a network Media Access Control address.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EFI_MAC_ADDRESS(pub [UINT8; 32]);
 
 /// A 4-byte buffer containing an IPv4 internet protocol address.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EFI_IPv4_ADDRESS(pub [UINT8; 4]);
 
 /// A 16-byte buffer containing an IPv6 internet protocol address.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EFI_IPv6_ADDRESS(pub [UINT8; 16]);
 
 /// A 16-byte buffer aligned on a 4-byte boundary, containing either an IPv4 or IPv6 internet protocol address.
-#[derive(Copy)]
+#[derive(Copy, Clone)]
 #[repr(C)]
 pub union EFI_IP_ADDRESS {
     __: [UINT32; 4],
