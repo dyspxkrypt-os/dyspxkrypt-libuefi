@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::protocols::console::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
 use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64};
 
@@ -55,4 +56,6 @@ pub struct EFI_SYSTEM_TABLE {
     /// and `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL`. If there is no active console, these protocols must still
     /// be present.
     pub ConsoleInHandle: EFI_HANDLE,
+    /// A pointer to the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` interface that is associated with `ConsoleInHandle`.
+    pub ConIn: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
 }

@@ -107,7 +107,7 @@ pub type VOID = c_void;
 #[repr(C)]
 pub struct EFI_GUID {
     /// The timestamp.
-    pub TimeLow: UINT64,
+    pub Time: UINT64,
     /// The high field of the clock sequence multiplexed with the variant.
     pub ClockSeqHighAndReserved: UINT8,
     /// The low field of the clock sequence.
