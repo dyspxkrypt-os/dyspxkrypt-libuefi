@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{UINT32, UINT64};
+use crate::tables::EFI_TABLE_HEADER;
+use crate::types::{CHAR16, UINT32, UINT64};
 
 /// The signature of the EFI System Table.
 pub const EFI_SYSTEM_TABLE_SIGNATURE: UINT64 = 0x5453595320494249;
@@ -40,4 +41,8 @@ pub const EFI_SYSTEM_TABLE_REVISION: UINT32 = EFI_2_100_SYSTEM_TABLE_REVISION;
 
 /// The EFI System Table containing pointers to the runtime and boot services tables.
 #[repr(C)]
-pub struct EFI_SYSTEM_TABLE {}
+pub struct EFI_SYSTEM_TABLE {
+    pub Hdr: EFI_TABLE_HEADER,
+    pub FirmwareVendor: *mut CHAR16,
+    pub FirmwareRevision: UINT32,
+}
