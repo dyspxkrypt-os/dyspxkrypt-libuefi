@@ -45,3 +45,9 @@
 //! The full text of the license is available in the [`COPYING` file].
 //!
 //! [`COPYING` file]: ./COPYING
+
+#![no_std]
+#![allow(non_camel_case_types)]
+#![allow(non_snake_case)]
+
+pub mod types;
