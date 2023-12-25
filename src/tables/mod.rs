@@ -18,6 +18,7 @@
 
 use crate::types::{UINT32, UINT64};
 
+pub mod runtime;
 pub mod system;
 
 /// The EFI table header is the data structure that precedes all of the standard EFI table types.
