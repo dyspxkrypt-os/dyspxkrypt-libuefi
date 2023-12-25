@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::console::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
+use crate::protocols::console::{EFI_SIMPLE_TEXT_INPUT_PROTOCOL, EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL};
 use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64};
 
@@ -58,4 +58,15 @@ pub struct EFI_SYSTEM_TABLE {
     pub ConsoleInHandle: EFI_HANDLE,
     /// A pointer to the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` interface that is associated with `ConsoleInHandle`.
     pub ConIn: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
+    /// The handle for the active console output device. This handle must support the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
+    ///
+    /// If there is no active console, this protocol must still be present.
+    pub ConsoleOutHandle: EFI_HANDLE,
+    /// A pointer to the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL` interface that is associated with `ConsoleOutHandle`.
+    pub ConOut: *mut EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL,
+    /// The handle for the active standard error console device. This handle must support the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
+    /// If there is no active console, this protocol must still be present.
+    pub StandardErrorHandle: EFI_HANDLE,
+    /// A pointer to the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL` interface that is associated with `StandardErrorHandle`.
+    pub StdErr: *mut EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL,
 }
