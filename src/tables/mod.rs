@@ -16,11 +16,9 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-//! # EFI Tables
-//!
-//! This module contains definitions to various tables defined by the UEFI specification.
-
 use crate::types::{UINT32, UINT64};
+
+pub mod system;
 
 /// The EFI table header is the data structure that precedes all of the standard EFI table types.
 ///
