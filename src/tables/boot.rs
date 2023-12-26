@@ -90,7 +90,7 @@ pub const EFI_EVENT_GROUP_READY_TO_BOOT: EFI_GUID = unsafe {
         0x7CE88FB3,
         0x4BD7,
         0x4679,
-        [0x87, 0xA8, 0xA8, 0xD8, 0xDE, 0xE5,0x0D, 0x2B],
+        [0x87, 0xA8, 0xA8, 0xD8, 0xDE, 0xE5, 0x0D, 0x2B],
     )
 };
 
@@ -541,6 +541,33 @@ pub struct EFI_BOOT_SERVICES {
         Event: *mut EFI_EVENT,
         Index: *mut UINTN,
     ) -> EFI_STATUS,
+    /// Signals an event.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Event` | The event to signal. |
+    ///
+    /// ## Description
+    ///
+    /// The supplied `Event` is placed in the signaled state. If `Event` is already in the signaled state, then `EFI_SUCCESS`
+    /// is returned. If Event is of type `EVT_NOTIFY_SIGNAL`, then the event’s notification function is scheduled to be
+    /// invoked at the event’s notification task priority level. `SignalEvent()` may be invoked from any task priority
+    /// level.
+    ///
+    /// If the supplied `Event` is a part of an event group, then all of the events in the event group are also signaled
+    /// and their notification functions are scheduled.
+    ///
+    /// When signaling an event group, it is possible to create an event in the group, signal it and then close the event
+    /// to remove it from the group.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event was signaled. |
+    pub SignalEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
