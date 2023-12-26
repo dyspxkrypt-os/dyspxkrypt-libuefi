@@ -141,6 +141,13 @@ pub enum EFI_MEMORY_TYPE {
     EfiMaxMemoryType,
 }
 
+#[repr(C)]
+pub enum EFI_TIMER_DELAY {
+    TimerCancel,
+    TimerPeriodic,
+    TimerRelative,
+}
+
 /// The EFI Boot Services containing a table header and pointers to all of the boot services.
 #[repr(C)]
 pub struct EFI_BOOT_SERVICES {
@@ -459,6 +466,32 @@ pub struct EFI_BOOT_SERVICES {
         NotifyFunction: EFI_EVENT_NOTIFY,
         NotifyContext: *mut VOID,
         Event: *mut EFI_EVENT,
+    ) -> EFI_STATUS,
+    /// Sets the type of timer and the trigger time for a timer event.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Event` | The timer event that is to be signaled at the specified time. |
+    /// | **IN** `Type` | The type of time that is specified in `TriggerTime`. |
+    /// | **IN** `TriggerTime` | The number of 100ns units until the timer expires. A `TriggerTime` of `0` is legal. If `Type` is `TimerRelative` and `TriggerTime` is `0`, then the timer event will be signaled on the next timer tick. If `Type` is `TimerPeriodic` and `TriggerTime` is `0`, then the timer event will be signaled on every timer tick. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetTimer()` function cancels any previous time trigger setting for the event, and sets the new trigger time
+    /// for the event. This function can only be used on events of type `EVT_TIMER`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event has been set to be signaled at the requested time. |
+    /// | `EFI_INVALID_PARAMETER` | `Event` or `Type` is not valid. |
+    pub SetTimer: unsafe extern "efiapi" fn(
+        Event: EFI_EVENT,
+        Type: EFI_TIMER_DELAY,
+        TriggerTime: UINT64,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
