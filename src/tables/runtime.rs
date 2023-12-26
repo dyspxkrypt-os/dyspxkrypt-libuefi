@@ -19,12 +19,24 @@
 use crate::tables::boot::EFI_MEMORY_DESCRIPTOR;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{BOOLEAN, EFI_STATUS, INT16, UINT16, UINT32, UINT64, UINT8, UINTN, VOID};
+use crate::types::{
+    BOOLEAN, CHAR16, EFI_GUID, EFI_STATUS, INT16, UINT16, UINT32, UINT64, UINT8, UINTN, VOID,
+};
 
 pub const EFI_RUNTIME_SERVICES_SIGNATURE: UINT64 = 0x56524553544E5552;
 pub const EFI_RUNTIME_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
 
 pub const EFI_OPTIONAL_PTR: UINTN = 0x00000001;
+
+pub const EFI_VARIABLE_NON_VOLATILE: UINT32 = 0x00000001;
+pub const EFI_VARIABLE_BOOTSERVICE_ACCESS: UINT32 = 0x00000002;
+pub const EFI_VARIABLE_RUNTIME_ACCESS: UINT32 = 0x00000004;
+pub const EFI_VARIABLE_HARDWARE_ERROR_RECORD: UINT32 = 0x00000008;
+#[deprecated(since = "0.1.0", note = "this attribute is deprecated and should be considered as reserved")]
+pub const EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS: UINT32 = 0x00000010;
+pub const EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS: UINT32 = 0x00000020;
+pub const EFI_VARIABLE_APPEND_WRITE: UINT32 = 0x00000040;
+pub const EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS: UINT32 = 0x00000080;
 
 /// The EFI Runtime Services containing a table header and pointers to all of the runtime services.
 #[repr(C)]
@@ -253,9 +265,62 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `Address` is `NULL`.                                                                                                                                                                                        |
     /// | `EFI_INVALID_PARAMETER` | `*Address` is `NULL` and `DebugDisposition` does not have the `EFI_OPTIONAL_PTR` bit set.                                                                                                                   |
     /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
-    pub ConvertPointer: unsafe extern "efiapi" fn(
-        DebugDisposition: UINTN,
-        Address: *mut *mut VOID,
+    pub ConvertPointer:
+        unsafe extern "efiapi" fn(DebugDisposition: UINTN, Address: *mut *mut VOID) -> EFI_STATUS,
+    /// Returns the value of a variable.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                         | Description                                                                                                                                                                                                               |
+    /// | --------------------------------- | ------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `VariableName`             | A null-terminated string that is the name of the vendor’s variable.                                                                                                                                                       |
+    /// | **IN** `VendorGuid`               | A unique identifier for the vendor.                                                                                                                                                                                       |
+    /// | **OUT** `Attributes` **OPTIONAL** | If not `NULL`, a pointer to the memory location to return the attributes bitmask for the variable. If not `NULL`, then `Attributes` is set on output both when `EFI_SUCCESS` and when `EFI_BUFFER_TOO_SMALL` is returned. |
+    /// | **IN OUT** `DataSize`             | On input, the size in bytes of the return `Data` buffer. On output the size of data returned in `Data`.                                                                                                                   |
+    /// | **OUT** `Data` **OPTIONAL**       | The buffer to return the contents of the variable. May be `NULL` with a zero `DataSize` in order to determine the size buffer needed.                                                                                     |
+    ///
+    /// ## Description
+    ///
+    /// Each vendor may create and manage its own variables without the risk of name conflicts by using a unique `VendorGuid`.
+    /// When a variable is set its `Attributes` are supplied to indicate how the data variable should be stored and maintained
+    /// by the system. The attributes affect when the variable may be accessed and volatility of the data. If `EFI_BOOT_SERVICES.ExitBootServices()`
+    /// has already been executed, data variables without the `EFI_VARIABLE_RUNTIME_ACCESS` attribute set will not be visible
+    /// to `GetVariable()` and will return an `EFI_NOT_FOUND` error.
+    ///
+    /// If the `Data` buffer is too small to hold the contents of the variable, the error `EFI_BUFFER_TOO_SMALL` is returned
+    /// and `DataSize` is set to the required buffer size to obtain the data.
+    ///
+    /// The `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` and the `EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS` attributes
+    /// may both be set in the returned `Attributes` bitmask parameter of a `GetVariable()` call, though it should be noted
+    /// that the `EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS` attribute is deprecated and should no longer be used. The
+    /// `EFI_VARIABLE_APPEND_WRITE` attribute will never be set in the returned `Attributes` bitmask parameter.
+    ///
+    /// Variables stored with the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` attribute set will return metadata in addition
+    /// to variable data when `GetVariable()` is called. If a `GetVariable()` call indicates that this attribute is set,
+    /// the `GetVariable()` payload must be interpreted according to the metadata headers. In addition to the headers described
+    /// in `SetVariable()`, the `EFI_VARIABLE_AUTHENTICATION_3_CERT_ID` header is used to indicate what certificate may be
+    /// currently associated with a variable.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                                          |
+    /// | ------------------------ | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | The function completed successfully.                                                                                                                                                                                                                                 |
+    /// | `EFI_NOT_FOUND`          | The variable was not found.                                                                                                                                                                                                                                          |
+    /// | `EFI_BUFFER_TOO_SMALL`   | The `DataSize` is too small for the result. `DataSize` has been updated with the size needed to complete the request. If `Attributes` is not `NULL`, then the attributes bitmask for the variable has been stored to the memory location pointed to by `Attributes`. |
+    /// | `EFI_INVALID_PARAMETER`  | `VariableName` is `NULL`.                                                                                                                                                                                                                                            |
+    /// | `EFI_INVALID_PARAMETER`  | `VendorGuid` is `NULL`.                                                                                                                                                                                                                                              |
+    /// | `EFI_INVALID_PARAMETER`  | `DataSize` is `NULL`.                                                                                                                                                                                                                                                |
+    /// | `EFI_INVALID_PARAMETER`  | The `DataSize` is not too small and `Data` is `NULL`.                                                                                                                                                                                                                |
+    /// | `EFI_DEVICE_ERROR`       | The variable could not be retrieved due to a hardware error.                                                                                                                                                                                                         |
+    /// | `EFI_SECURITY_VIOLATION` | The variable could not be retrieved due to an authentication failure.                                                                                                                                                                                                |
+    /// | `EFI_UNSUPPORTED`        | After `ExitBootServices()` has been called, this return code may be returned if no variable storage is supported. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table.                  |
+    pub GetVariable: unsafe extern "efiapi" fn(
+        VariableName: *mut CHAR16,
+        VendorGuid: *mut EFI_GUID,
+        Attributes: *mut UINT32,
+        DataSize: *mut UINTN,
+        Data: *mut VOID,
     ) -> EFI_STATUS,
 }
 
@@ -334,4 +399,13 @@ pub struct EFI_TIME_CAPABILITIES {
     /// reporting level. A `FALSE` indicates that the state below the Resolution level of the device
     /// is not cleared when the time is set. Normal PC-AT CMOS RTC devices set this value to `FALSE`.
     pub SetsToZero: BOOLEAN,
+}
+
+/// An extensible structure to identify a unique x509 certificate associated with a given variable
+#[repr(C)]
+pub struct EFI_VARIABLE_AUTHENTICATION_3_CERT_ID {
+    /// Identifies the type of ID that is returned and how the ID should be interpreted.
+    pub Type: UINT8,
+    /// Indicates the size of the `Id` buffer that follows this field in the structure.
+    pub IdSize: UINT32,
 }
