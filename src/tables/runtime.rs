@@ -322,6 +322,61 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: *mut UINTN,
         Data: *mut VOID,
     ) -> EFI_STATUS,
+    /// Enumerates the current variable names.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                                                                     |
+    /// | ----------------------------- | --------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN OUT** `VariableNameSize` | The size of the `VariableName` buffer. The size must be large enough to fit input string supplied in `VariableName` buffer.                                     |
+    /// | **IN OUT** `VariableName`     | On input, supplies the last `VariableName` that was returned by `GetNextVariableName()`. On output, returns the null-terminated string of the current variable. |
+    /// | **IN OUT** `VendorGuid`       | On input, supplies the last `VendorGuid` that was returned by `GetNextVariableName()`. On output, returns the VendorGuid of the current variable.               |
+    ///
+    /// ## Description
+    ///
+    /// `GetNextVariableName()` is called multiple times to retrieve the `VariableName` and `VendorGuid` of all variables
+    /// currently available in the system. On each call to `GetNextVariableName()` the previous results are passed into
+    /// the interface, and on output the interface returns the next variable name data. When the entire variable list has
+    /// been returned, the error `EFI_NOT_FOUND` is returned.
+    ///
+    /// Note that if `EFI_BUFFER_TOO_SMALL` is returned, the `VariableName` buffer was too small for the next variable.
+    /// When such an error occurs, the `VariableNameSize` is updated to reflect the size of buffer needed. In all cases
+    /// when calling `GetNextVariableName()` the `VariableNameSize` must not exceed the actual buffer size that was allocated
+    /// for `VariableName`. The `VariableNameSize` must not be smaller the size of the variable name string passed to
+    /// `GetNextVariableName()` on input in the `VariableName` buffer.
+    ///
+    /// To start the search, a null-terminated string is passed in `VariableName`; that is, `VariableName` is a pointer to
+    /// a `NULL` character. This is always done on the initial call to `GetNextVariableName()`. When `VariableName` is
+    /// a pointer to a `NULL` character, VendorGuid is ignored. `GetNextVariableName()` cannot be used as a filter to
+    /// return variable names with a specific GUID. Instead, the entire list of variables must be retrieved, and the caller
+    /// may act as a filter if it chooses. Calls to `SetVariable()` between calls to `GetNextVariableName()` may produce
+    /// unpredictable results. If a `VariableName` buffer on input is not a null-terminated string, `EFI_INVALID_PARAMETER`
+    /// is returned. If input values of `VariableName` and `VendorGuid` are not a name and GUID of an existing variable,
+    /// `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// Once `EFI_BOOT_SERVICES.ExitBootServices()` is performed, variables that are only visible during boot services
+    /// will no longer be returned. To obtain the data contents or attribute for a variable returned by `GetNextVariableName()`,
+    /// the `GetVariable()` interface is used.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | The function completed successfully.                                                                                                                                                                                                                |
+    /// | `EFI_NOT_FOUND`          | The next variable was not found.                                                                                                                                                                                                                    |
+    /// | `EFI_BUFFER_TOO_SMALL`   | The `VariableNameSize` is too small for the result. `VariableNameSize` has been updated with the size needed to complete the request.                                                                                                               |
+    /// | `EFI_INVALID_PARAMETER`  | `VariableNameSize` is `NULL`.                                                                                                                                                                                                                       |
+    /// | `EFI_INVALID_PARAMETER`  | `VariableName` is NULL.                                                                                                                                                                                                                             |
+    /// | `EFI_INVALID_PARAMETER`  | `VendorGuid` is `NULL`.                                                                                                                                                                                                                             |
+    /// | `EFI_INVALID_PARAMETER`  | The input values of `VariableName` and `VendorGuid` are not a name and GUID of an existing variable.                                                                                                                                                |
+    /// | `EFI_INVALID_PARAMETER`  | Null-terminator is not found in the first `VariableNameSize` bytes of the input `VariableName` buffer.                                                                                                                                              |
+    /// | `EFI_DEVICE_ERROR`       | The variable name could not be retrieved due to a hardware error.                                                                                                                                                                                   |
+    /// | `EFI_UNSUPPORTED`        | After `ExitBootServices()` has been called, this return code may be returned if no variable storage is supported. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub GetNextVariableName: unsafe extern "efiapi" fn(
+        VariableNameSize: *mut UINTN,
+        VariableName: *mut CHAR16,
+        VendorGuid: *mut EFI_GUID,
+    ) -> EFI_STATUS,
 }
 
 /// A snapshot of the current time.
