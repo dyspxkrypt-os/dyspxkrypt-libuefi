@@ -18,7 +18,7 @@
 
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{EFI_EVENT, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
+use crate::types::{EFI_EVENT, EFI_GUID, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -333,8 +333,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
     /// | **IN** `Type` | The type of event to create and its mode and attributes. |
     /// | **IN** `NotifyTPL` | The task priority level of event notifications, if needed. |
-    /// | **IN** `NotifyFunction` | Pointer to the event’s notification function, if any. |
-    /// | **IN** `NotifyContext` | Pointer to the notification function’s context; corresponds to parameter `Context` in the notification function. |
+    /// | **IN** `NotifyFunction` **OPTIONAL** | Pointer to the event’s notification function, if any. |
+    /// | **IN** `NotifyContext` **OPTIONAL** | Pointer to the notification function’s context; corresponds to parameter `Context` in the notification function. |
     /// | **IN** `Event` | Pointer to the newly created event if the call succeeds; undefined otherwise. |
     ///
     /// ## Description
@@ -395,6 +395,15 @@ pub struct EFI_BOOT_SERVICES {
         NotifyTPL: EFI_TPL,
         NotifyFunction: EFI_EVENT_NOTIFY,
         NotifyContext: *mut VOID,
+        Event: *mut EFI_EVENT,
+    ) -> EFI_STATUS,
+    /// Creates an event in a group.
+    pub CreateEventEx: unsafe extern "efiapi" fn(
+        Type: UINT32,
+        NotifyTPL: EFI_TPL,
+        NotifyFunction: EFI_EVENT_NOTIFY,
+        NotifyContext: *const VOID,
+        EventGroup: *const EFI_GUID,
         Event: *mut EFI_EVENT,
     ) -> EFI_STATUS,
 }

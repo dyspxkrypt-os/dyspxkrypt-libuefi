@@ -106,15 +106,10 @@ pub type VOID = c_void;
 #[derive(Copy, Clone)]
 #[repr(C)]
 pub struct EFI_GUID {
-    /// The timestamp.
-    pub Time: UINT64,
-    /// The high field of the clock sequence multiplexed with the variant.
-    pub ClockSeqHighAndReserved: UINT8,
-    /// The low field of the clock sequence.
-    pub ClockSeqLow: UINT8,
-    /// The spatially unique node identifier. This can be based on any IEEE 802 address obtained from a network card. If no
-    /// network card exists in the system, a cryptographic-quality random number can be used.
-    pub Node: [UINT8; 6],
+    pub Data1: UINT32,
+    pub Data2: UINT16,
+    pub Data3: UINT16,
+    pub Data4: [UINT8; 8],
 }
 
 /// A status code.
