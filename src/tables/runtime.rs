@@ -18,7 +18,7 @@
 
 use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{BOOLEAN, INT16, UINT16, UINT32, UINT64, UINT8};
+use crate::types::{BOOLEAN, EFI_STATUS, INT16, UINT16, UINT32, UINT64, UINT8};
 
 pub const EFI_RUNTIME_SERVICES_SIGNATURE: UINT64 = 0x56524553544E5552;
 pub const EFI_RUNTIME_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -64,7 +64,7 @@ pub struct EFI_RUNTIME_SERVICES {
     pub GetTime: unsafe extern "efiapi" fn(
         Time: *mut EFI_TIME,
         Capabilities: *mut EFI_TIME_CAPABILITIES
-    ),
+    ) -> EFI_STATUS,
     /// Sets the current local time and date information.
     ///
     /// ## Parameters
@@ -94,7 +94,76 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
     pub SetTime: unsafe extern "efiapi" fn(
         Time: *mut EFI_TIME,
-    ),
+    ) -> EFI_STATUS,
+    /// Returns the current wakeup alarm clock setting.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter         | Description                                                            |
+    /// | ----------------- | ---------------------------------------------------------------------- |
+    /// | **OUT** `Enabled` | Indicates if the alarm is currently enabled or disabled.               |
+    /// | **OUT** `Pending` | Indicates if the alarm signal is pending and requires acknowledgement. |
+    /// | **OUT** `Time`    | The current alarm setting.                                             |
+    ///
+    /// ## Description
+    ///
+    /// The alarm clock time may be rounded from the set alarm clock time to be within the resolution of the alarm clock
+    /// device. The resolution of the alarm clock device is defined to be one second.
+    ///
+    /// During runtime, if a PC-AT CMOS device is present in the platform the caller must synchronize access to the device
+    /// before calling `GetWakeupTime()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`           | The operation completed successfully.                                                                                                                                                                       |
+    /// | `EFI_INVALID_PARAMETER` | Either one of `Enabled`, `Pending` or `Time` is `NULL`.                                                                                                                                                     |
+    /// | `EFI_DEVICE_ERROR`      | The wakeup time could not be retrieved due to a hardware error.                                                                                                                                             |
+    /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub GetWakeupTime: unsafe extern "efiapi" fn(
+        Enabled: *mut BOOLEAN,
+        Pending: *mut BOOLEAN,
+        Time: *mut EFI_TIME,
+    ) -> EFI_STATUS,
+    /// Sets the system wakeup alarm clock time.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                  | Description                                                                                                                              |
+    /// | -------------------------- | ---------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `Enabled`           | Indicates if the alarm is currently enabled or disabled.                                                                                 |
+    /// | **IN** `Time` **OPTIONAL** | If `Enable` is `TRUE`, the time to set the wakeup alarm for. If `Enable` is `FALSE`, then this parameter is optional, and may be `NULL`. |
+    ///
+    /// ## Description
+    ///
+    /// Setting a system wakeup alarm causes the system to wake up or power on at the set time. When the alarm fires, the
+    /// alarm signal is latched until it is acknowledged by calling `SetWakeupTime()` to disable the alarm. If the alarm
+    /// fires before the system is put into a sleeping or off state, since the alarm signal is latched the system will
+    /// immediately wake up. If the alarm fires while the system is off and there is insufficient power to power on the
+    /// system, the system is powered on when power is restored.
+    ///
+    /// For an ACPI-aware operating system, this function only handles programming the wakeup alarm for the desired wakeup
+    /// time. The operating system still controls the wakeup event as it normally would through the ACPI Power Management
+    /// register set.
+    ///
+    /// The resolution for the wakeup alarm is defined to be 1 second.
+    ///
+    /// During runtime, if a PC-AT CMOS device is present in the platform the caller must synchronize access to the device
+    /// before calling `SetWakeupTime()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`           | The operation completed successfully.                                                                                                                                                                       |
+    /// | `EFI_INVALID_PARAMETER` | A `Time` field is out of range.                                                                                                                                                                             |
+    /// | `EFI_DEVICE_ERROR`      | The wakeup time could not be set due to a hardware error.                                                                                                                                                   |
+    /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub SetWakeupTime: unsafe extern "efiapi" fn(
+        Enable: BOOLEAN,
+        Time: *mut EFI_TIME,
+    ) -> EFI_STATUS,
 }
 
 /// A snapshot of the current time.
