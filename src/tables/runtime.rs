@@ -518,6 +518,48 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: UINTN,
         Data: *mut VOID,
     ) -> EFI_STATUS,
+    /// Returns the next high 32 bits of the platform’s monotonic counter.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **OUT** `HighCount` | Pointer to returned value. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetNextHighMonotonicCount()` function returns the next high 32 bits of the platform’s monotonic counter.
+    ///
+    /// The platform’s monotonic counter is comprised of two 32-bit quantities: the high 32 bits and the low 32 bits.
+    /// During boot service time the low 32-bit value is volatile: it is reset to zero on every system reset and is increased
+    /// by 1 on every call to `GetNextMonotonicCount()`. The high 32-bit value is nonvolatile and is increased by 1 whenever
+    /// the system resets, whenever `GetNextHighMonotonicCount()` is called, or whenever the low 32-bit count (returned
+    /// by `GetNextMonotonicCount()`) overflows.
+    ///
+    /// The `EFI_BOOT_SERVICES.GetNextMonotonicCount()` function is only available at boot services time. If the operating
+    /// system wishes to extend the platform monotonic counter to runtime, it may do so by utilizing `GetNextHighMonotonicCount()`.
+    /// To do this, before calling `EFI_BOOT_SERVICES.ExitBootServices()` the operating system would call `GetNextMonotonicCount()`
+    /// to obtain the current platform monotonic count. The operating system would then provide an interface that returns
+    /// the next count by:
+    ///
+    /// - Adding 1 to the last count.
+    ///
+    /// - Before the lower 32 bits of the count overflows, call `GetNextHighMonotonicCount()`. This will increase the high
+    /// 32 bits of the platform’s nonvolatile portion of the monotonic count by 1.
+    ///
+    /// This function may only be called at runtime.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | The next high monotonic count was returned. |
+    /// | `EFI_DEVICE_ERROR`  | The device is not functioning properly. |
+    /// | `EFI_INVALID_PARAMETER`  | `HighCount` is `NULL`. |
+    /// | `EFI_UNSUPPORTED`  | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub GetNextHighMonotonicCount: unsafe extern "efiapi" fn(
+        HighCount: *mut UINT32,
+    ) -> EFI_STATUS,
     /// Returns information about the EFI variables.
     ///
     /// ## Parameters
