@@ -18,7 +18,7 @@
 
 use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{UINT32, UINT64};
+use crate::types::{EFI_TPL, UINT32, UINT64};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -47,6 +47,44 @@ pub struct EFI_BOOT_SERVICES {
     /// `EFI_BOOT_SERVICES_REVISION` values along with the size of the `EFI_BOOT_SERVICES` structure and a 32-bit CRC to
     /// verify that the contents of the EFI Boot Services Table are valid.
     pub Hdr: EFI_TABLE_HEADER,
+    /// Raises a task’s priority level and returns its previous level.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                       |
+    /// | --------------- | ------------------------------------------------------------------------------------------------- |
+    /// | **IN** `NewTPL` | The new task priority level. It must be greater than or equal to the current task priority level. |
+    ///
+    /// ## Description
+    ///
+    /// This function raises the priority of the currently executing task and returns its previous priority level.
+    ///
+    /// Only three task priority levels are exposed outside of the firmware during boot services execution. The first is
+    /// `TPL_APPLICATION` where all normal execution occurs. That level may be interrupted to perform various asynchronous
+    /// interrupt style notifications, which occur at the `TPL_CALLBACK` or `TPL_NOTIFY` level. By raising the task priority level
+    /// to `TPL_NOTIFY` such notifications are masked until the task priority level is restored, thereby synchronizing
+    /// execution with such notifications. Synchronous blocking I/O functions execute at `TPL_NOTIFY`. `TPL_CALLBACK` is
+    /// typically used for application level notification functions. Device drivers will typically use `TPL_CALLBACK`
+    /// or `TPL_NOTIFY` for their notification functions. Applications and drivers may also use `TPL_NOTIFY` to protect
+    /// data structures in critical sections of code.
+    ///
+    /// The caller must restore the task priority level with `EFI_BOOT_SERVICES.RestoreTPL()` to the previous level
+    /// before returning.
+    ///
+    /// **Note:** If `NewTpl` is below the current TPL level, then the system behavior is indeterminate. Additionally,
+    /// only `TPL_APPLICATION`, `TPL_CALLBACK`, `TPL_NOTIFY` and `TPL_HIGH_LEVEL` may be used. All other values are
+    /// reserved for use by the firmware; using them will result in unpredictable behavior. Good coding practice
+    /// dictates that all code should execute at its lowest possible TPL level, and the use of TPL levels above
+    /// `TPL_APPLICATION` must be minimized. Executing at TPL levels above `TPL_APPLICATION` for extended periods of
+    /// time may also result in unpredictable behavior.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// Unlike other UEFI interface functions, `EFI_BOOT_SERVICES.RaiseTPL()` does not return a status code. Instead, it
+    /// returns the previous task priority level, which is to be restored later with a matching call to `RestoreTPL()`.
+    pub RaiseTPL: unsafe extern "efiapi" fn(
+        NewTPL: EFI_TPL,
+    ) -> EFI_TPL,
 }
 
 /// A descriptor for a memory map.
