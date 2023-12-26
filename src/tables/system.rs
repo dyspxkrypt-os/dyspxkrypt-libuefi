@@ -17,6 +17,7 @@
  */
 
 use crate::protocols::console::{EFI_SIMPLE_TEXT_INPUT_PROTOCOL, EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL};
+use crate::tables::runtime::EFI_RUNTIME_SERVICES;
 use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64};
 
@@ -69,4 +70,6 @@ pub struct EFI_SYSTEM_TABLE {
     pub StandardErrorHandle: EFI_HANDLE,
     /// A pointer to the `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL` interface that is associated with `StandardErrorHandle`.
     pub StdErr: *mut EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL,
+    /// A pointer to the EFI Runtime Services Table.
+    pub RuntimeServices: *mut EFI_RUNTIME_SERVICES,
 }
