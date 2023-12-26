@@ -18,7 +18,7 @@
 
 use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
+use crate::types::{EFI_EVENT, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -308,7 +308,7 @@ pub struct EFI_BOOT_SERVICES {
     ///
     /// | Parameter       | Description                                                                                                              |
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
-    /// | **IN** `Buffer` | Pointer to the buffer to free. |'
+    /// | **IN** `Buffer` | Pointer to the buffer to free. |
     ///
     /// ## Description
     ///
@@ -323,6 +323,78 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `Buffer` was invalid. |
     pub FreePool: unsafe extern "efiapi" fn(
         Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    /// Creates an event.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Type` | The type of event to create and its mode and attributes. |
+    /// | **IN** `NotifyTPL` | The task priority level of event notifications, if needed. |
+    /// | **IN** `NotifyFunction` | Pointer to the event’s notification function, if any. |
+    /// | **IN** `NotifyContext` | Pointer to the notification function’s context; corresponds to parameter `Context` in the notification function. |
+    /// | **IN** `Event` | Pointer to the newly created event if the call succeeds; undefined otherwise. |
+    ///
+    /// ## Description
+    ///
+    /// The `CreateEvent()` function creates a new event of type `Type` and returns it in the location referenced by
+    /// `Event`. The event’s notification function, context, and task priority level are specified by `NotifyFunction`,
+    /// `NotifyContext`, and `NotifyTPL`, respectively.
+    ///
+    /// Events exist in one of two states, “waiting” or “signaled.” When an event is created, firmware puts it in the
+    /// “waiting” state. When the event is signaled, firmware changes its state to “signaled” and, if `EVT_NOTIFY_SIGNAL`
+    /// is specified, places a call to its notification function in a FIFO queue. There is a queue for each of the “basic”
+    /// task priority levels defined in Event, Timer, and Task Priority Services (`TPL_CALLBACK`, and `TPL_NOTIFY`). The
+    /// functions in these queues are invoked in FIFO order, starting with the highest priority level queue and proceeding
+    /// to the lowest priority queue that is unmasked by the current TPL. If the current TPL is equal to or greater than
+    /// the queued notification, it will wait until the TPL is lowered via `EFI_BOOT_SERVICES.RestoreTPL()`.
+    ///
+    /// In a general sense, there are two “types” of events, synchronous and asynchronous. Asynchronous events are closely
+    /// related to timers and are used to support periodic or timed interruption of program execution. This capability
+    /// is typically used with device drivers. For example, a network device driver that needs to poll for the presence
+    /// of new packets could create an event whose type includes `EVT_TIMER` and then call the `EFI_BOOT_SERVICES.SetTimer()`
+    /// function. When the timer expires, the firmware signals the event.
+    ///
+    /// Synchronous events have no particular relationship to timers. Instead, they are used to ensure that certain
+    /// activities occur following a call to a specific interface function. One example of this is the cleanup that
+    /// needs to be performed in response to a call to the `EFI_BOOT_SERVICES.ExitBootServices()` function. `ExitBootServices()`
+    /// can clean up the firmware since it understands firmware internals, but it cannot clean up on behalf of drivers
+    /// that have been loaded into the system. The drivers have to do that themselves by creating an event whose type is
+    /// `EVT_SIGNAL_EXIT_BOOT_SERVICES` and whose notification function is a function within the driver itself. Then, when
+    /// `ExitBootServices()` has finished its cleanup, it signals each event of type `EVT_SIGNAL_EXIT_BOOT_SERVICES`.
+    ///
+    /// Another example of the use of synchronous events occurs when an event of type `EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE`
+    /// is used in conjunction with the `SetVirtualAddressMap()`.
+    ///
+    /// The `EVT_NOTIFY_WAIT` and `EVT_NOTIFY_SIGNAL` flags are exclusive. If neither flag is specified, the caller does
+    /// not require any notification concerning the event and the `NotifyTPL`, `NotifyFunction`, and `NotifyContext`
+    /// parameters are ignored. If `EVT_NOTIFY_WAIT` is specified and the event is not in the signaled state, then the
+    /// `EVT_NOTIFY_WAIT` notify function is queued whenever a consumer of the event is waiting for the event (via
+    /// `EFI_BOOT_SERVICES.WaitForEvent()` or `EFI_BOOT_SERVICES.CheckEvent()`). If the `EVT_NOTIFY_SIGNAL` flag is
+    /// specified then the event’s notify function is queued whenever the event is signaled.
+    ///
+    /// **Note:** Because its internal structure is unknown to the caller, Event cannot be modified by the caller. The
+    /// only way to manipulate it is to use the published event interfaces.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event structure was created. |
+    /// | `EFI_INVALID_PARAMETER` | One of the parameters has an invalid value. |
+    /// | `EFI_INVALID_PARAMETER` | `Event` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has an unsupported bit set. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has both `EVT_NOTIFY_SIGNAL` and `EVT_NOTIFY_WAIT` set. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has either `EVT_NOTIFY_SIGNAL` or `EVT_NOTIFY_WAIT` set and `NotifyFunction` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has either `EVT_NOTIFY_SIGNAL` or `EVT_NOTIFY_WAIT` set and `NotifyTPL` is not a supported TPL level. |
+    /// | `EFI_OUT_OF_RESOURCES` | The event could not be allocated. |
+    pub CreateEvent: unsafe extern "efiapi" fn(
+        Type: UINT32,
+        NotifyTPL: EFI_TPL,
+        NotifyFunction: EFI_EVENT_NOTIFY,
+        NotifyContext: *mut VOID,
+        Event: *mut EFI_EVENT,
     ) -> EFI_STATUS,
 }
 
@@ -350,3 +422,14 @@ pub struct EFI_MEMORY_DESCRIPTOR {
 pub type EFI_PHYSICAL_ADDRESS = UINT64;
 /// A virtual address.
 pub type EFI_VIRTUAL_ADDRESS = UINT64;
+
+/// ## Parameters
+///
+/// | Parameter       | Description                                                                                                              |
+/// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+/// | **IN** `Event` | Event whose notification function is being invoked. |
+/// | **IN** `Context` | Pointer to the notification function’s context, which is implementation-dependent. `Context` corresponds to `NotifyContext` in `EFI_BOOT_SERVICES.CreateEvent()`. |
+pub type EFI_EVENT_NOTIFY = unsafe extern "efiapi" fn(
+    Event: EFI_EVENT,
+    Context: *mut VOID,
+) -> EFI_STATUS;
