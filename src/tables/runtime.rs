@@ -377,6 +377,147 @@ pub struct EFI_RUNTIME_SERVICES {
         VariableName: *mut CHAR16,
         VendorGuid: *mut EFI_GUID,
     ) -> EFI_STATUS,
+    /// Sets the value of a variable. This service can be used to create a new variable, modify the value of an existing
+    /// variable, or to delete an existing variable.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter             | Description                                                                                                                                                                                                                                              |
+    /// | --------------------- | -------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `VariableName` | A null-terminated string that is the name of the vendor’s variable. Each VariableName is unique for each `VendorGuid`. `VariableName` must contain 1 or more characters. If `VariableName` is an empty string, then `EFI_INVALID_PARAMETER` is returned. |
+    /// | **IN** `VendorGuid`   | A unique identifier for the vendor.                                                                                                                                                                                                                      |
+    /// | **IN** `Attributes`   | Attributes bitmask to set for the variable.                                                                                                                                                                                                              |
+    /// | **IN** `DataSize`     | The size in bytes of the Data buffer. Unless the `EFI_VARIABLE_APPEND_WRITE`, `EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS`, `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS`, or `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute is set, a size of zero causes the variable to be deleted. When the `EFI_VARIABLE_APPEND_WRITE` attribute is set, then a `SetVariable()` call with a `DataSize` of zero will not cause any change to the variable value (the timestamp associated with the variable may be updated however, even if no new data value is provided; see the description of the `EFI_VARIABLE_AUTHENTICATION_2` descriptor). In this case the `DataSize` will not be zero since the `EFI_VARIABLE_AUTHENTICATION_2` descriptor will be populated). |
+    /// | **IN** `Data`         | The contents for the variable.                                                                                                                                                                                                                           |
+    ///
+    /// ## Description
+    ///
+    /// Variables are stored by the firmware and may maintain their values across power cycles. Each vendor may create
+    /// and manage its own variables without the risk of name conflicts by using a unique `VendorGuid`.
+    ///
+    /// Each variable has `Attributes` that define how the firmware stores and maintains the data value. If the `EFI_VARIABLE_NON_VOLATILE`
+    /// attribute is not set, the firmware stores the variable in normal memory and it is not maintained across a power cycle.
+    /// Such variables are used to pass information from one component to another. An example of this is the firmware’s
+    /// language code support variable. It is created at firmware initialization time for access by EFI components that
+    /// may need the information, but does not need to be backed up to nonvolatile storage.
+    ///
+    /// `EFI_VARIABLE_NON_VOLATILE` variables are stored in fixed hardware that has a limited storage capacity; sometimes
+    /// a severely limited capacity. Software should only use a nonvolatile variable when absolutely necessary. In addition,
+    /// if software uses a nonvolatile variable it should use a variable that is only accessible at boot services time if
+    /// possible.
+    ///
+    /// A variable must contain one or more bytes of `Data`. Unless the `EFI_VARIABLE_APPEND_WRITE`, `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS`,
+    /// or `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` attribute is set, using `SetVariable()` with a `DataSize` of zero
+    /// will cause the entire variable to be deleted. The space consumed by the deleted variable may not be available
+    /// until the next power cycle.
+    ///
+    /// If a variable with matching name, GUID, and attributes already exists, its value is updated.
+    ///
+    /// The Attributes have the following usage rules:
+    ///
+    /// - If a preexisting variable is rewritten with different attributes, `SetVariable()` shall not modify the variable
+    /// and shall return `EFI_INVALID_PARAMETER`. The only exception to this is when the only attribute differing is `EFI_VARIABLE_APPEND_WRITE`.
+    /// In such cases the call’s successful outcome or not is determined by the actual value being written. There are two
+    /// exceptions to this rule:
+    ///
+    ///   - If a preexisting variable is rewritten with no access attributes specified, the variable will be deleted.
+    ///
+    ///   - `EFI_VARIABLE_APPEND_WRITE` attribute presents a special case. It is acceptable to rewrite the variable
+    /// with or without `EFI_VARIABLE_APPEND_WRITE` attribute.
+    ///
+    /// - Setting a data variable with no access attributes causes it to be deleted.
+    ///
+    /// - `EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS` is deprecated and should not be used. Platforms should return
+    /// `EFI_UNSUPPORTED` if a caller to `SetVariable()` specifies this attribute.
+    ///
+    /// - Unless the `EFI_VARIABLE_APPEND_WRITE`, `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS`, or `EFI_VARIABLE_ENHANCED_AUTHENTICATED_WRITE_ACCESS`
+    /// attribute is set, setting a data variable with zero `DataSize` specified, causes it to be deleted.
+    ///
+    /// - Runtime access to a data variable implies boot service access. Attributes that have `EFI_VARIABLE_RUNTIME_ACCESS`
+    /// set must also have `EFI_VARIABLE_BOOTSERVICE_ACCESS` set. The caller is responsible for following this rule.
+    ///
+    /// - Once `EFI_BOOT_SERVICES.ExitBootServices()` is performed, data variables that did not have `EFI_VARIABLE_RUNTIME_ACCESS`
+    /// set are no longer visible to `GetVariable()`.
+    ///
+    /// - Once ExitBootServices() is performed, only variables that have `EFI_VARIABLE_RUNTIME_ACCESS` and `EFI_VARIABLE_NON_VOLATILE`
+    /// set can be set with `SetVariable()`. Variables that have runtime access but that are not nonvolatile are read-only
+    /// data variables once `ExitBootServices()` is performed. When the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` attribute
+    /// is set in a `SetVariable()` call, the authentication shall use the `EFI_VARIABLE_AUTHENTICATION_3` descriptor, which
+    /// will be followed by any descriptors indicated in the `Type` and `Flags` fields.
+    ///
+    /// - When the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute is set in a `SetVariable()` call, the
+    /// authentication shall use the `EFI_VARIABLE_AUTHENTICATION_2` descriptor.
+    ///
+    /// - If both the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` and the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS`
+    /// attribute are set in a `SetVariable()` call, then the firmware must return `EFI_INVALID_PARAMETER`.
+    ///
+    /// - If the `EFI_VARIABLE_APPEND_WRITE` attribute is set in a `SetVariable()` call, then any existing variable value
+    /// shall be appended with the value of the `Data` parameter. If the firmware does not support the append operation,
+    /// then the `SetVariable()` call shall return `EFI_INVALID_PARAMETER`.
+    ///
+    /// - If the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute is set in a `SetVariable()` call, and firmware
+    /// does not support signature type of the certificate included in the `EFI_VARIABLE_AUTHENTICATION_2` descriptor, then
+    /// the `SetVariable()` call shall return `EFI_INVALID_PARAMETER`. The list of signature types supported by the firmware
+    /// is defined by the `SignatureSupport` variable. Signature type of the certificate is defined by its digest and encryption
+    /// algorithms.
+    ///
+    /// - If the `EFI_VARIABLE_HARDWARE_ERROR_RECORD` attribute is set, `VariableName` and `VendorGuid` must comply with the
+    /// rules stated in Hardware Error Record Variables and Hardware Error Record Persistence Usage. Otherwise, the `SetVariable()`
+    /// call shall return `EFI_INVALID_PARAMETER`.
+    ///
+    /// - Globally Defined Variables must be created with the attributes defined in the Table Global Variables. If a globally
+    /// defined variable is created with the wrong attributes, the result is indeterminate and may vary between implementations.
+    ///
+    /// - If using the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` interface to update the cert authority for a given variable,
+    /// it is valid for the `Data` region of the payload to be empty. This would update the cert without modifying the data
+    /// itself. If the `Data` region is empty AND no `NewCert` is specified, the variable will be deleted (assuming all
+    /// authorizations are verified).
+    ///
+    /// - Secure Boot Policy Variable must be created with the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute
+    /// set, and the authentication shall use the `EFI_VARIABLE_AUTHENTICATION_2` descriptor. If the appropriate attribute
+    /// bit is not set, then the firmware shall return `EFI_INVALID_PARAMETER`.
+    ///
+    /// - The only rules the firmware must implement when saving a nonvolatile variable is that it has actually been saved
+    /// to nonvolatile storage before returning `EFI_SUCCESS`, and that a partial save is not performed. If power fails
+    /// during a call to `SetVariable()` the variable may contain its previous value, or its new value. In addition there
+    /// is no read, write, or delete security protection.
+    ///
+    /// - To delete a variable created with the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute, `SetVariable()`
+    /// must be used with attributes matching the existing variable and the `DataSize` set to the size of the `AuthInfo`
+    /// descriptor. The `Data` buffer must contain an instance of the `AuthInfo` descriptor which will be validated according
+    /// to the steps in the appropriate section above referring to updates of `Authenticated` variables. An attempt to delete
+    /// a variable created with the `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` attribute for which the prescribed
+    /// AuthInfo `validation` fails or when called using `DataSize` of zero will fail with an `EFI_SECURITY_VIOLATION` status.
+    ///
+    /// - To delete a variable created with the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` attribute, `SetVariable()` must
+    /// be used with attributes matching the existing variable and the `DataSize` set to the size of the entire payload
+    /// including all descriptors and certificates. The `Data` buffer must contain an instance of the `EFI_VARIABLE_AUTHENTICATION_3`
+    /// descriptor which will indicate how to validate the payload according to the description in Using the `EFI_VARIABLE_AUTHENTICATION_3`
+    /// descriptor. An attempt to delete a variable created with the `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` attribute
+    /// for which the prescribed validation fails or when called using DataSize of zero will fail with an `EFI_SECURITY_VIOLATION`
+    /// status.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | The firmware has successfully stored the variable and its data as defined by the `Attributes`. |
+    /// | `EFI_INVALID_PARAMETER`  | An invalid combination of attribute bits, name, and GUID was supplied, or the `DataSize` exceeds the maximum allowed. |
+    /// | `EFI_INVALID_PARAMETER`  | `VariableName` is an empty string. |
+    /// | `EFI_OUT_OF_RESOURCES`   | Not enough storage is available to hold the variable and its data. |
+    /// | `EFI_DEVICE_ERROR`       | The variable could not be saved due to a hardware failure. |
+    /// | `EFI_WRITE_PROTECTED`    | The variable in question is read-only. |
+    /// | `EFI_WRITE_PROTECTED`    | The variable in question cannot be deleted. |
+    /// | `EFI_SECURITY_VIOLATION` | The variable could not be written due to `EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS` or `EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS` being set, but the payload does NOT pass the validation check carried out by the firmware. |
+    /// | `EFI_NOT_FOUND`          | The variable trying to be updated or deleted was not found. |
+    /// | `EFI_UNSUPPORTED`        | After `ExitBootServices()` has been called, this return code may be returned if no variable storage is supported. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub SetVariable: unsafe extern "efiapi" fn(
+        VariableName: *mut CHAR16,
+        VendorGuid: *mut EFI_GUID,
+        Attributes: UINT32,
+        DataSize: UINTN,
+        Data: *mut VOID,
+    ) -> EFI_STATUS,
 }
 
 /// A snapshot of the current time.
