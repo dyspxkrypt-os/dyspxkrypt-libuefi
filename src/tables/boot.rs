@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
+use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{EFI_EVENT, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
@@ -39,6 +39,15 @@ pub const EFI_MEMORY_CPU_CRYPTO: UINT64 = 0x0000000000080000;
 pub const EFI_MEMORY_RUNTIME: UINT64 = 0x8000000000000000;
 pub const EFI_MEMORY_ISA_VALID: UINT64 = 0x4000000000000000;
 pub const EFI_MEMORY_ISA_MASK: UINT64 = 0x0FFFF00000000000;
+
+pub const EVT_TIMER: UINT32 = 0x80000000;
+pub const EVT_RUNTIME: UINT32 = 0x40000000;
+
+pub const EVT_NOTIFY_WAIT: UINT32 = 0x00000100;
+pub const EVT_NOTIFY_SIGNAL: UINT32 = 0x00000200;
+
+pub const EVT_SIGNAL_EXIT_BOOT_SERVICES: UINT32 = 0x00000201;
+pub const EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE: UINT32 = 0x60000202;
 
 #[repr(C)]
 pub enum EFI_ALLOCATE_TYPE {
@@ -111,9 +120,7 @@ pub struct EFI_BOOT_SERVICES {
     ///
     /// Unlike other UEFI interface functions, `EFI_BOOT_SERVICES.RaiseTPL()` does not return a status code. Instead, it
     /// returns the previous task priority level, which is to be restored later with a matching call to `RestoreTPL()`.
-    pub RaiseTPL: unsafe extern "efiapi" fn(
-        NewTPL: EFI_TPL,
-    ) -> EFI_TPL,
+    pub RaiseTPL: unsafe extern "efiapi" fn(NewTPL: EFI_TPL) -> EFI_TPL,
     /// Restores a task’s priority level to its previous value.
     ///
     /// ## Parameters
@@ -137,9 +144,7 @@ pub struct EFI_BOOT_SERVICES {
     /// ## Status Codes Returned
     ///
     /// None.
-    pub RestoreTPL: unsafe extern "efiapi" fn(
-        OldTPL: EFI_TPL,
-    ) -> VOID,
+    pub RestoreTPL: unsafe extern "efiapi" fn(OldTPL: EFI_TPL) -> VOID,
     /// Allocates memory pages from the system.
     ///
     /// ## Parameters
@@ -208,10 +213,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_SUCCESS` | The requested memory pages were freed. |
     /// | `EFI_NOT_FOUND` | The requested memory pages were not allocated with `AllocatePages()`. |
     /// | `EFI_INVALID_PARAMETER` | `Memory` is not a page-aligned address or `Pages` is invalid. |
-    pub FreePages: unsafe extern "efiapi" fn(
-        Memory: EFI_PHYSICAL_ADDRESS,
-        Pages: UINTN,
-    ) -> EFI_STATUS,
+    pub FreePages:
+        unsafe extern "efiapi" fn(Memory: EFI_PHYSICAL_ADDRESS, Pages: UINTN) -> EFI_STATUS,
     /// Returns the current memory map.
     ///
     /// ## Parameters
@@ -321,9 +324,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The memory was returned to the system. |
     /// | `EFI_INVALID_PARAMETER` | `Buffer` was invalid. |
-    pub FreePool: unsafe extern "efiapi" fn(
-        Buffer: *mut VOID,
-    ) -> EFI_STATUS,
+    pub FreePool: unsafe extern "efiapi" fn(Buffer: *mut VOID) -> EFI_STATUS,
     /// Creates an event.
     ///
     /// ## Parameters
@@ -429,7 +430,5 @@ pub type EFI_VIRTUAL_ADDRESS = UINT64;
 /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
 /// | **IN** `Event` | Event whose notification function is being invoked. |
 /// | **IN** `Context` | Pointer to the notification function’s context, which is implementation-dependent. `Context` corresponds to `NotifyContext` in `EFI_BOOT_SERVICES.CreateEvent()`. |
-pub type EFI_EVENT_NOTIFY = unsafe extern "efiapi" fn(
-    Event: EFI_EVENT,
-    Context: *mut VOID,
-) -> EFI_STATUS;
+pub type EFI_EVENT_NOTIFY =
+    unsafe extern "efiapi" fn(Event: EFI_EVENT, Context: *mut VOID) -> EFI_STATUS;
