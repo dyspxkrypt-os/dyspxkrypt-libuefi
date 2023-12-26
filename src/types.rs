@@ -112,6 +112,25 @@ pub struct EFI_GUID {
     pub Data4: [UINT8; 8],
 }
 
+impl EFI_GUID {
+    /// Convenience function to construct a new GUID from its raw parts.
+    ///
+    /// It is the caller's responsibility to ensure that the GUID constructed is not a malformed one.
+    pub const unsafe fn from_raw_parts(
+        Data1: UINT32,
+        Data2: UINT16,
+        Data3: UINT16,
+        Data4: [UINT8; 8],
+    ) -> Self {
+        Self {
+            Data1,
+            Data2,
+            Data3,
+            Data4,
+        }
+    }
+}
+
 /// A status code.
 pub type EFI_STATUS = UINTN;
 

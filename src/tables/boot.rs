@@ -49,6 +49,69 @@ pub const EVT_NOTIFY_SIGNAL: UINT32 = 0x00000200;
 pub const EVT_SIGNAL_EXIT_BOOT_SERVICES: UINT32 = 0x00000201;
 pub const EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE: UINT32 = 0x60000202;
 
+pub const EFI_EVENT_GROUP_EXIT_BOOT_SERVICES: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x27ABF055,
+        0xB1B8,
+        0x4C26,
+        [0x80, 0x48, 0x74, 0x8F, 0x37, 0xBA, 0xA2, 0xDF],
+    )
+};
+
+pub const EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x8BE0E274,
+        0x3970,
+        0x4B44,
+        [0x80, 0xC5, 0x1A, 0xB9, 0x50, 0x2F, 0x3B, 0xFC],
+    )
+};
+
+pub const EFI_EVENT_GROUP_VIRTUAL_ADDRESS_CHANGE: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x13FA7698,
+        0xC831,
+        0x49C7,
+        [0x87, 0xEA, 0x8F, 0x43, 0xFC, 0xC2, 0x51, 0x96],
+    )
+};
+
+pub const EFI_EVENT_GROUP_MEMORY_MAP_CHANGE: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x78BEE926,
+        0x692F,
+        0x48FD,
+        [0x9E, 0xDB, 0x01, 0x42, 0x2E, 0xF0, 0xD7, 0xAB],
+    )
+};
+
+pub const EFI_EVENT_GROUP_READY_TO_BOOT: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x7CE88FB3,
+        0x4BD7,
+        0x4679,
+        [0x87, 0xA8, 0xA8, 0xD8, 0xDE, 0xE5,0x0D, 0x2B],
+    )
+};
+
+pub const EFI_EVENT_GROUP_AFTER_READY_TO_BOOT: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x3A2A00AD,
+        0x98B9,
+        0x4CDF,
+        [0xA4, 0x78, 0x70, 0x27, 0x77, 0xF1, 0xC1, 0x0B],
+    )
+};
+
+pub const EFI_EVENT_GROUP_RESET_SYSTEM: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x62DA6A56,
+        0x13FB,
+        0x485A,
+        [0xA8, 0xDA, 0xA3, 0xDD, 0x79, 0x12, 0xCB, 0x6B],
+    )
+};
+
 #[repr(C)]
 pub enum EFI_ALLOCATE_TYPE {
     AllocateAnyPages,
@@ -335,7 +398,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | **IN** `NotifyTPL` | The task priority level of event notifications, if needed. |
     /// | **IN** `NotifyFunction` **OPTIONAL** | Pointer to the event’s notification function, if any. |
     /// | **IN** `NotifyContext` **OPTIONAL** | Pointer to the notification function’s context; corresponds to parameter `Context` in the notification function. |
-    /// | **IN** `Event` | Pointer to the newly created event if the call succeeds; undefined otherwise. |
+    /// | **OUT** `Event` | Pointer to the newly created event if the call succeeds; undefined otherwise. |
     ///
     /// ## Description
     ///
@@ -398,6 +461,137 @@ pub struct EFI_BOOT_SERVICES {
         Event: *mut EFI_EVENT,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Type` | The type of event to create and its mode and attributes. |
+    /// | **IN** `NotifyTPL` | The task priority level of event notifications, if needed. |
+    /// | **IN** `NotifyFunction` **OPTIONAL** | Pointer to the event’s notification function, if any. |
+    /// | **IN** `NotifyContext` **OPTIONAL** | Pointer to the notification function’s context; corresponds to parameter `Context` in the notification function. |
+    /// | **IN** `EventGroup` **OPTIONAL** | Pointer to the unique identifier of the group to which this event belongs. If this is `NULL`, then the function behaves as if the parameters were passed to `CreateEvent`. |
+    /// | **OUT** `Event` | Pointer to the newly created event if the call succeeds; undefined otherwise. |
+    ///
+    /// ## Description
+    ///
+    /// The `CreateEventEx()` function creates a new event of type `Type` and returns it in the specified location indicated
+    /// by `Event`. The event’s notification function, context and task priority are specified by `NotifyFunction`,
+    /// `NotifyContext`, and `NotifyTPL`, respectively. The event will be added to the group of events identified by
+    /// `EventGroup`.
+    ///
+    /// If no group is specified by `EventGroup`, then this function behaves as if the same parameters had been passed
+    /// to `CreateEvent`.
+    ///
+    /// Event groups are collections of events identified by a shared `EFI_GUID` where, when one member event is signaled,
+    /// all other events are signaled and their individual notification actions are taken (as described in `CreateEvent`).
+    /// All events are guaranteed to be signaled before the first notification action is taken. All notification functions
+    /// will be executed in the order specified by their `NotifyTPL`.
+    ///
+    /// A single event can only be part of a single event group. An event may be removed from an event group by using
+    /// `CloseEvent()`.
+    ///
+    /// The `Type` of an event uses the same values as defined in `CreateEvent()` except that `EVT_SIGNAL_EXIT_BOOT_SERVICES`
+    /// and `EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE` are not valid.
+    ///
+    /// If `Type` has `EVT_NOTIFY_SIGNAL` or `EVT_NOTIFY_WAIT`, then `NotifyFunction` must be non-`NULL` and `NotifyTPL`
+    /// must be a valid task priority level. Otherwise these parameters are ignored.
+    ///
+    /// More than one event of type `EVT_TIMER` may be part of a single event group. However, there is no mechanism for
+    /// determining which of the timers was signaled.
+    ///
+    /// #### Configuration Table Groups
+    ///
+    /// The GUID for a configuration table also defines a corresponding event group GUID with the same value. If the data
+    /// represented by a configuration table is changed, `InstallConfigurationTable()` should be called. When `InstallConfigurationTable()`
+    /// is called, the corresponding event is signaled. When this event is signaled, any components that cache information
+    /// from the configuration table can optionally update their cached state.
+    ///
+    /// For example, `EFI_ACPI_TABLE_GUID` defines a configuration table for ACPI data. When ACPI data is changed,
+    /// `InstallConfigurationTable()` is called. During the execution of `InstallConfigurationTable()`, a corresponding
+    /// event group with `EFI_ACPI_TABLE_GUID` is signaled, allowing an application to invalidate any cached ACPI data.
+    ///
+    /// #### Pre-Defined Event Groups
+    ///
+    /// This section describes the pre-defined event groups used by the UEFI specification.
+    ///
+    /// ### `EFI_EVENT_GROUP_EXIT_BOOT_SERVICES`
+    ///
+    /// This event group is notified by the system when `ExitBootServices()` is invoked after notifying
+    /// `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES` event group. This event group is functionally equivalent to the
+    /// `EVT_SIGNAL_EXIT_BOOT_SERVICES` flag for the `Type` argument of `CreateEvent()`. The notification function for
+    /// this event must comply with the following requirements:
+    ///
+    /// - The notification function is not allowed to use the Memory Allocation Services, or call any functions that use
+    /// the Memory Allocation Services, because these services modify the current memory map.
+    ///
+    /// **Note:** Since consumer of the service does not necessarily knows if the service uses memory allocation services,
+    /// this requirement is effectively a mandate to reduce usage of any external services (services implemented outside
+    /// of the driver owning the notification function) to an absolute minimum required to perform an orderly transition
+    /// to a runtime environment. Usage of the external services may yield unexpected results. Since UEFI specification
+    /// does not guarantee any given order of notification function invocation, a notification function consuming the
+    /// service may be invoked before or after the notification function of the driver providing the service. As a result,
+    /// a service being called by the notification function may exhibit boot time behavior or a runtime behavior (which is
+    /// undefined for pure boot services).
+    ///
+    /// - The notification function must not depend on timer events since timer services will be deactivated before any
+    /// notification functions are called.
+    ///
+    /// Refer to `EFI_BOOT_SERVICES.ExitBootServices()` for additional details.
+    ///
+    /// ### `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES`
+    ///
+    /// This event group is notified by the system `ExitBootServices()` is invoked right before notifying
+    /// `EFI_EVENT_GROUP_EXIT_BOOT_SERVICES` event group. The event presents the last opportunity to use firmware
+    /// interfaces in the boot environment.
+    ///
+    /// The notification function for this event must not depend on any kind of delayed processing (processing that happens
+    /// in a timer callback beyond the time span of the notification function) because system firmware deactivates timer
+    /// services right after dispatching handlers for this event group.
+    ///
+    /// Refer to `EFI_BOOT_SERVICES.ExitBootServices()` for additional details.
+    ///
+    /// ### `EFI_EVENT_GROUP_VIRTUAL_ADDRESS_CHANGE`
+    ///
+    /// This event group is notified by the system when `SetVirtualAddressMap()` is invoked. This is functionally equivalent
+    /// to the `VT_SIGNAL_VIRTUAL_ADDRESS_CHANGE` flag for the `Type` argument of `CreateEvent`.
+    ///
+    /// ### `EFI_EVENT_GROUP_MEMORY_MAP_CHANGE`
+    ///
+    /// This event group is notified by the system when the memory map has changed. The notification function for this
+    /// event should not use Memory Allocation Services to avoid reentrancy complications.
+    ///
+    /// ### `EFI_EVENT_GROUP_READY_TO_BOOT`
+    ///
+    /// This event group is notified by the system right before notifying `EFI_EVENT_GROUP_AFTER_READY_TO_BOOT` event
+    /// group when the Boot Manager is about to load and execute a boot option or a platform or OS recovery option. The
+    /// event group presents the last chance to modify device or system configuration prior to passing control to a boot
+    /// option.
+    ///
+    /// ### `EFI_EVENT_GROUP_AFTER_READY_TO_BOOT`
+    ///
+    /// This event group is notified by the system immediately after notifying `EFI_EVENT_GROUP_READY_TO_BOOT` event group
+    /// when the Boot Manager is about to load and execute a boot option or a platform or OS recovery option. The event
+    /// group presents the last chance to survey device or system configuration prior to passing control to a boot
+    /// option.
+    ///
+    /// ### `EFI_EVENT_GROUP_RESET_SYSTEM`
+    ///
+    /// This event group is notified by the system when `ResetSystem()` is invoked and the system is about to be reset.
+    /// The event group is only notified prior to `ExitBootServices()` invocation.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event structure was created. |
+    /// | `EFI_INVALID_PARAMETER` | One of the parameters has an invalid value. |
+    /// | `EFI_INVALID_PARAMETER` | `Event` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has an unsupported bit set. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has both `EVT_NOTIFY_SIGNAL` and `EVT_NOTIFY_WAIT` set. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has either `EVT_NOTIFY_SIGNAL` or `EVT_NOTIFY_WAIT` set and `NotifyFunction` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` has either `EVT_NOTIFY_SIGNAL` or `EVT_NOTIFY_WAIT` set and `NotifyTPL` is not a supported TPL level. |
+    /// | `EFI_OUT_OF_RESOURCES` | The event could not be allocated. |
     pub CreateEventEx: unsafe extern "efiapi" fn(
         Type: UINT32,
         NotifyTPL: EFI_TPL,

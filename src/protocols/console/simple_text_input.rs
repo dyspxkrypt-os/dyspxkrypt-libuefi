@@ -18,11 +18,13 @@
 
 use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT16};
 
-pub const EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID: EFI_GUID = EFI_GUID {
-    Data1: 0x387477C1,
-    Data2: 0x69C7,
-    Data3: 0x11D2,
-    Data4: [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
+pub const EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x387477C1,
+        0x69C7,
+        0x11D2,
+        [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
+    )
 };
 
 /// The Simple Text Input Protocol defines the minimum input required to support the console-in device.
