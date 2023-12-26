@@ -38,6 +38,14 @@ pub const EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS: UINT32 = 0x0000002
 pub const EFI_VARIABLE_APPEND_WRITE: UINT32 = 0x00000040;
 pub const EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS: UINT32 = 0x00000080;
 
+#[repr(C)]
+pub enum EFI_RESET_TYPE {
+    EfiResetCold,
+    EfiResetWarm,
+    EfiResetShutdown,
+    EfiResetPlatformSpecific,
+}
+
 /// The EFI Runtime Services containing a table header and pointers to all of the runtime services.
 #[repr(C)]
 pub struct EFI_RUNTIME_SERVICES {
@@ -560,6 +568,46 @@ pub struct EFI_RUNTIME_SERVICES {
     pub GetNextHighMonotonicCount: unsafe extern "efiapi" fn(
         HighCount: *mut UINT32,
     ) -> EFI_STATUS,
+    /// Resets the entire platform. If the platform supports `EFI_RESET_NOTIFICATION_PROTOCOL`, then prior to completing
+    /// the reset of the platform, all of the pending notifications must be called.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `ResetType` | The type of reset to perform. |
+    /// | **IN** `ResetStatus` | The status code for the reset. If the system reset is part of a normal operation, the status code would be `EFI_SUCCESS`. If the system reset is due to some type of failure the most appropriate EFI Status code would be used. |
+    /// | **IN** `DataSize` | The size, in bytes, of `ResetData`. |
+    /// | **IN** `ResetData` | For a `ResetType` of `EfiResetCold`, `EfiResetWarm`, or `EfiResetShutdown` the data buffer starts with a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the system reset. For a `ResetType` of `EfiResetPlatformSpecific` the data buffer also starts with a null-terminated string that is followed by an `EFI_GUID` that describes the specific type of reset to perform. |
+    ///
+    /// ## Description
+    ///
+    /// The `ResetSystem()` function resets the entire platform, including all processors and devices, and reboots the system.
+    ///
+    /// Calling this interface with `ResetType` of `EfiResetCold` causes a system-wide reset. This sets all circuitry within
+    /// the system to its initial state. This type of reset is asynchronous to system operation and operates without regard
+    /// to cycle boundaries. `EfiResetCold` is tantamount to a system power cycle.
+    ///
+    /// Calling this interface with `ResetType` of `EfiResetWarm` causes a system-wide initialization. The processors are
+    /// set to their initial state, and pending cycles are not corrupted. If the system does not support this reset type,
+    /// then an `EfiResetCold` must be performed.
+    ///
+    /// Calling this interface with `ResetType` of `EfiResetShutdown` causes the system to enter a power state equivalent
+    /// to the ACPI G2/S5 or G3 states. If the system does not support this reset type, then when the system is rebooted,
+    /// it should exhibit the `EfiResetCold` attributes.
+    ///
+    /// Calling this interface with `ResetType` of `EfiResetPlatformSpecific` causes a system-wide reset. The exact type
+    /// of the reset is defined by the `EFI_GUID` that follows the null-terminated Unicode string passed into `ResetData`.
+    /// If the platform does not recognize the `EFI_GUID` in `ResetData` the platform must pick a supported reset type to
+    /// perform.The platform may optionally log the parameters from any non-normal reset that occurs.
+    ///
+    /// The `ResetSystem()` function does not return.
+    pub ResetSystem: unsafe extern "efiapi" fn(
+        ResetType: EFI_RESET_TYPE,
+        ResetStatus: EFI_STATUS,
+        DataSize: UINTN,
+        ResetData: *mut VOID,
+    ) -> VOID,
     /// Returns information about the EFI variables.
     ///
     /// ## Parameters
