@@ -212,6 +212,63 @@ pub struct EFI_BOOT_SERVICES {
         Memory: EFI_PHYSICAL_ADDRESS,
         Pages: UINTN,
     ) -> EFI_STATUS,
+    /// Returns the current memory map.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN OUT** `MemoryMapSize` | A pointer to the size, in bytes, of the `MemoryMap` buffer. On input, this is the size of the buffer allocated by the caller. On output, it is the size of the buffer returned by the firmware if the buffer was large enough, or the size of the buffer needed to contain the map if the buffer was too small. |
+    /// | **OUT** `MemoryMap` | A pointer to the buffer in which firmware places the current memory map. The map is an array of `EFI_MEMORY_DESCRIPTOR`s. |
+    /// | **OUT** `MapKey` | A pointer to the location in which firmware returns the key for the current memory map. |
+    /// | **OUT** `DescriptorSize` | A pointer to the location in which firmware returns the size, in bytes, of an individual `EFI_MEMORY_DESCRIPTOR`. |
+    /// | **OUT** `DescriptorVersion` | A pointer to the location in which firmware returns the version number associated with the `EFI_MEMORY_DESCRIPTOR`. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetMemoryMap()` function returns a copy of the current memory map. The map is an array of memory descriptors,
+    /// each of which describes a contiguous block of memory. The map describes all of memory, no matter how it is being used.
+    /// That is, it includes blocks allocated by `EFI_BOOT_SERVICES.AllocatePages()` and `EFI_BOOT_SERVICES.AllocatePool()`,
+    /// as well as blocks that the firmware is using for its own purposes. The memory map is only used to describe memory
+    /// that is present in the system. The firmware does not return a range description for address space regions that are
+    /// not backed by physical hardware. Regions that are backed by physical hardware, but are not supposed to be accessed
+    /// by the OS, must be returned as `EfiReservedMemoryType`. The OS may use addresses of memory ranges that are not
+    /// described in the memory map at its own discretion.
+    ///
+    /// Until `EFI_BOOT_SERVICES.ExitBootServices()` is called, the memory map is owned by the firmware and the currently
+    /// executing UEFI Image should only use memory pages it has explicitly allocated.
+    ///
+    /// If the `MemoryMap` buffer is too small, the `EFI_BUFFER_TOO_SMALL` error code is returned and the `MemoryMapSize`
+    /// value contains the size of the buffer needed to contain the current memory map. The actual size of the buffer allocated
+    /// for the consequent call to `GetMemoryMap()` should be bigger then the value returned in `MemoryMapSize`, since allocation
+    /// of the new buffer may potentially increase memory map size.
+    ///
+    /// On success a `MapKey` is returned that identifies the current memory map. The firmware’s key is changed every time
+    /// something in the memory map changes. In order to successfully invoke `EFI_BOOT_SERVICES.ExitBootServices()` the
+    /// caller must provide the current memory map key.
+    ///
+    /// The `GetMemoryMap()` function also returns the size and revision number of the `EFI_MEMORY_DESCRIPTOR`. The `DescriptorSize`
+    /// represents the size in bytes of an `EFI_MEMORY_DESCRIPTOR` array element returned in `MemoryMap`. The size is returned
+    /// to allow for future expansion of the `EFI_MEMORY_DESCRIPTOR` in response to hardware innovation. The structure of
+    /// the `EFI_MEMORY_DESCRIPTOR` may be extended in the future but it will remain backwards compatible with the current
+    /// definition. Thus OS software must use the `DescriptorSize` to find the start of each `EFI_MEMORY_DESCRIPTOR` in the
+    /// `MemoryMap` array.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The memory map was returned in the `MemoryMap` buffer. |
+    /// | `EFI_BUFFER_TOO_SMALL` | The `MemoryMap` buffer was too small. The current buffer size needed to hold the memory map is returned in `MemoryMapSize`. |
+    /// | `EFI_INVALID_PARAMETER` | `MemoryMapSize` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | The `MemoryMap` buffer is not too small and `MemoryMap` is NULL. |
+    pub GetMemoryMap: unsafe extern "efiapi" fn(
+        MemoryMapSize: *mut UINTN,
+        MemoryMap: *mut EFI_MEMORY_DESCRIPTOR,
+        MapKey: *mut UINTN,
+        DescriptorSize: *mut UINTN,
+        DescriptorVersion: *mut UINT32,
+    ) -> EFI_STATUS,
 }
 
 /// A descriptor for a memory map.
