@@ -397,10 +397,8 @@ pub struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
     /// | `EFI_SUCCESS`      | The operation completed successfully.                                |
     /// | `EFI_DEVICE_ERROR` | The device had an error and could not complete the request.          |
     /// | `EFI_UNSUPPORTED`  | The output device does not support visibility control of the cursor. |
-    pub EnableCursor: unsafe extern "efiapi" fn(
-        This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
-        Visible: BOOLEAN,
-    ),
+    pub EnableCursor:
+        unsafe extern "efiapi" fn(This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL, Visible: BOOLEAN),
     /// Pointer to the `SIMPLE_TEXT_OUTPUT_MODE` data.
     pub Mode: *mut SIMPLE_TEXT_OUTPUT_MODE,
 }

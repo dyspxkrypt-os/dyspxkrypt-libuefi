@@ -16,12 +16,15 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::tables::EFI_TABLE_HEADER;
+use crate::tables::boot::EFI_MEMORY_DESCRIPTOR;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{BOOLEAN, EFI_STATUS, INT16, UINT16, UINT32, UINT64, UINT8};
+use crate::tables::EFI_TABLE_HEADER;
+use crate::types::{BOOLEAN, EFI_STATUS, INT16, UINT16, UINT32, UINT64, UINT8, UINTN, VOID};
 
 pub const EFI_RUNTIME_SERVICES_SIGNATURE: UINT64 = 0x56524553544E5552;
 pub const EFI_RUNTIME_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
+
+pub const EFI_OPTIONAL_PTR: UINTN = 0x00000001;
 
 /// The EFI Runtime Services containing a table header and pointers to all of the runtime services.
 #[repr(C)]
@@ -63,7 +66,7 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
     pub GetTime: unsafe extern "efiapi" fn(
         Time: *mut EFI_TIME,
-        Capabilities: *mut EFI_TIME_CAPABILITIES
+        Capabilities: *mut EFI_TIME_CAPABILITIES,
     ) -> EFI_STATUS,
     /// Sets the current local time and date information.
     ///
@@ -92,9 +95,7 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | A `Time` field is out of range.                                                                                                                                                                             |
     /// | `EFI_DEVICE_ERROR`      | The time could not be set due to a hardware error.                                                                                                                                                          |
     /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
-    pub SetTime: unsafe extern "efiapi" fn(
-        Time: *mut EFI_TIME,
-    ) -> EFI_STATUS,
+    pub SetTime: unsafe extern "efiapi" fn(Time: *mut EFI_TIME) -> EFI_STATUS,
     /// Returns the current wakeup alarm clock setting.
     ///
     /// ## Parameters
@@ -160,9 +161,101 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | A `Time` field is out of range.                                                                                                                                                                             |
     /// | `EFI_DEVICE_ERROR`      | The wakeup time could not be set due to a hardware error.                                                                                                                                                   |
     /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
-    pub SetWakeupTime: unsafe extern "efiapi" fn(
-        Enable: BOOLEAN,
-        Time: *mut EFI_TIME,
+    pub SetWakeupTime:
+        unsafe extern "efiapi" fn(Enable: BOOLEAN, Time: *mut EFI_TIME) -> EFI_STATUS,
+    /// Changes the runtime addressing mode of EFI firmware from physical to virtual.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                  | Description                                                                                                  |
+    /// | -------------------------- | ------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `MemoryMapSize`     | The size in bytes of VirtualMap.                                                                             |
+    /// | **IN** `DescriptorSize`    | The size in bytes of an entry in the `VirtualMap`.                                                           |
+    /// | **IN** `DescriptorVersion` | The version of the structure entries in `VirtualMap`.                                                        |
+    /// | **IN** `VirtualMap`        | An array of memory descriptors which contain new virtual address mapping information for all runtime ranges. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetVirtualAddressMap()` function is used by the OS loader. The function can only be called at runtime, and
+    /// is called by the owner of the system’s memory map: i.e., the component which called `EFI_BOOT_SERVICES.ExitBootServices()`.
+    /// All events of type `EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE` must be signaled before `SetVirtualAddressMap()` returns.
+    ///
+    /// This call changes the addresses of the runtime components of the EFI firmware to the new virtual addresses supplied
+    /// in the `VirtualMap`. The supplied `VirtualMap` must provide a new virtual address for every entry in the memory
+    /// map at `ExitBootServices()` that is marked as being needed for runtime usage. All of the virtual address fields
+    /// in the `VirtualMap` must be aligned on 4 KiB boundaries.
+    ///
+    /// The call to `SetVirtualAddressMap()` must be done with the physical mappings. On successful return from this function,
+    /// the system must then make any future calls with the newly assigned virtual mappings. All address space mappings
+    /// must be done in accordance to the cache-ability flags as specified in the original address map.
+    ///
+    /// When this function is called, all events that were registered to be signaled on an address map change are notified.
+    /// Each component that is notified must update any internal pointers for their new addresses. This can be done with
+    /// the `ConvertPointer()` function. Once all events have been notified, the EFI firmware reapplies image “fix-up”
+    /// information to virtually relocate all runtime images to their new addresses. In addition, all of the fields of
+    /// the EFI Runtime Services Table except `SetVirtualAddressMap` and `ConvertPointer` must be converted from physical
+    /// pointers to virtual pointers using the `ConvertPointer()` service. The `SetVirtualAddressMap()` and `ConvertPointer()`
+    /// services are only callable in physical mode, so they do not need to be converted from physical pointers to virtual
+    /// pointers. Several fields of the EFI System Table must be converted from physical pointers to virtual pointers using
+    /// the `ConvertPointer()` service. These fields include `FirmwareVendor`, `RuntimeServices`, and `ConfigurationTable`.
+    /// Because contents of both the EFI Runtime Services Table and the EFI System Table are modified by this service, the
+    /// 32-bit CRC for the EFI Runtime Services Table and the EFI System Table must be recomputed.
+    ///
+    /// A virtual address map may only be applied one time. Once the runtime system is in virtual mode, calls to this
+    /// function return `EFI_UNSUPPORTED`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`           | The virtual address map has been applied.                                                                                                                                                                   |
+    /// | `EFI_UNSUPPORTED`       | EFI firmware is not at runtime, or the EFI firmware is already in virtual address mapped mode.                                                                                                              |
+    /// | `EFI_INVALID_PARAMETER` | `DescriptorSize` or `DescriptorVersion` is invalid.                                                                                                                                                         |
+    /// | `EFI_NO_MAPPING`        | A virtual address was not supplied for a range in the memory map that requires a mapping.                                                                                                                   |
+    /// | `EFI_NOT_FOUND`         | A virtual address was supplied for an address that is not found in the memory map.                                                                                                                          |
+    /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub SetVirtualAddressMap: unsafe extern "efiapi" fn(
+        MemoryMapSize: UINTN,
+        DescriptorSize: UINTN,
+        DescriptorVersion: UINT32,
+        VirtualMap: *mut EFI_MEMORY_DESCRIPTOR,
+    ) -> EFI_STATUS,
+    /// Determines the new virtual address that is to be used on subsequent memory accesses.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DebugDisposition` | Supplies type information for the pointer being converted.                                                            |
+    /// | **IN** `Address`          | A pointer to a pointer that is to be fixed to be the value needed for the new virtual address mappings being applied. |
+    ///
+    /// ## Description
+    ///
+    /// The `ConvertPointer()` function is used by an EFI component during the `SetVirtualAddressMap()` operation. `ConvertPointer()`
+    /// must be called using physical address pointers during the execution of `SetVirtualAddressMap()`.
+    ///
+    /// The `ConvertPointer()` function updates the current pointer pointed to by Address to be the proper value for the
+    /// new address map. Only runtime components need to perform this operation. The `EFI_BOOT_SERVICES.CreateEvent()`
+    /// function is used to create an event that is to be notified when the address map is changing. All pointers the
+    /// component has allocated or assigned must be updated.
+    ///
+    /// If the `EFI_OPTIONAL_PTR` flag is specified, the pointer being converted is allowed to be `NULL`.
+    ///
+    /// Once all components have been notified of the address map change, firmware fixes any compiled in pointers that are
+    /// embedded in any runtime image.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`           | The pointer pointed to by `Address` was modified.                                                                                                                                                           |
+    /// | `EFI_NOT_FOUND`         | The pointer pointed to by `Address` was not found to be part of the current memory map. This is normally fatal.                                                                                             |
+    /// | `EFI_INVALID_PARAMETER` | `Address` is `NULL`.                                                                                                                                                                                        |
+    /// | `EFI_INVALID_PARAMETER` | `*Address` is `NULL` and `DebugDisposition` does not have the `EFI_OPTIONAL_PTR` bit set.                                                                                                                   |
+    /// | `EFI_UNSUPPORTED`       | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub ConvertPointer: unsafe extern "efiapi" fn(
+        DebugDisposition: UINTN,
+        Address: *mut *mut VOID,
     ) -> EFI_STATUS,
 }
 

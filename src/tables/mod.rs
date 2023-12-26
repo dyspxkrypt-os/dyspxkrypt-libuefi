@@ -18,6 +18,7 @@
 
 use crate::types::{UINT32, UINT64};
 
+pub mod boot;
 pub mod runtime;
 pub mod system;
 
