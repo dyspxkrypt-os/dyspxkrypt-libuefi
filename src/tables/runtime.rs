@@ -518,6 +518,47 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: UINTN,
         Data: *mut VOID,
     ) -> EFI_STATUS,
+    /// Returns information about the EFI variables.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `Attributes` | Attributes bitmask to specify the type of variables on which to return information. The `EFI_VARIABLE_APPEND_WRITE` attribute, if set in the attributes bitmask, will be ignored. |
+    /// | **OUT** `MaximumVariableStorageSize` | On output the maximum size of the storage space available for the EFI variables associated with the attributes specified. |
+    /// | **OUT** `RemainingVariableStorageSize` | Returns the remaining size of the storage space available for EFI variables associated with the attributes specified. |
+    /// | **OUT** `MaximumVariableSize` | Returns the maximum size of an individual EFI variable associated with the attributes specified. |
+    ///
+    /// ## Description
+    ///
+    /// The `QueryVariableInfo()` function allows a caller to obtain the information about the maximum size of the storage
+    /// space available for the EFI variables, the remaining size of the storage space available for the EFI variables
+    /// and the maximum size of each individual EFI variable, associated with the attributes specified.
+    ///
+    /// The `MaximumVariableSize` value will reflect the overhead associated with the saving of a single EFI variable
+    /// with the exception of the overhead associated with the length of the string name of the EFI variable.
+    ///
+    /// The returned `MaximumVariableStorageSize`, `RemainingVariableStorageSize`, `MaximumVariableSize` information may
+    /// change immediately after the call based on other runtime activities including asynchronous error events. Also,
+    /// these values associated with different attributes are not additive in nature.
+    ///
+    /// After the system has transitioned into runtime (after `ExitBootServices()` is called), an implementation may not
+    /// be able to accurately return information about the Boot Services variable store. In such cases, `EFI_INVALID_PARAMETER`
+    /// should be returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | Valid answer returned. |
+    /// | `EFI_INVALID_PARAMETER`  | An invalid combination of attribute bits was supplied |
+    /// | `EFI_UNSUPPORTED`        | The attribute is not supported on this platform, and the `MaximumVariableStorageSize`, `RemainingVariableStorageSize`, `MaximumVariableSize` are undefined. |
+    pub QueryVariableInfo: unsafe extern "efiapi" fn(
+        Attributes: UINT32,
+        MaximumVariableStorageSize: *mut UINT64,
+        RemainingVariableStorageSize: *mut UINT64,
+        MaximumVariableSize: *mut UINT64,
+    ) -> EFI_STATUS,
 }
 
 /// A snapshot of the current time.
