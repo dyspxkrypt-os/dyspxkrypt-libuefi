@@ -493,6 +493,54 @@ pub struct EFI_BOOT_SERVICES {
         Type: EFI_TIMER_DELAY,
         TriggerTime: UINT64,
     ) -> EFI_STATUS,
+    /// Stops execution until an event is signaled.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `NumberOfEvents` | The number of events in the `Event` array. |
+    /// | **IN** `Event` | An array of `EFI_EVENT`. |
+    /// | **OUT** `Index` | Pointer to the index of the event which satisfied the wait condition. |
+    ///
+    /// ## Description
+    ///
+    /// This function must be called at priority level `TPL_APPLICATION`. If an attempt is made to call it at any other
+    /// priority level, `EFI_UNSUPPORTED` is returned.
+    ///
+    /// The list of events in the `Event` array are evaluated in order from first to last, and this evaluation is repeated
+    /// until an event is signaled or an error is detected. The following checks are performed on each event in the `Event`
+    /// array.
+    ///
+    /// - If an event is of type `EVT_NOTIFY_SIGNAL`, then `EFI_INVALID_PARAMETER` is returned and Index indicates the event
+    /// that caused the failure.
+    ///
+    /// - If an event is in the signaled state, the signaled state is cleared and `EFI_SUCCESS` is returned, and Index
+    /// indicates the event that was signaled.
+    ///
+    /// - If an event is not in the signaled state but does have a notification function, the notification function is queued
+    /// at the event’s notification task priority level. If the execution of the event’s notification function causes the
+    /// event to be signaled, then the signaled state is cleared, `EFI_SUCCESS` is returned, and Index indicates the event
+    /// that was signaled.
+    ///
+    /// To wait for a specified time, a timer event must be included in the `Event` array.
+    ///
+    /// To check if an event is signaled without waiting, an already signaled event can be used as the last event in the
+    /// list being checked, or the `CheckEvent()` interface may be used.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event indicated by `Index` was signaled. |
+    /// | `EFI_INVALID_PARAMETER` | `NumberOfEvents` is `0`. |
+    /// | `EFI_INVALID_PARAMETER` | The event indicated by Index is of type `EVT_NOTIFY_SIGNAL`. |
+    /// | `EFI_UNSUPPORTED` | The current TPL is not `TPL_APPLICATION`. |
+    pub WaitForEvent: unsafe extern "efiapi" fn(
+        NumberOfEvents: UINTN,
+        Event: *mut EFI_EVENT,
+        Index: *mut UINTN,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
