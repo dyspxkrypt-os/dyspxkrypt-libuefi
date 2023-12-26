@@ -17,9 +17,11 @@
  */
 
 use crate::protocols::console::{EFI_SIMPLE_TEXT_INPUT_PROTOCOL, EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL};
+use crate::tables::boot::EFI_BOOT_SERVICES;
+use crate::tables::configuration::EFI_CONFIGURATION_TABLE;
 use crate::tables::runtime::EFI_RUNTIME_SERVICES;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64};
+use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64, UINTN};
 
 /// The signature of the EFI System Table.
 pub const EFI_SYSTEM_TABLE_SIGNATURE: UINT64 = 0x5453595320494249;
@@ -72,4 +74,10 @@ pub struct EFI_SYSTEM_TABLE {
     pub StdErr: *mut EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL,
     /// A pointer to the EFI Runtime Services Table.
     pub RuntimeServices: *mut EFI_RUNTIME_SERVICES,
+    /// A pointer to the EFI Boot Services Table.
+    pub BootServices: *mut EFI_BOOT_SERVICES,
+    /// The number of system configuration tables in the buffer `ConfigurationTable`.
+    pub NumberOfTableEntries: UINTN,
+    /// A pointer to the system configuration tables. The number of entries in the table is `NumberOfTableEntries`.
+    pub ConfigurationTable: *mut EFI_CONFIGURATION_TABLE,
 }

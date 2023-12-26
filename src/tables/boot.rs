@@ -35,6 +35,10 @@ pub const EFI_MEMORY_RUNTIME: UINT64 = 0x8000000000000000;
 pub const EFI_MEMORY_ISA_VALID: UINT64 = 0x4000000000000000;
 pub const EFI_MEMORY_ISA_MASK: UINT64 = 0x0FFFF00000000000;
 
+/// The EFI Boot Services containing a table header and pointers to all of the boot services.
+#[repr(C)]
+pub struct EFI_BOOT_SERVICES;
+
 /// A descriptor for a memory map.
 #[repr(C)]
 pub struct EFI_MEMORY_DESCRIPTOR {
