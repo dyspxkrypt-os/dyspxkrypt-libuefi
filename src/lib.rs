@@ -40,7 +40,7 @@
 //!
 //! ## License
 //!
-//! This library is licensed under **Version 3 of the GNU Public License**.
+//! This library is licensed under **Version 3 of the GNU General Public License**.
 //!
 //! The full text of the license is available in the [`COPYING` file].
 //!
