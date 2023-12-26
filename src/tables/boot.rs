@@ -188,6 +188,30 @@ pub struct EFI_BOOT_SERVICES {
         Pages: UINTN,
         Memory: *mut EFI_PHYSICAL_ADDRESS,
     ) -> EFI_STATUS,
+    /// Frees memory pages.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Memory` | The base physical address of the pages to be freed. |
+    /// | **IN** `Pages` | The number of contiguous 4 KiB pages to free. |
+    ///
+    /// ## Description
+    ///
+    /// The `FreePages()` function returns memory allocated by `AllocatePages()` to the firmware.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The requested memory pages were freed. |
+    /// | `EFI_NOT_FOUND` | The requested memory pages were not allocated with `AllocatePages()`. |
+    /// | `EFI_INVALID_PARAMETER` | `Memory` is not a page-aligned address or `Pages` is invalid. |
+    pub FreePages: unsafe extern "efiapi" fn(
+        Memory: EFI_PHYSICAL_ADDRESS,
+        Pages: UINTN,
+    ) -> EFI_STATUS,
 }
 
 /// A descriptor for a memory map.
