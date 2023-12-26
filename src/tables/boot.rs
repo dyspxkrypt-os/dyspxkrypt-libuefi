@@ -18,7 +18,7 @@
 
 use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{EFI_TPL, UINT32, UINT64, VOID};
+use crate::types::{EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -39,6 +39,35 @@ pub const EFI_MEMORY_CPU_CRYPTO: UINT64 = 0x0000000000080000;
 pub const EFI_MEMORY_RUNTIME: UINT64 = 0x8000000000000000;
 pub const EFI_MEMORY_ISA_VALID: UINT64 = 0x4000000000000000;
 pub const EFI_MEMORY_ISA_MASK: UINT64 = 0x0FFFF00000000000;
+
+#[repr(C)]
+pub enum EFI_ALLOCATE_TYPE {
+    AllocateAnyPages,
+    AllocateMaxAddress,
+    AllocateAddress,
+    MaxAllocateType,
+}
+
+#[repr(C)]
+pub enum EFI_MEMORY_TYPE {
+    EfiReservedMemoryType,
+    EfiLoaderCode,
+    EfiLoaderData,
+    EfiBootServicesCode,
+    EfiBootServicesData,
+    EfiRuntimeServicesCode,
+    EfiRuntimeServicesData,
+    EfiConventionalMemory,
+    EfiUnusableMemory,
+    EfiACPIReclaimMemory,
+    EfiACPIMemoryNVS,
+    EfiMemoryMappedIO,
+    EfiMemoryMappedIOPortSpace,
+    EfiPalCode,
+    EfiPersistentMemory,
+    EfiUnacceptedMemoryType,
+    EfiMaxMemoryType,
+}
 
 /// The EFI Boot Services containing a table header and pointers to all of the boot services.
 #[repr(C)]
@@ -111,6 +140,54 @@ pub struct EFI_BOOT_SERVICES {
     pub RestoreTPL: unsafe extern "efiapi" fn(
         OldTPL: EFI_TPL,
     ) -> VOID,
+    /// Allocates memory pages from the system.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Type` | The type of allocation to perform. |
+    /// | **IN** `MemoryType` | The type of memory to allocate. These memory types are also described in more detail in Memory Type Usage before `ExitBootServices()`, and Memory Type Usage after `ExitBootServices()`. Normal allocations (that is, allocations by any UEFI application) are of type `EfiLoaderData`. `MemoryType` values in the range `0x70000000..0x7FFFFFFF` are reserved for OEM use. `MemoryType` values in the range `0x80000000..0xFFFFFFFF` are reserved for use by UEFI OS loaders that are provided by operating system vendors. |
+    /// | **IN** `Pages` | The number of contiguous 4 KiB pages to allocate. |
+    /// | **IN OUT** `Memory` | Pointer to a physical address. On input, the way in which the address is used depends on the value of `Type`. On output the address is set to the base of the page range that was allocated. |
+    ///
+    /// ## Description
+    ///
+    /// The `AllocatePages()` function allocates the requested number of pages and returns a pointer to the base address
+    /// of the page range in the location referenced by Memory. The function scans the memory map to locate free pages.
+    /// When it finds a physically contiguous block of pages that is large enough and also satisfies the allocation requirements
+    /// of `Type`, it changes the memory map to indicate that the pages are now of type `MemoryType`.
+    ///
+    /// In general, UEFI OS loaders and UEFI applications should allocate memory (and pool) of type EfiLoaderData. UEFI
+    /// boot service drivers must allocate memory (and pool) of type `EfiBootServicesData`. UEFI runtime drivers should
+    /// allocate memory (and pool) of type `EfiRuntimeServicesData` (although such allocation can only be made during boot
+    /// services time).
+    ///
+    /// Allocation requests of type `AllocateAnyPages` allocate any available range of pages that satisfies the request.
+    /// On input, the address pointed to by `Memory` is ignored.
+    ///
+    /// Allocation requests of type `AllocateMaxAddress` allocate any available range of pages whose uppermost address
+    /// is less than or equal to the address pointed to by `Memory` on input.
+    ///
+    /// Allocation requests of type `AllocateAddress` allocate pages at the address pointed to by `Memory` on input.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The requested pages were allocated. |
+    /// | `EFI_OUT_OF_RESOURCES` | The pages could not be allocated. |
+    /// | `EFI_INVALID_PARAMETER` | `Type` is not `AllocateAnyPages` or `AllocateMaxAddress` or `AllocateAddress`. |
+    /// | `EFI_INVALID_PARAMETER` | `MemoryType` is in the range `EfiMaxMemoryType..0x6FFFFFFF`. |
+    /// | `EFI_INVALID_PARAMETER` | `MemoryType` is `EfiPersistentMemoryType` or `EfiUnacceptedMemory`. |
+    /// | `EFI_INVALID_PARAMETER` | `Memory` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | The requested pages could not be found. |
+    pub AllocatePages: unsafe extern "efiapi" fn(
+        Type: EFI_ALLOCATE_TYPE,
+        MemoryType: EFI_MEMORY_TYPE,
+        Pages: UINTN,
+        Memory: *mut EFI_PHYSICAL_ADDRESS,
+    ) -> EFI_STATUS,
 }
 
 /// A descriptor for a memory map.
