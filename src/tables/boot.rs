@@ -16,7 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::tables::EFI_TABLE_HEADER;
+use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::types::{UINT32, UINT64};
+
+pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
+pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
 
 pub const EFI_MEMORY_UC: UINT64 = 0x0000000000000001;
 pub const EFI_MEMORY_WC: UINT64 = 0x0000000000000002;
@@ -37,7 +42,12 @@ pub const EFI_MEMORY_ISA_MASK: UINT64 = 0x0FFFF00000000000;
 
 /// The EFI Boot Services containing a table header and pointers to all of the boot services.
 #[repr(C)]
-pub struct EFI_BOOT_SERVICES;
+pub struct EFI_BOOT_SERVICES {
+    /// The table header for the EFI Boot Services Table. This header contains the `EFI_BOOT_SERVICES_SIGNATURE` and
+    /// `EFI_BOOT_SERVICES_REVISION` values along with the size of the `EFI_BOOT_SERVICES` structure and a 32-bit CRC to
+    /// verify that the contents of the EFI Boot Services Table are valid.
+    pub Hdr: EFI_TABLE_HEADER,
+}
 
 /// A descriptor for a memory map.
 #[repr(C)]
