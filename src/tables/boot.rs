@@ -301,6 +301,29 @@ pub struct EFI_BOOT_SERVICES {
         Size: UINTN,
         Buffer: *mut *mut VOID,
     ) -> EFI_STATUS,
+    /// Returns pool memory to the system.
+    ///
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Buffer` | Pointer to the buffer to free. |'
+    ///
+    /// ## Description
+    ///
+    /// The `FreePool()` function returns the memory specified by `Buffer` to the system. On return, the memory’s type is
+    /// `EfiConventionalMemory`. The `Buffer` that is freed must have been allocated by `AllocatePool()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The memory was returned to the system. |
+    /// | `EFI_INVALID_PARAMETER` | `Buffer` was invalid. |
+    pub FreePool: unsafe extern "efiapi" fn(
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
 }
 
 /// A descriptor for a memory map.
