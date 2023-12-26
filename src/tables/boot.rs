@@ -261,13 +261,45 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_SUCCESS` | The memory map was returned in the `MemoryMap` buffer. |
     /// | `EFI_BUFFER_TOO_SMALL` | The `MemoryMap` buffer was too small. The current buffer size needed to hold the memory map is returned in `MemoryMapSize`. |
     /// | `EFI_INVALID_PARAMETER` | `MemoryMapSize` is `NULL`. |
-    /// | `EFI_INVALID_PARAMETER` | The `MemoryMap` buffer is not too small and `MemoryMap` is NULL. |
+    /// | `EFI_INVALID_PARAMETER` | The `MemoryMap` buffer is not too small and `MemoryMap` is `NULL`. |
     pub GetMemoryMap: unsafe extern "efiapi" fn(
         MemoryMapSize: *mut UINTN,
         MemoryMap: *mut EFI_MEMORY_DESCRIPTOR,
         MapKey: *mut UINTN,
         DescriptorSize: *mut UINTN,
         DescriptorVersion: *mut UINT32,
+    ) -> EFI_STATUS,
+    /// Allocates pool memory.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `PoolType` | The type of pool to allocate. `PoolType` values in the range `0x70000000..0x7FFFFFFF` are reserved for OEM use. PoolType values in the range `0x80000000..0xFFFFFFFF` are reserved for use by UEFI OS loaders that are provided by operating system vendors. |
+    /// | **IN** `Size` | The number of bytes to allocate from the pool. |
+    /// | **OUT** `Buffer` | A pointer to a pointer to the allocated buffer if the call succeeds; undefined otherwise. |
+    ///
+    /// ## Description
+    ///
+    /// The `AllocatePool()` function allocates a memory region of `Size` bytes from memory of type `PoolType` and returns
+    /// the address of the allocated memory in the location referenced by Buffer. This function allocates pages from
+    /// `EfiConventionalMemory` as needed to grow the requested pool type. All allocations are eight-byte aligned.
+    ///
+    /// The allocated pool memory is returned to the available pool with the `EFI_BOOT_SERVICES.FreePool()` function.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The requested number of bytes was allocated. |
+    /// | `EFI_OUT_OF_RESOURCES` | The pool requested could not be allocated. |
+    /// | `EFI_INVALID_PARAMETER` | `PoolType` is in the range `EfiMaxMemoryType..0x6FFFFFFF`. |
+    /// | `EFI_INVALID_PARAMETER` | `PoolType` is `EfiPersistentMemory`. |
+    /// | `EFI_INVALID_PARAMETER` | `Buffer` is `NULL`. |
+    pub AllocatePool: unsafe extern "efiapi" fn(
+        PoolType: EFI_MEMORY_TYPE,
+        Size: UINTN,
+        Buffer: *mut *mut VOID,
     ) -> EFI_STATUS,
 }
 
