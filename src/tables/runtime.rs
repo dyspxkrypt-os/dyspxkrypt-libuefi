@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::tables::boot::EFI_MEMORY_DESCRIPTOR;
+use crate::tables::boot::{EFI_MEMORY_DESCRIPTOR, EFI_PHYSICAL_ADDRESS};
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{
@@ -32,11 +32,18 @@ pub const EFI_VARIABLE_NON_VOLATILE: UINT32 = 0x00000001;
 pub const EFI_VARIABLE_BOOTSERVICE_ACCESS: UINT32 = 0x00000002;
 pub const EFI_VARIABLE_RUNTIME_ACCESS: UINT32 = 0x00000004;
 pub const EFI_VARIABLE_HARDWARE_ERROR_RECORD: UINT32 = 0x00000008;
-#[deprecated(since = "0.1.0", note = "this attribute is deprecated and should be considered as reserved")]
+#[deprecated(
+    since = "0.1.0",
+    note = "this attribute is deprecated and should be considered as reserved"
+)]
 pub const EFI_VARIABLE_AUTHENTICATED_WRITE_ACCESS: UINT32 = 0x00000010;
 pub const EFI_VARIABLE_TIME_BASED_AUTHENTICATED_WRITE_ACCESS: UINT32 = 0x00000020;
 pub const EFI_VARIABLE_APPEND_WRITE: UINT32 = 0x00000040;
 pub const EFI_VARIABLE_ENHANCED_AUTHENTICATED_ACCESS: UINT32 = 0x00000080;
+
+pub const CAPSULE_FLAGS_PERSIST_ACROSS_RESET: UINT32 = 0x00010000;
+pub const CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE: UINT32 = 0x00020000;
+pub const CAPSULE_FLAGS_INITIATE_RESET: UINT32 = 0x00040000;
 
 #[repr(C)]
 pub enum EFI_RESET_TYPE {
@@ -565,9 +572,7 @@ pub struct EFI_RUNTIME_SERVICES {
     /// | `EFI_DEVICE_ERROR`  | The device is not functioning properly. |
     /// | `EFI_INVALID_PARAMETER`  | `HighCount` is `NULL`. |
     /// | `EFI_UNSUPPORTED`  | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
-    pub GetNextHighMonotonicCount: unsafe extern "efiapi" fn(
-        HighCount: *mut UINT32,
-    ) -> EFI_STATUS,
+    pub GetNextHighMonotonicCount: unsafe extern "efiapi" fn(HighCount: *mut UINT32) -> EFI_STATUS,
     /// Resets the entire platform. If the platform supports `EFI_RESET_NOTIFICATION_PROTOCOL`, then prior to completing
     /// the reset of the platform, all of the pending notifications must be called.
     ///
@@ -608,6 +613,54 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: UINTN,
         ResetData: *mut VOID,
     ) -> VOID,
+    /// Passes capsules to the firmware with both virtual and physical mapping. Depending on the intended consumption,
+    /// the firmware may process the capsule immediately. If the payload should persist across a system reset, the reset
+    /// value returned from `EFI_RUNTIME_SERVICES.QueryCapsuleCapabilities()` must be passed into `EFI_RUNTIME_SERVICES.ResetSystem()`
+    /// and will cause the capsule to be processed by the firmware as part of the reset process.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `CapsuleHeaderArray` | Virtual pointer to an array of virtual pointers to the capsules being passed into update capsule. Each capsules is assumed to stored in contiguous virtual memory. The capsules in the `CapsuleHeaderArray` must be the same capsules as the `ScatterGatherList`. The `CapsuleHeaderArray` must have the capsules in the same order as the `ScatterGatherList`. |
+    /// | **IN** `CapsuleCount` | Number of pointers to `EFI_CAPSULE_HEADER` in `CapsuleHeaderArray`. |
+    /// | **IN** `ScatterGatherList` | Physical pointer to a set of `EFI_CAPSULE_BLOCK_DESCRIPTOR` that describes the location in physical memory of a set of capsules. The capsules in the `ScatterGatherList` must be in the same order as the `CapsuleHeaderArray`. This parameter is only referenced if the capsules are defined to persist across system reset. |
+    ///
+    /// ## Description
+    ///
+    /// The `UpdateCapsule()` function allows the operating system to pass information to firmware. The `UpdateCapsule()`
+    /// function supports passing capsules in operating system virtual memory back to firmware. Each capsule is contained
+    /// in a contiguous virtual memory range in the operating system, but both a virtual and physical mapping for the capsules
+    /// are passed to the firmware.
+    ///
+    /// If a capsule has the `CAPSULE_FLAGS_PERSIST_ACROSS_RESET` flag set in its header, the firmware will process the
+    /// capsules after system reset. The caller must ensure to reset the system using the required reset value obtained
+    /// from `QueryCapsuleCapabilities`. If this flag is not set, the firmware will process the capsules immediately.
+    ///
+    /// A capsule which has the `CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE` flag must have `CAPSULE_FLAGS_PERSIST_ACROSS_RESET`
+    /// set in its header as well. Firmware that processes a capsule that has the `CAPSULE_FLAGS_POPULATE_SYSTEM_TABLE`
+    /// flag set in its header will coalesce the contents of the capsule from the `ScatterGatherList` into a contiguous
+    /// buffer and must then place a pointer to this coalesced capsule in the EFI System Table after the system has been
+    /// reset. Agents searching for this capsule will look in the `EFI_CONFIGURATION_TABLE` and search for the capsule’s
+    /// GUID and associated pointer to retrieve the data after the reset.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | Valid capsule was passed. If `CAPSULE_FLAGS_PERSIST_ACROSS_RESET` is not set, the capsule has been successfully processed by the firmware. |
+    /// | `EFI_INVALID_PARAMETER`  | `CapsuleSize`, or an incompatible set of flags were set in the capsule header. |
+    /// | `EFI_INVALID_PARAMETER`  | `CapsuleCount` is `0`. |
+    /// | `EFI_DEVICE_ERROR`  | The capsule update was started, but failed due to a device error. |
+    /// | `EFI_UNSUPPORTED`  | The capsule type is not supported on this platform. |
+    /// | `EFI_OUT_OF_RESOURCES`  | When `ExitBootServices()` has been previously called this error indicates the capsule is compatible with this platform but is not capable of being submitted or processed in runtime. The caller may resubmit the capsule prior to `ExitBootServices()`. |
+    /// | `EFI_OUT_OF_RESOURCES`  | When `ExitBootServices()` has not been previously called then this error indicates the capsule is compatible with this platform but there are insufficient resources to process. |
+    /// | `EFI_UNSUPPORTED`  | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub UpdateCapsule: unsafe extern "efiapi" fn(
+        CapsuleHeaderArray: *mut *mut EFI_CAPSULE_HEADER,
+        CapsuleCount: UINTN,
+        ScatterGatherList: EFI_PHYSICAL_ADDRESS,
+    ) -> EFI_STATUS,
     /// Returns information about the EFI variables.
     ///
     /// ## Parameters
@@ -689,7 +742,7 @@ pub struct EFI_TIME {
     ///
     /// All other bits must be zero.
     ///
-    /// When entering daylight saving time, if the time is affected, but hasn’t been adjusted (DST = 1),
+    /// When entering daylight saving time, if the time is affected, but hasn't been adjusted (DST = 1),
     /// use the new calculation:
     ///
     /// - The date/time should be increased by the appropriate amount.
@@ -735,4 +788,33 @@ pub struct EFI_VARIABLE_AUTHENTICATION_3_CERT_ID {
     pub Type: UINT8,
     /// Indicates the size of the `Id` buffer that follows this field in the structure.
     pub IdSize: UINT32,
+}
+
+#[repr(C)]
+pub struct EFI_CAPSULE_BLOCK_DESCRIPTOR {
+    /// Length in bytes of the data pointed to by `DataBlock` or `ContinuationPointer`.
+    pub Length: UINT64,
+    pub Union: __,
+}
+
+#[repr(C)]
+pub struct EFI_CAPSULE_HEADER {
+    /// A GUID that defines the contents of a capsule.
+    pub CapsuleGuid: EFI_GUID,
+    /// The size of the capsule header. This may be larger than the size of the `EFI_CAPSULE_HEADER` since `CapsuleGuid`
+    /// may imply extended header entries.
+    pub HeaderSize: UINT32,
+    /// The Bits \[`0`, `15`] bits are defined by `CapsuleGuid`. Bits \[`16`, `31`] are defined by this specification.
+    pub Flags: UINT32,
+    /// Size in bytes of the capsule (including capsule header).
+    pub CapsuleImageSize: UINT32,
+}
+
+#[repr(C)]
+pub union __ {
+    /// Physical address of the data block. This member of the union is used if `Length` is not equal to zero.
+    pub DataBlock: EFI_PHYSICAL_ADDRESS,
+    /// Physical address of another block of `EFI_CAPSULE_BLOCK_DESCRIPTOR` structures. This member of the union is used
+    /// if Length is equal to zero. If `ContinuationPointer` is zero this entry represents the end of the list.
+    pub ContinuationPointer: EFI_PHYSICAL_ADDRESS,
 }
