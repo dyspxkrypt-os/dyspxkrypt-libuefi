@@ -18,7 +18,7 @@
 
 use crate::tables::EFI_TABLE_HEADER;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
-use crate::types::{EFI_TPL, UINT32, UINT64};
+use crate::types::{EFI_TPL, UINT32, UINT64, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -85,6 +85,32 @@ pub struct EFI_BOOT_SERVICES {
     pub RaiseTPL: unsafe extern "efiapi" fn(
         NewTPL: EFI_TPL,
     ) -> EFI_TPL,
+    /// Restores a task’s priority level to its previous value.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `OldTPL` | The previous task priority level to restore (the value from a previous, matching call to `EFI_BOOT_SERVICES.RaiseTPL()`. |
+    ///
+    /// ## Description
+    ///
+    /// The `RestoreTPL()` function restores a task’s priority level to its previous value. Calls to `RestoreTPL()` are
+    /// matched with calls to `RaiseTPL()`.
+    ///
+    /// NOTE: If `OldTpl` is above the current TPL level, then the system behavior is indeterminate. Additionally, only
+    /// `TPL_APPLICATION`, `TPL_CALLBACK`, `TPL_NOTIFY`, and `TPL_HIGH_LEVEL` may be used. All other values are reserved
+    /// for use by the firmware; using them will result in unpredictable behavior. Good coding practice dictates that all
+    /// code should execute at its lowest possible TPL level, and the use of TPL levels above `TPL_APPLICATION` must be
+    /// minimized. Executing at TPL levels above `TPL_APPLICATION` for extended periods of time may also result in
+    /// unpredictable behavior.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// None.
+    pub RestoreTPL: unsafe extern "efiapi" fn(
+        OldTPL: EFI_TPL,
+    ) -> VOID,
 }
 
 /// A descriptor for a memory map.
