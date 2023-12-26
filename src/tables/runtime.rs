@@ -661,6 +661,42 @@ pub struct EFI_RUNTIME_SERVICES {
         CapsuleCount: UINTN,
         ScatterGatherList: EFI_PHYSICAL_ADDRESS,
     ) -> EFI_STATUS,
+    /// Returns if the capsule can be supported via `UpdateCapsule()`.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                 | Description                                                                                                           |
+    /// | ------------------------- | --------------------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `CapsuleHeaderArray` | Virtual pointer to an array of virtual pointers to the capsules being passed into update capsule. Each capsules is assumed to stored in contiguous virtual memory. The capsules in the `CapsuleHeaderArray` must be the same capsules as the `ScatterGatherList`. The `CapsuleHeaderArray` must have the capsules in the same order as the `ScatterGatherList`. |
+    /// | **IN** `CapsuleCount` | Number of pointers to `EFI_CAPSULE_HEADER` in `CapsuleHeaderArray`. |
+    /// | **OUT** `MaximumCapsuleSize` | On output the maximum size in bytes that `UpdateCapsule()` can support as an argument to `UpdateCapsule()` via `CapsuleHeaderArray` and `ScatterGatherList`. Undefined on input. |
+    /// | **OUT** `ResetType` | Returns the type of reset required for the capsule update. Undefined on input. |
+    ///
+    /// ## Description
+    ///
+    /// The `QueryCapsuleCapabilities()` function allows a caller to test to see if a capsule or capsules can be updated
+    /// via `UpdateCapsule()`. The `Flags` values in the capsule header and size of the entire capsule is checked.
+    ///
+    /// If the caller needs to query for generic capsule capability a fake `EFI_CAPSULE_HEADER` can be constructed where
+    /// `CapsuleImageSize` is equal to `HeaderSize` that is equal to `sizeof(EFI_CAPSULE_HEADER)`. To determine reset
+    /// requirements, `CAPSULE_FLAGS_PERSIST_ACROSS_RESET` should be set in the `Flags` field of the `EFI_CAPSULE_HEADER`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code              | Description                                                                                                                                                                                                                                         |
+    /// | ------------------------ | --------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`            | Valid answer returned. |
+    /// | `EFI_INVALID_PARAMETER`  | `MaximumCapsuleSize` is NULL. |
+    /// | `EFI_UNSUPPORTED`  | The capsule type is not supported on this platform, and `MaximumCapsuleSize` and `ResetType` are undefined. |
+    /// | `EFI_OUT_OF_RESOURCES`  | When `ExitBootServices()` has been previously called this error indicates the capsule is compatible with this platform but is not capable of being submitted or processed in runtime. The caller may resubmit the capsule prior to `ExitBootServices()`. |
+    /// | `EFI_OUT_OF_RESOURCES`  | When `ExitBootServices()` has not been previously called then this error indicates the capsule is compatible with this platform but there are insufficient resources to process. |
+    /// | `EFI_UNSUPPORTED`  | This call is not supported by this platform at the time the call is made. The platform should describe this runtime service as unsupported at runtime via an `EFI_RT_PROPERTIES_TABLE` configuration table. |
+    pub QueryCapsuleCapabilities: unsafe extern "efiapi" fn(
+        CapsuleHeaderArray: *mut *mut EFI_CAPSULE_HEADER,
+        CapsuleCount: UINTN,
+        MaximumCapsuleSize: *mut UINT64,
+        ResetType: *mut EFI_RESET_TYPE,
+    ) -> EFI_STATUS,
     /// Returns information about the EFI variables.
     ///
     /// ## Parameters
