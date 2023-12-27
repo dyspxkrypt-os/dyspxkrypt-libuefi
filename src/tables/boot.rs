@@ -666,6 +666,66 @@ pub struct EFI_BOOT_SERVICES {
         InterfaceType: EFI_INTERFACE_TYPE,
         Interface: *mut VOID,
     ) -> EFI_STATUS,
+    /// Reinstalls a protocol interface on a device handle.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | Handle on which the interface is to be reinstalled. If `Handle` is not a valid handle, then `EFI_INVALID_PARAMETER` is returned. |
+    /// | **IN** `Protocol` | The numeric ID of the interface. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **IN** `InterfaceType` | A pointer to the old interface. `NULL` can be used if a structure is not associated with `Protocol`. |
+    /// | **IN** `Interface` | A pointer to the new interface. `NULL` can be used if a structure is not associated with `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// The `ReinstallProtocolInterface()` function reinstalls a protocol interface on a device handle. The `OldInterface`
+    /// for `Protocol` is replaced by the `NewInterface`. `NewInterface` may be the same as `OldInterface`. If it is, the
+    /// registered protocol notifies occur for the handle without replacing the interface on the handle.
+    ///
+    /// As with `InstallProtocolInterface()`, any process that has registered to wait for the installation of the interface
+    /// is notified.
+    ///
+    /// The caller is responsible for ensuring that there are no references to the `OldInterface` that is being removed.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// The extension to this service directly addresses the limitations described in the section above. There may be some
+    /// number of drivers currently consuming the protocol interface that is being reinstalled. In this case, it may be
+    /// dangerous to replace a protocol interface in the system. It could result in an unstable state, because a driver
+    /// may attempt to use the old protocol interface after a new one has been reinstalled. Since the usage of protocol
+    /// interfaces is now being tracked for components that use the `EFI_BOOT_SERVICES.OpenProtocol()` and `EFI_BOOT_SERVICES.CloseProtocol()`
+    /// boot services, a safe version of this function can be implemented.
+    ///
+    /// When this function is called, a call is first made to the boot service `UninstallProtocolInterface()`. This will
+    /// guarantee that all of the agents are currently consuming the protocol interface `OldInterface` will stop using
+    /// `OldInterface`. If `UninstallProtocolInterface()` returns `EFI_ACCESS_DENIED`, then this function returns `EFI_ACCESS_DENIED`,
+    /// `OldInterface` remains on `Handle`, and the protocol notifies are not processed because `NewInterface` was never
+    /// installed.
+    ///
+    /// If `UninstallProtocolInterface()` succeeds, then a call is made to the boot service `EFI_BOOT_SERVICES.InstallProtocolInterface()`
+    /// to put the `NewInterface` onto `Handle`.
+    ///
+    /// Finally, the boot service `EFI_BOOT_SERVICES.ConnectController()` is called so all agents that were forced to
+    /// release `OldInterface` with `UninstallProtocolInterface()` can now consume the protocol interface `NewInterface`
+    /// that was installed with `InstallProtocolInterface()`. After `OldInterface` has been replaced with `NewInterface`,
+    /// any process that has registered to wait for the installation of the interface is notified.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The protocol interface was reinstalled. |
+    /// | `EFI_NOT_FOUND` | The `OldInterface` on the handle was not found. |
+    /// | `EFI_ACCESS_DENIED` | The protocol interface could not be reinstalled, because `OldInterface` is still being used by a driver that will not release it. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    pub ReinstallProtocolInterface: unsafe extern "efiapi" fn(
+        Handle: *mut EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        OldInterface: *mut VOID,
+        NewInterface: *mut VOID,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
