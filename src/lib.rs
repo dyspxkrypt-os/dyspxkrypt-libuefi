@@ -49,6 +49,7 @@
 #![no_std]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
+#![feature(extended_varargs_abi_support)]
 
 pub mod protocols;
 pub mod tables;

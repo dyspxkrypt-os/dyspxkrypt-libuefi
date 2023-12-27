@@ -1839,6 +1839,47 @@ pub struct EFI_BOOT_SERVICES {
         Registration: *mut VOID,
         Interface: *mut *mut VOID,
     ) -> EFI_STATUS,
+    /// Installs one or more protocol interfaces into the boot services environment.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN OUT** `Handle` | The pointer to a handle to install the new protocol interfaces on, or a pointer to `NULL` if a new handle is to be allocated. |
+    /// | ... | A variable argument list containing pairs of protocol GUIDs and protocol interfaces. |
+    ///
+    /// ## Description
+    ///
+    /// This function installs a set of protocol interfaces into the boot services environment. It removes arguments from
+    /// the variable argument list in pairs. The first item is always a pointer to the protocol’s GUID, and the second item
+    /// is always a pointer to the protocol’s interface. These pairs are used to call the boot service `EFI_BOOT_SERVICES.InstallProtocolInterface()`
+    /// to add a protocol interface to `Handle`. If `Handle` is `NULL` on entry, then a new handle will be allocated. The
+    /// pairs of arguments are removed in order from the variable argument list until a `NULL` protocol GUID value is found.
+    /// If any errors are generated while the protocol interfaces are being installed, then all the protocols installed
+    /// prior to the error will be uninstalled with the boot service `EFI_BOOT_SERVICES.UninstallProtocolInterface()` before
+    /// the error is returned. The same GUID cannot be installed more than once onto the same handle.
+    ///
+    /// It is illegal to have two handles in the handle database with identical device paths. This service performs a
+    /// test to guarantee a duplicate device path is not inadvertently installed on two different handles. Before any
+    /// protocol interfaces are installed onto Handle, the list of GUID/pointer pair parameters are searched to see if a
+    /// Device Path Protocol instance is being installed. If a Device Path Protocol instance is going to be installed onto
+    /// `Handle`, then a check is made to see if a handle is already present in the handle database with an identical
+    /// Device Path Protocol instance. If an identical Device Path Protocol instance is already present in the handle
+    /// database, then no protocols are installed onto Handle, and `EFI_ALREADY_STARTED` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | All the protocol interfaces were installed. |
+    /// | `EFI_ALREADY_STARTED` | A Device Path Protocol instance was passed in that is already present in the handle database. |
+    /// | `EFI_OUT_OF_RESOURCES` | There was not enough memory in pool to install all the protocols. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is already installed on the handle specified by `Handle`. |
+    pub InstallMultipleProtocolInterfaces: unsafe extern "efiapi" fn(
+        Handle: *mut EFI_HANDLE,
+        ...
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
