@@ -1,4 +1,16 @@
-# Unreleased
+# Dyspxkrypt LibUEFI Unreleased
+
+## Added
+
+## Changed
+
+## Fixed
+
+## Removed
+
+# Dyspxkrypt LibUEFI 0.1.0 (27-12-2023)
+
+Initial release.
 
 ## Added
 
@@ -11,9 +23,3 @@
 - EFI configuration table and its associating constants a structures (`EFI_CONFIGURATION_TABLE`)
 - EFI boot services table and its associating constants a structures (`EFI_BOOT_SERVICES`)
 - EFI runtime services table and its associating constants a structures (`EFI_RUNTIME_SERVICES`)
-
-## Changed
-
-## Fixed
-
-## Removed
