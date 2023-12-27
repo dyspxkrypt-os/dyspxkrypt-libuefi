@@ -1945,6 +1945,47 @@ pub struct EFI_BOOT_SERVICES {
         DataSize: UINTN,
         Crc32: *mut UINT32,
     ) -> EFI_STATUS,
+    /// The `CopyMem()` function copies the contents of one buffer to another buffer.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Destination` | Pointer to the destination buffer of the memory copy. |
+    /// | **IN** `Source` | Pointer to the source buffer of the memory copy. |
+    /// | **IN** `Length` | Number of bytes to copy from `Source` to `Destination`. |
+    ///
+    /// ## Description
+    ///
+    /// The `CopyMem()` function copies Length bytes from the buffer `Source` to the buffer `Destination`.
+    ///
+    /// The implementation of `CopyMem()` must be reentrant, and it must handle overlapping `Source` and `Destination`
+    /// buffers. This means that the implementation of `CopyMem()` must choose the correct direction of the copy operation
+    /// based on the type of overlap that exists between the `Source` and `Destination` buffers. If either the `Source`
+    /// buffer or the `Destination` buffer crosses the top of the processor’s address space, then the result of the copy
+    /// operation is unpredictable.
+    ///
+    /// The contents of the `Destination` buffer on exit from this service must match the contents of the `Source` buffer
+    /// on entry to this service. Due to potential overlaps, the contents of the `Source` buffer may be modified by this
+    /// service. The following rules can be used to guarantee the correct behavior:
+    ///
+    /// - If `Destination` and `Source` are identical, then no operation should be performed.
+    ///
+    /// - If `Destination` > `Source` and `Destination` < ( `Source` + `Length` ), then the data should be copied from
+    /// the `Source` buffer to the `Destination` buffer starting from the end of the buffers and working toward the
+    /// beginning of the buffers.
+    ///
+    /// Otherwise, the data should be copied from the `Source` buffer to the `Destination` buffer starting from the
+    /// beginning of the buffers and working toward the end of the buffers.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// None.
+    pub CopyMem: unsafe extern "efiapi" fn(
+        Destination: *mut VOID,
+        Source: *mut VOID,
+        Length: UINTN,
+    ) -> VOID,
     /// Creates an event in a group.
     ///
     /// ## Parameters
