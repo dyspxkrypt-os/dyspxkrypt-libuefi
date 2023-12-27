@@ -1314,6 +1314,46 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | Execution was stalled at least the requested number of `Microseconds`. |
     pub Stall: unsafe extern "efiapi" fn(Microseconds: UINTN) -> EFI_STATUS,
+    /// Sets the system’s watchdog timer.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Timeout` | The number of seconds to set the watchdog timer to. A value of zero disables the timer. |
+    /// | **IN** `WatchdogCode` | The numeric code to log on a watchdog timer timeout event. The firmware reserves codes `0x0000` to `0xFFFF`. Loaders and operating systems may use other timeout codes. |
+    /// | **IN** `DataSize` | The size, in bytes, of `WatchdogData`. |
+    /// | **IN** `WatchdogData` | A data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the call may use to further indicate the reason to be logged with a watchdog event. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetWatchdogTimer()` function sets the system’s watchdog timer.
+    ///
+    /// If the watchdog timer expires, the event is logged by the firmware. The system may then either reset with the
+    /// Runtime Service `ResetSystem()` or perform a platform specific action that must eventually cause the platform to
+    /// be reset. The watchdog timer is armed before the firmware’s boot manager invokes an EFI boot option. The watchdog
+    /// must be set to a period of 5 minutes. The EFI Image may reset or disable the watchdog timer as needed. If control
+    /// is returned to the firmware’s boot manager, the watchdog timer must be disabled.
+    ///
+    /// The watchdog timer is only used during boot services. On successful completion of `EFI_BOOT_SERVICES.ExitBootServices()`
+    /// the watchdog timer is disabled.
+    ///
+    /// The accuracy of the watchdog timer is +/- 1 second from the requested `Timeout`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The timeout has been set. |
+    /// | `EFI_INVALID_PARAMETER` | The supplied `WatchdogCode` is invalid. |
+    /// | `EFI_UNSUPPORTED` | The system does not have a watchdog timer. |
+    /// | `EFI_DEVICE_ERROR` | The watch dog timer could not be programmed due to a hardware error. |
+    pub SetWatchdogTimer: unsafe extern "efiapi" fn(
+        Timeout: UINTN,
+        WatchdogCode: UINT64,
+        DataSize: UINTN,
+        WatchdogData: *mut CHAR16,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
