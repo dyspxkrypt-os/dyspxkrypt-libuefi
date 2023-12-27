@@ -1106,13 +1106,71 @@ pub struct EFI_BOOT_SERVICES {
     ///
     /// | Status Code             | Description                                                                                                                                                                                                 |
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
-    /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is either an invalid image handle or the image has already been initialized with `StartImage` |
+    /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is either an invalid image handle or the image has already been initialized with `StartImage`. |
     /// | `EFI_SECURITY_VIOLATION` | The current platform policy specifies that the image should not be started. |
     /// | exit code from image | Exit code from image. |
     pub StartImage: unsafe extern "efiapi" fn(
         ImageHandle: EFI_HANDLE,
         ExitDataSize: *mut UINTN,
         ExitData: *mut *mut CHAR16,
+    ) -> EFI_STATUS,
+    /// Terminates a loaded EFI image and returns control to boot services.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ImageHandle` | Handle that identifies the image. This parameter is passed to the image on entry. |
+    /// | **IN** `ExitStatus` | The image’s exit code. |
+    /// | **IN** `ExitDataSize` | The size, in bytes, of `ExitData`. Ignored if `ExitStatus` is `EFI_SUCCESS`. |
+    /// | **IN** `ExitData` | Pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. `ExitData` is only valid if `ExitStatus` is something other than `EFI_SUCCESS`. The `ExitData` buffer must be allocated by calling `EFI_BOOT_SERVICES.AllocatePool()`. |
+    ///
+    /// ## Description
+    ///
+    /// The `Exit()` function terminates the image referenced by `ImageHandle` and returns control to boot services. This
+    /// function may not be called if the image has already returned from its entry point (`EFI_IMAGE_ENTRY_POINT`) or if
+    /// it has loaded any child images that have not exited (all child images must exit before this image can exit).
+    ///
+    /// Using `Exit()` is similar to returning from the image’s `EFI_IMAGE_ENTRY_POINT` except that `Exit()` may also
+    /// return additional `ExitData`.
+    ///
+    /// When an application exits a compliant system, firmware frees the memory used to hold the image. The firmware also
+    /// frees its references to the `ImageHandle` and the handle itself. Before exiting, the application is responsible
+    /// for freeing any resources it allocated. This includes memory (pages and/or pool), open file system handles, and
+    /// so forth. The only exception to this rule is the `ExitData` buffer, which must be freed by the caller of
+    /// `EFI_BOOT_SERVICES.StartImage()`. (If the buffer is needed, firmware must allocate it by calling
+    /// `EFI_BOOT_SERVICES.AllocatePool()` and must return a pointer to it to the caller of `StartImage()`.)
+    ///
+    /// When an EFI boot service driver or runtime service driver exits, firmware frees the image only if the `ExitStatus`
+    /// is an error code; otherwise the image stays resident in memory. The driver must not return an error code if it
+    /// has installed any protocol handlers or other active callbacks into the system that have not (or cannot) be cleaned
+    /// up. If the driver exits with an error code, it is responsible for freeing all resources before exiting. This includes
+    /// any allocated memory (pages and/or pool), open file system handles, and so forth.
+    ///
+    /// It is valid to call `Exit()` or `UnloadImage()` for an image that was loaded by `EFI_BOOT_SERVICES.LoadImage()`
+    /// before calling `EFI_BOOT_SERVICES.StartImage()`. This will free the image from memory without having started it.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// If `ImageHandle` is a UEFI application, then all of the protocols that were opened by `ImageHandle` using the boot
+    /// service `EFI_BOOT_SERVICES.OpenProtocol()` are automatically closed with the boot service `EFI_BOOT_SERVICES.CloseProtocol()`.
+    /// If `ImageHandle` is a UEFI boot service driver or UEFI runtime service driver, and `ExitStatus` is an error code,
+    /// then all of the protocols that were opened by `ImageHandle` using the boot service `OpenProtocol()` are automatically
+    /// closed with the boot service `CloseProtocol()`. If `ImageHandle` is a UEFI boot service driver or UEFI runtime service
+    /// driver, and `ExitStatus` is not an error code, then no protocols are automatically closed by this service.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The image specified by `ImageHandle` was unloaded. This condition only occurs for images that have been loaded with `LoadImage()` but have not been started with `StartImage()`. |
+    /// | `EFI_INVALID_PARAMETER` | The image specified by `ImageHandle` has been loaded and started with `LoadImage()` and `StartImage()`, but the image is not the currently executing image. |
+    /// | does not return | Image exit. Control is returned to the `StartImage()` call that invoked the image specified by `ImageHandle`. |
+    pub Exit: unsafe extern "efiapi" fn(
+        ImageHandle: EFI_HANDLE,
+        ExitStatus: EFI_STATUS,
+        ExitDataSize: UINTN,
+        ExitData: *mut CHAR16,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
