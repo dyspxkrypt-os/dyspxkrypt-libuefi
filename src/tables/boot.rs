@@ -1295,6 +1295,25 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_DEVICE_ERROR` | The device is not functioning properly. |
     /// | `EFI_INVALID_PARAMETER` | `Count` is `NULL`. |
     pub GetNextMonotonicCount: unsafe extern "efiapi" fn(Count: *mut UINT64) -> EFI_STATUS,
+    /// Induces a fine-grained stall.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Microseconds` | The number of microseconds to stall execution. |
+    ///
+    /// ## Description
+    ///
+    /// The `Stall()` function stalls execution on the processor for at least the requested number of microseconds.
+    /// Execution of the processor is not yielded for the duration of the stall.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Execution was stalled at least the requested number of `Microseconds`. |
+    pub Stall: unsafe extern "efiapi" fn(Microseconds: UINTN) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
