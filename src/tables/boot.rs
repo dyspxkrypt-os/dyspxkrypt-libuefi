@@ -568,6 +568,27 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The event was signaled. |
     pub SignalEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
+    /// Closes an event.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Event` | The event to close. |
+    ///
+    /// ## Description
+    ///
+    /// The `CloseEvent()` function removes the caller’s reference to the event, removes it from any event group to which
+    /// it belongs, and closes it. Once the event is closed, the event is no longer valid and may not be used on any
+    /// subsequent function calls. If Event was registered with `RegisterProtocolNotify()` then `CloseEvent()` will remove
+    /// the corresponding registration. It is safe to call `CloseEvent()` within the corresponding notify function.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event has been closed. |
+    pub CloseEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
