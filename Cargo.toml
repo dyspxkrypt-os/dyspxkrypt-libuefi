@@ -15,6 +15,7 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 
 [features]
 default = []
-full = ["image"]
+full = ["console-ex", "image"]
 
+console-ex = []
 image = []

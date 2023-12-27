@@ -16,13 +16,19 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod simple_text_input;
-pub mod simple_text_output;
+use crate::types::EFI_GUID;
 
-pub use simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
-pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
+pub const EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0xDD9E7534,
+        0x7762,
+        0x4698,
+        [0x8C, 0x14, 0xF5, 0x85, 0x17, 0xA6, 0x25, 0xAA],
+    )
+};
 
-#[cfg(feature = "console-ex")]
-pub mod simple_text_input_ex;
-#[cfg(feature = "console-ex")]
-pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
+/// This protocol is used to obtain input from the `ConsoleIn` device. The EFI specification requires
+/// that the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` supports the same languages as the corresponding
+/// `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
+#[repr(C)]
+pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;

@@ -2,6 +2,8 @@
 
 ## Added
 
+- EFI loaded image protocol and its associating constants and structures (`EFI_LOADED_IMAGE_PROTOCOL`)
+
 ## Changed
 
 ## Fixed
