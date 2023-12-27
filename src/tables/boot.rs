@@ -818,6 +818,8 @@ pub struct EFI_BOOT_SERVICES {
         Protocol: *mut EFI_GUID,
         Interface: *mut *mut VOID,
     ) -> EFI_STATUS,
+    #[doc(hidden)]
+    pub Reserved: *mut VOID,
     /// Creates an event in a group.
     ///
     /// ## Parameters

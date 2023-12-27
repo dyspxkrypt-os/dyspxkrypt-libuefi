@@ -62,6 +62,6 @@ pub struct EFI_TABLE_HEADER {
     /// The 32-bit CRC for the entire table. This value is computed by setting this field to 0, and computing
     /// the 32-bit CRC for `HeaderSize` bytes.
     pub CRC32: UINT32,
-    /// Reserved field that must be set to `0`.
+    #[doc(hidden)]
     pub Reserved: UINT32,
 }
