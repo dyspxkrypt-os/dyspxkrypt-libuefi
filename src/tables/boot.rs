@@ -1213,6 +1213,62 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is not a valid image handle. |
     /// | exit code from unload handler | Exit code from the image’s unload function. |
     pub UnloadImage: unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE) -> EFI_STATUS,
+    /// Terminates all boot services.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ImageHandle` | Handle that identifies the exiting image. |
+    /// | **IN** `MapKey` | Key to the latest memory map. |
+    ///
+    /// ## Description
+    ///
+    /// The `ExitBootServices()` function is called by the currently executing UEFI OS loader image to terminate all boot
+    /// services. On success, the UEFI OS loader becomes responsible for the continued operation of the system. All events
+    /// from the `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES` and `EFI_EVENT_GROUP_EXIT_BOOT_SERVICES` event notification
+    /// groups as well as events of type `EVT_SIGNAL_EXIT_BOOT_SERVICES` must be signaled before `ExitBootServices()`
+    /// returns `EFI_SUCCESS`. The events are only signaled once even if `ExitBootServices()` is called multiple times.
+    ///
+    /// A UEFI OS loader must ensure that it has the system’s current memory map at the time it calls `ExitBootServices()`.
+    /// This is done by passing in the current memory map’s `MapKey` value as returned by `EFI_BOOT_SERVICES.GetMemoryMap()`.
+    /// Care must be taken to ensure that the memory map does not change between these two calls. It is suggested that
+    /// `GetMemoryMap()` be called immediately before calling `ExitBootServices()`. If `MapKey` value is incorrect,
+    /// `ExitBootServices()` returns `EFI_INVALID_PARAMETER` and `GetMemoryMap()` with `ExitBootServices()` must be called
+    /// again. Firmware implementation may choose to do a partial shutdown of the boot services during the first call to
+    /// `ExitBootServices()`. A UEFI OS loader should not make calls to any boot service function other than Memory Allocation
+    /// Services after the first call to `ExitBootServices()`.
+    ///
+    /// On success, the UEFI OS loader owns all available memory in the system. In addition, the UEFI OS loader can treat
+    /// all memory in the map marked as `EfiBootServicesCode` and `EfiBootServicesData` as available free memory. No further
+    /// calls to boot service functions or EFI device-handle-based protocols may be used, and the boot services watchdog
+    /// timer is disabled. On success, several fields of the EFI System Table should be set to NULL. These include
+    /// `ConsoleInHandle`, `ConIn`, `ConsoleOutHandle`, `ConOut`, `StandardErrorHandle`, `StdErr`, and `BootServicesTable`.
+    /// In addition, since fields of the EFI System Table are being modified, the 32-bit CRC for the EFI System Table must
+    /// be recomputed.
+    ///
+    /// Firmware must guarantee the following order of processing:
+    ///
+    /// - `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES` handlers are called.
+    ///
+    /// - Timer services are deactivated (timer event activity stopped).
+    ///
+    /// - `EVT_SIGNAL_EXIT_BOOT_SERVICES` and `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES` handlers are called.
+    ///
+    /// **Note:** The `EVT_SIGNAL_EXIT_BOOT_SERVICES` event type and `EFI_EVENT_GROUP_BEFORE_EXIT_BOOT_SERVICES` event
+    /// group are functionally equivalent. Firmware does not distinguish between the two while ordering the handlers.
+    ///
+    /// Refer to `EFI_EVENT_GROUP_EXIT_BOOT_SERVICES` description in the `EFI_BOOT_SERVICES.CreateEventEx()` section for
+    /// additional restrictions on `EXIT_BOOT_SERVICES` handlers.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Boot services have been terminated. |
+    /// | `EFI_INVALID_PARAMETER` | `MapKey` is incorrect. |
+    pub ExitBootServices:
+        unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE, MapKey: UINTN) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
