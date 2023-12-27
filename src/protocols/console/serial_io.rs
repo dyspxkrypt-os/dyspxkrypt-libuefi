@@ -16,23 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod simple_text_input;
-pub mod simple_text_output;
+use crate::types::EFI_GUID;
 
-pub use simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
-pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
+pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0xBB25CF6F,
+        0xF1D4,
+        0x11D2,
+        [0x9A, 0x0C, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0xFD],
+    )
+};
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "console-full")] {
-        pub mod absolute_pointer;
-        pub mod serial_io;
-        pub mod simple_text_input_ex;
-        pub mod simple_pointer;
-
-        pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
-        pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
-        pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
-        pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
-    } else {
-    }
-}
+#[repr(C)]
+pub struct EFI_SERIAL_IO_PROTOCOL;
