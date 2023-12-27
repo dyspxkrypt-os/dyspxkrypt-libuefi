@@ -153,6 +153,13 @@ pub enum EFI_INTERFACE_TYPE {
     EFI_NATIVE_INTERFACE,
 }
 
+#[repr(C)]
+pub enum EFI_LOCATE_SEARCH_TYPE {
+    AllHandles,
+    ByRegisterNotify,
+    ByProtocol,
+}
+
 /// The EFI Boot Services containing a table header and pointers to all of the boot services.
 #[repr(C)]
 pub struct EFI_BOOT_SERVICES {
@@ -858,6 +865,43 @@ pub struct EFI_BOOT_SERVICES {
         Protocol: *mut EFI_GUID,
         Event: EFI_EVENT,
         Registration: *mut *mut VOID,
+    ) -> EFI_STATUS,
+    /// Returns an array of handles that support a specified protocol.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `SearchType` | Specifies which handle(s) are to be returned. |
+    /// | **IN** `Protocol` | Specifies the protocol to search by. This parameter is only valid if `SearchType` is `ByProtocol`. |
+    /// | **IN** `SearchKey` | Specifies the search key. This parameter is ignored if `SearchType` is `AllHandles` or `ByProtocol`. If `SearchType` is `ByRegisterNotify`, the parameter must be the `Registration` value returned by function `EFI_BOOT_SERVICES.RegisterProtocolNotify()`. |
+    /// | **IN OUT** `BufferSize` | On input, the size in bytes of Buffer. On output, the size in bytes of the array returned in `Buffer` (if the buffer was large enough) or the size, in bytes, of the buffer needed to obtain the array (if the buffer was not large enough). |
+    /// | **OUT** `Buffer` | The buffer in which the array is returned. |
+    ///
+    /// ## Description
+    ///
+    /// The `LocateHandle()` function returns an array of handles that match the `SearchType` request. If the input value
+    /// of `BufferSize` is too small, the function returns `EFI_BUFFER_TOO_SMALL` and updates `BufferSize` to the size of
+    /// the buffer needed to obtain the array.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The array of handles was returned. |
+    /// | `EFI_NOT_FOUND` | No handles match the search. |
+    /// | `EFI_BUFFER_TOO_SMALL` | The `BufferSize` is too small for the result. `BufferSize` has been updated with the size needed to complete the request. |
+    /// | `EFI_INVALID_PARAMETER` | `SearchType` is not a member of `EFI_LOCATE_SEARCH_TYPE`. |
+    /// | `EFI_INVALID_PARAMETER` | `SearchType` is `ByRegisterNotify` and `SearchKey` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `SearchType` is `ByProtocol` and `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | One or more matches are found and `BufferSize` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `BufferSize` is large enough for the result and `Buffer` is `NULL`. |
+    pub LocateHandle: unsafe extern "efiapi" fn(
+        SearchType: EFI_LOCATE_SEARCH_TYPE,
+        Protocol: *mut EFI_GUID,
+        SearchKey: *mut VOID,
+        BufferSize: UINTN,
+        Buffer: *mut EFI_HANDLE,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
