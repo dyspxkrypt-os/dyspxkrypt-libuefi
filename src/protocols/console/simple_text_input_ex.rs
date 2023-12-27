@@ -136,6 +136,34 @@ pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         KeyData: *mut EFI_KEY_DATA,
     ),
+    /// Set certain state for the input device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This`                 | A pointer to the `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL` instance.                                             |
+    /// | **IN** `KeyToggleState` | Pointer to the `EFI_KEY_TOGGLE_STATE` to set the state for the input device. |
+    ///
+    /// # Description
+    ///
+    /// The `SetState()` function allows the input device hardware to have state settings adjusted.
+    /// By calling the `SetState()` function with the `EFI_KEY_STATE_EXPOSED` bit active in the
+    /// `KeyToggleState` parameter, this will enable the `ReadKeyStrokeEx()` function to return
+    /// incomplete keystrokes such as the holding down of certain keys which are expressed as a part
+    /// of `KeyState` when there is no `Key` data.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The device state was set appropriately. |
+    /// | `EFI_DEVICE_ERROR` | The device is not functioning correctly and could not have the setting adjusted. |
+    /// | `EFI_UNSUPPORTED` | The device does not support the ability to have its state set or the requested state change was not supported. |
+    pub SetState: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
+        KeyToggleState: *mut EFI_KEY_TOGGLE_STATE,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
