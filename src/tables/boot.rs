@@ -1880,6 +1880,37 @@ pub struct EFI_BOOT_SERVICES {
         Handle: *mut EFI_HANDLE,
         ...
     ) -> EFI_STATUS,
+    /// Removes one or more protocol interfaces into the boot services environment.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle to remove the protocol interfaces from. |
+    /// | ... | A variable argument list containing pairs of protocol GUIDs and protocol interfaces. |
+    ///
+    /// ## Description
+    ///
+    /// This function removes a set of protocol interfaces from the boot services environment. It removes arguments from
+    /// the variable argument list in pairs. The first item is always a pointer to the protocol’s GUID, and the second item
+    /// is always a pointer to the protocol’s interface. These pairs are used to call the boot service
+    /// `EFI_BOOT_SERVICES.UninstallProtocolInterface()` to remove a protocol interface from `Handle`. The pairs of
+    /// arguments are removed in order from the variable argument list until a `NULL` protocol GUID value is found. If
+    /// all of the protocols are uninstalled from Handle, then `EFI_SUCCESS` is returned. If any errors are generated
+    /// while the protocol interfaces are being uninstalled, then the protocols uninstalled prior to the error will be
+    /// reinstalled with the boot service `EFI_BOOT_SERVICES.InstallProtocolInterface()` and the status code
+    /// `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | All the protocol interfaces were installed. |
+    /// | `EFI_ALREADY_STARTED` | A Device Path Protocol instance was passed in that is already present in the handle database. |
+    pub UninstallMultipleProtocolInterfaces: unsafe extern "efiapi" fn(
+        Handle: *mut EFI_HANDLE,
+        ...
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
