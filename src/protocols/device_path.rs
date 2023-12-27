@@ -16,5 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod console;
-pub mod device_path;
+use crate::types::{EFI_GUID, UINT8};
+
+pub const EFI_DEVICE_PATH_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x09576E91,
+        0x6D3F,
+        0x11D2,
+        [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
+    )
+};
+
+#[repr(C)]
+pub struct EFI_DEVICE_PATH_PROTOCOL {
+    pub Type: UINT8,
+    pub SubType: UINT8,
+    pub Length: [UINT8; 2],
+}
