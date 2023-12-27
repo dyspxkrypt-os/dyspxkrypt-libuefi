@@ -1269,6 +1269,32 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `MapKey` is incorrect. |
     pub ExitBootServices:
         unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE, MapKey: UINTN) -> EFI_STATUS,
+    /// Returns a monotonically increasing count for the platform.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **OUT** `Count` | Pointer to returned value. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetNextMonotonicCount()` function returns a 64-bit value that is numerically larger then the last time the
+    /// function was called.
+    ///
+    /// The platform’s monotonic counter is comprised of two parts: the high 32 bits and the low 32 bits. The low 32-bit
+    /// value is volatile and is reset to zero on every system reset. It is increased by 1 on every call to `GetNextMonotonicCount()`.
+    /// The high 32-bit value is nonvolatile and is increased by one on whenever the system resets or the low 32-bit counter
+    /// overflows.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The next monotonic count was returned. |
+    /// | `EFI_DEVICE_ERROR` | The device is not functioning properly. |
+    /// | `EFI_INVALID_PARAMETER` | `Count` is `NULL`. |
+    pub GetNextMonotonicCount: unsafe extern "efiapi" fn(Count: *mut UINT64) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
