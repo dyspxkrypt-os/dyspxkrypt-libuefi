@@ -239,6 +239,5 @@ pub struct EFI_KEY_STATE {
 
 pub type EFI_KEY_TOGGLE_STATE = UINT8;
 
-pub type EFI_KEY_NOTIFY_FUNCTION = unsafe extern "efiapi" fn(
-    KeyData: *mut EFI_KEY_DATA,
-) -> EFI_STATUS;
+pub type EFI_KEY_NOTIFY_FUNCTION =
+    unsafe extern "efiapi" fn(KeyData: *mut EFI_KEY_DATA) -> EFI_STATUS;
