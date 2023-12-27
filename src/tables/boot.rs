@@ -19,7 +19,10 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
+use crate::types::{
+    BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN,
+    VOID,
+};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -1172,6 +1175,44 @@ pub struct EFI_BOOT_SERVICES {
         ExitDataSize: UINTN,
         ExitData: *mut CHAR16,
     ) -> EFI_STATUS,
+    /// Unloads an image.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ImageHandle` | Handle that identifies the image to be unloaded. |
+    ///
+    /// ## Description
+    ///
+    /// The `UnloadImage()` function unloads a previously loaded image.
+    ///
+    /// There are three possible scenarios. If the image has not been started, the function unloads the image and returns
+    /// `EFI_SUCCESS`.
+    ///
+    /// If the image has been started and has an `Unload()` entry point, control is passed to that entry point. If the
+    /// image’s unload function returns `EFI_SUCCESS`, the image is unloaded; otherwise, the error returned by the image’s
+    /// unload function is returned to the caller. The image unload function is responsible for freeing all allocated memory
+    /// and ensuring that there are no references to any freed memory, or to the image itself, before returning `EFI_SUCCESS`.
+    ///
+    /// If the image has been started and does not have an `Unload()` entry point, the function returns `EFI_UNSUPPORTED`.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// All of the protocols that were opened by `ImageHandle` using the boot service `EFI_BOOT_SERVICES.OpenProtocol()`
+    /// are automatically closed with the boot service `EFI_BOOT_SERVICES.CloseProtocol()`. If all of the open protocols
+    /// are closed, then `EFI_SUCCESS` is returned. If any call to `CloseProtocol()` fails, then the error code from
+    /// `CloseProtocol()` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The image has been unloaded. |
+    /// | `EFI_UNSUPPORTED` | The image has been started, but does not support unload. |
+    /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is not a valid image handle. |
+    /// | exit code from unload handler | Exit code from the image’s unload function. |
+    pub UnloadImage: unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
