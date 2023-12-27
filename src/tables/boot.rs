@@ -1700,13 +1700,51 @@ pub struct EFI_BOOT_SERVICES {
     /// | Status Code             | Description                                                                                                                                                                                                 |
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The open protocol information was returned in `EntryBuffer`, and the number of entries was returned `EntryCount`. |
-        /// | `EFI_NOT_FOUND` | `Handle` does not support the protocol specified by `Protocol`. |
+    /// | `EFI_NOT_FOUND` | `Handle` does not support the protocol specified by `Protocol`. |
     /// | `EFI_OUT_OF_RESOURCES` | There are not enough resources available to allocate `EntryBuffer`. |
     pub OpenProtocolInformation: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         EntryBuffer: *mut *mut EFI_OPEN_PROTOCOL_INFORMATION_ENTRY,
         EntryCount: *mut UINTN,
+    ) -> EFI_STATUS,
+    /// Retrieves the list of protocol interface GUIDs that are installed on a handle in a buffer allocated from pool.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle from which to retrieve the list of protocol interface GUIDs. |
+    /// | **OUT** `ProtocolBuffer` | A pointer to the list of protocol interface GUID pointers that are installed on `Handle`. This buffer is allocated with a call to the Boot Service `EFI_BOOT_SERVICES.AllocatePool()`. It is the caller’s responsibility to call the Boot Service `EFI_BOOT_SERVICES.FreePool()` when the caller no longer requires the contents of `ProtocolBuffer`. |
+    /// | **OUT** `ProtocolBufferCount` | A pointer to the number of GUID pointers present in `ProtocolBuffer`. |
+    ///
+    /// ## Description
+    ///
+    /// The `ProtocolsPerHandle()` function retrieves the list of protocol interface GUIDs that are installed on `Handle`.
+    /// The list is returned in `ProtocolBuffer`, and the number of GUID pointers in `ProtocolBuffer` is returned in
+    /// `ProtocolBufferCount`.
+    ///
+    /// If `Handle` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `ProtocolBuffer` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `ProtocolBufferCount` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If there are not enough resources available to allocate `ProtocolBuffer`, then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The list of protocol interface GUIDs installed on `Handle` was returned in `ProtocolBuffer`. The number of protocol interface GUIDs was returned in `ProtocolBufferCount`. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `ProtocolBuffer` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `ProtocolBufferCount` is `NULL`. |
+    /// | `EFI_OUT_OF_RESOURCES` | There is not enough pool memory to store the results. |
+    pub ProtocolsPerHandle: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        ProtocolBuffer: *mut *mut *mut EFI_GUID,
+        ProtocolBufferCount: *mut UINTN,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
