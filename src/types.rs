@@ -17,6 +17,10 @@
  */
 
 use core::ffi::c_void;
+use core::ptr::null_mut;
+
+/// A null, mutable pointer.
+pub const NULL: *mut VOID = null_mut();
 
 /// A logical Boolean value that occupies one byte.
 ///

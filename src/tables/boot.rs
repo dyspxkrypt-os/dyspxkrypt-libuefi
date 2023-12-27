@@ -877,8 +877,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | Parameter       | Description                                                                                                              |
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
     /// | **IN** `SearchType` | Specifies which handle(s) are to be returned. |
-    /// | **IN** `Protocol` | Specifies the protocol to search by. This parameter is only valid if `SearchType` is `ByProtocol`. |
-    /// | **IN** `SearchKey` | Specifies the search key. This parameter is ignored if `SearchType` is `AllHandles` or `ByProtocol`. If `SearchType` is `ByRegisterNotify`, the parameter must be the `Registration` value returned by function `EFI_BOOT_SERVICES.RegisterProtocolNotify()`. |
+    /// | **IN** `Protocol` **OPTIONAL** | Specifies the protocol to search by. This parameter is only valid if `SearchType` is `ByProtocol`. |
+    /// | **IN** `SearchKey` **OPTIONAL** | Specifies the search key. This parameter is ignored if `SearchType` is `AllHandles` or `ByProtocol`. If `SearchType` is `ByRegisterNotify`, the parameter must be the `Registration` value returned by function `EFI_BOOT_SERVICES.RegisterProtocolNotify()`. |
     /// | **IN OUT** `BufferSize` | On input, the size in bytes of Buffer. On output, the size in bytes of the array returned in `Buffer` (if the buffer was large enough) or the size, in bytes, of the buffer needed to obtain the array (if the buffer was not large enough). |
     /// | **OUT** `Buffer` | The buffer in which the array is returned. |
     ///
@@ -996,8 +996,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
     /// | **IN** `BootPolicy` | If `TRUE`, indicates that the request originates from the boot manager, and that the boot manager is attempting to load `DevicePath` as a boot selection. Ignored if `SourceBuffer` is not `NULL`. |
     /// | **IN** `ParentImageHandle` | The caller’s image handle. This field is used to initialize the `ParentHandle` field of the EFI Loaded Image Protocol for the image that is being loaded. |
-    /// | **IN** `DevicePath` | The `DeviceHandle` specific file path from which the image is loaded. |
-    /// | **IN** `SourceBuffer` | If not `NULL`, a pointer to the memory location containing a copy of the image to be loaded. |
+    /// | **IN** `DevicePath` **OPTIONAL** | The `DeviceHandle` specific file path from which the image is loaded. |
+    /// | **IN** `SourceBuffer` **OPTIONAL** | If not `NULL`, a pointer to the memory location containing a copy of the image to be loaded. |
     /// | **IN** `SourceSize` | The size in bytes of `SourceBuffer`. Ignored if `SourceBuffer` is `NULL`. |
     /// | **OUT** `ImageHandle` | Pointer to the returned image handle that is created when the image is successfully loaded. |
     ///
@@ -1083,7 +1083,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
     /// | **IN** `ImageHandle` | Handle of image to be started. |
     /// | **OUT** `ExitDataSize` | Pointer to the size, in bytes, of `ExitData`. If `ExitData` is `NULL`, then this parameter is ignored and the contents of `ExitDataSize` are not modified. |
-    /// | **OUT** `ExitData` | Pointer to a pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. |
+    /// | **OUT** `ExitData` **OPTIONAL** | Pointer to a pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. |
     ///
     /// ## Description
     ///
@@ -1126,7 +1126,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | **IN** `ImageHandle` | Handle that identifies the image. This parameter is passed to the image on entry. |
     /// | **IN** `ExitStatus` | The image’s exit code. |
     /// | **IN** `ExitDataSize` | The size, in bytes, of `ExitData`. Ignored if `ExitStatus` is `EFI_SUCCESS`. |
-    /// | **IN** `ExitData` | Pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. `ExitData` is only valid if `ExitStatus` is something other than `EFI_SUCCESS`. The `ExitData` buffer must be allocated by calling `EFI_BOOT_SERVICES.AllocatePool()`. |
+    /// | **IN** `ExitData` **OPTIONAL** | Pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. `ExitData` is only valid if `ExitStatus` is something other than `EFI_SUCCESS`. The `ExitData` buffer must be allocated by calling `EFI_BOOT_SERVICES.AllocatePool()`. |
     ///
     /// ## Description
     ///
@@ -1323,7 +1323,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | **IN** `Timeout` | The number of seconds to set the watchdog timer to. A value of zero disables the timer. |
     /// | **IN** `WatchdogCode` | The numeric code to log on a watchdog timer timeout event. The firmware reserves codes `0x0000` to `0xFFFF`. Loaders and operating systems may use other timeout codes. |
     /// | **IN** `DataSize` | The size, in bytes, of `WatchdogData`. |
-    /// | **IN** `WatchdogData` | A data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the call may use to further indicate the reason to be logged with a watchdog event. |
+    /// | **IN** `WatchdogData` **OPTIONAL** | A data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the call may use to further indicate the reason to be logged with a watchdog event. |
     ///
     /// ## Description
     ///
@@ -1361,8 +1361,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | Parameter       | Description                                                                                                              |
     /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
     /// | **IN** `ControllerHandle` | The handle of the controller to which driver(s) are to be connected. |
-    /// | **IN** `DriverImageHandle` | A pointer to an ordered list handles that support the `EFI_DRIVER_BINDING_PROTOCOL`. The list is terminated by a `NULL` handle value. These handles are candidates for the Driver Binding Protocol(s) that will manage the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. This parameter is typically used to debug new drivers. |
-    /// | **IN** `RemainingDevicePath` | A pointer to the device path that specifies a child of the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. If it is `NULL`, then handles for all the children of `ControllerHandle` will be created. This parameter is passed unchanged to the `EFI_DRIVER_BINDING_PROTOCOL.Supported()` and `EFI_DRIVER_BINDING_PROTOCOL.Start()` services of the `EFI_DRIVER_BINDING_PROTOCOL` attached to `ControllerHandle`. |
+    /// | **IN** `DriverImageHandle` **OPTIONAL** | A pointer to an ordered list handles that support the `EFI_DRIVER_BINDING_PROTOCOL`. The list is terminated by a `NULL` handle value. These handles are candidates for the Driver Binding Protocol(s) that will manage the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. This parameter is typically used to debug new drivers. |
+    /// | **IN** `RemainingDevicePath` **OPTIONAL** | A pointer to the device path that specifies a child of the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. If it is `NULL`, then handles for all the children of `ControllerHandle` will be created. This parameter is passed unchanged to the `EFI_DRIVER_BINDING_PROTOCOL.Supported()` and `EFI_DRIVER_BINDING_PROTOCOL.Start()` services of the `EFI_DRIVER_BINDING_PROTOCOL` attached to `ControllerHandle`. |
     /// | **IN** `Recursive` | If `TRUE`, then `ConnectController()` is called recursively until the entire tree of controllers below the controller specified by `ControllerHandle` have been created. If `FALSE`, then the tree of controllers is only expanded one level. |
     ///
     /// ## Description
@@ -1447,6 +1447,56 @@ pub struct EFI_BOOT_SERVICES {
         DriverImageHandle: *mut EFI_HANDLE,
         RemainingDevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
         Recursive: BOOLEAN,
+    ) -> EFI_STATUS,
+    /// Disconnects one or more drivers from a controller.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ControllerHandle` | The handle of the controller from which driver(s) are to be disconnected. |
+    /// | **IN** `DriverImageHandle` **OPTIONAL** | The driver to disconnect from `ControllerHandle`. If `DriverImageHandle` is `NULL`, then all the drivers currently managing `ControllerHandle` are disconnected from `ControllerHandle`. |
+    /// | **IN** `ChildHandle` **OPTIONAL** | The handle of the child to destroy. If `ChildHandle` is `NULL`, then all the children of `ControllerHandle` are destroyed before the drivers are disconnected from `ControllerHandle`. |
+    ///
+    /// ## Description
+    ///
+    /// This function disconnects one or more drivers from the controller specified by `ControllerHandle`. If `DriverImageHandle`
+    /// is `NULL`, then all of the drivers currently managing `ControllerHandle` are disconnected from `ControllerHandle`.
+    /// If `DriverImageHandle` is not `NULL`, then only the driver specified by `DriverImageHandle` is disconnected from
+    /// `ControllerHandle`. If `ChildHandle` is `NULL`, then all of the children of `ControllerHandle` are destroyed before
+    /// the drivers are disconnected from `ControllerHandle`. If `ChildHandle` is not `NULL`, then only the child controller
+    /// specified by `ChildHandle` is destroyed. If `ChildHandle` is the only child of `ControllerHandle`, then the driver
+    /// specified by `DriverImageHandle` will be disconnected from `ControllerHandle`. A driver is disconnected from a
+    /// controller by calling the `Stop()` service of the `EFI_DRIVER_BINDING_PROTOCOL`. The `EFI_DRIVER_BINDING_PROTOCOL`
+    /// is on the driver image handle, and the handle of the controller is passed into the `Stop()` service. The list of
+    /// drivers managing a controller, and the list of children for a specific controller can be retrieved from the handle
+    /// database with the boot service `EFI_BOOT_SERVICES.OpenProtocolInformation()`. If all the required drivers are
+    /// disconnected from ControllerHandle, then `EFI_SUCCESS` is returned.
+    ///
+    /// If `ControllerHandle` is `NULL`, then `EFI_INVALID_PARAMETER` is returned. If no drivers are managing `ControllerHandle`,
+    /// then `EFI_SUCCESS` is returned. If `DriverImageHandle` is not `NULL`, and `DriverImageHandle` is not a valid `EFI_HANDLE`,
+    /// then `EFI_INVALID_PARAMETER` is returned. If `DriverImageHandle` is not `NULL`, and `DriverImageHandle` is not
+    /// currently managing `ControllerHandle`, then `EFI_SUCCESS` is returned. If `ChildHandle` is not `NULL`, and `ChildHandle`
+    /// is not a valid `EFI_HANDLE`, then `EFI_INVALID_PARAMETER` is returned. If there are not enough resources available
+    /// to disconnect drivers from `ControllerHandle`, then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | One or more drivers were disconnected from the controller. |
+    /// | `EFI_SUCCESS` | On entry, no drivers are managing `ControllerHandle`. |
+    /// | `EFI_SUCCESS` | `DriverImageHandle` is not `NULL`, and on entry `DriverImageHandle` is not managing `ControllerHandle`. |
+    /// | `EFI_INVALID_PARAMETER` | `ControllerHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `DriverImageHandle` is not `NULL`, and it is not a valid `EFI_HANDLE`. |
+    /// | `EFI_INVALID_PARAMETER` | `ChildHandle` is not `NULL`, and it is not a valid `EFI_HANDLE`. |
+    /// | `EFI_OUT_OF_RESOURCES` | There are not enough resources available to disconnect any drivers from `ControllerHandle`. |
+    /// | `EFI_DEVICE_ERROR` | The controller could not be disconnected because of a device error. |
+    /// | `EFI_INVALID_PARAMETER` | `DriverImageHandle` does not support the `EFI_DRIVER_BINDING_PROTOCOL`. |
+    pub DisconnectController: unsafe extern "efiapi" fn(
+        ControllerHandle: EFI_HANDLE,
+        DriverImageHandle: EFI_HANDLE,
+        ChildHandle: EFI_HANDLE,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
