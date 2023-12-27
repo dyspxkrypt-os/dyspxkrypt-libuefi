@@ -589,6 +589,36 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The event has been closed. |
     pub CloseEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
+    /// Checks whether an event is in the signaled state.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Event` | The event to check. |
+    ///
+    /// ## Description
+    ///
+    /// The `CheckEvent()` function checks to see whether Event is in the signaled state. If `Event` is of type
+    /// `EVT_NOTIFY_SIGNAL`, then `EFI_INVALID_PARAMETER` is returned. Otherwise, there are three possibilities:
+    ///
+    /// - If `Event` is in the signaled state, it is cleared and `EFI_SUCCESS` is returned.
+    ///
+    /// - If `Event` is not in the signaled state and has no notification function, `EFI_NOT_READY` is returned.
+    ///
+    /// - If `Event` is not in the signaled state but does have a notification function, the notification function is
+    /// queued at the event’s notification task priority level. If the execution of the notification function causes
+    /// `Event` to be signaled, then the signaled state is cleared and `EFI_SUCCESS` is returned; if the `Event` is not
+    /// signaled, then `EFI_NOT_READY` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The event is in the signaled state. |
+    /// | `EFI_NOT_READY` | The event is not in the signaled state. |
+    /// | `EFI_INVALID_PARAMETER` | `Event` is of type `EVT_NOTIFY_SIGNAL`. |
+    pub CheckEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
