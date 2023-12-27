@@ -985,10 +985,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `Guid` is `NULL`. |
     /// | `EFI_NOT_FOUND` | An attempt was made to delete a nonexistent entry. |
     /// | `EFI_OUT_OF_RESOURCES` | There is not enough memory available to complete the operation. |
-    pub InstallConfigurationTable: unsafe extern "efiapi" fn(
-        Guid: *mut EFI_GUID,
-        Table: *mut VOID,
-    ) -> EFI_STATUS,
+    pub InstallConfigurationTable:
+        unsafe extern "efiapi" fn(Guid: *mut EFI_GUID, Table: *mut VOID) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
