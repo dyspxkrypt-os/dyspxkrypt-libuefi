@@ -19,10 +19,7 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{
-    BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN,
-    VOID,
-};
+use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINT8, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -1969,13 +1966,13 @@ pub struct EFI_BOOT_SERVICES {
     /// on entry to this service. Due to potential overlaps, the contents of the `Source` buffer may be modified by this
     /// service. The following rules can be used to guarantee the correct behavior:
     ///
-    /// - If `Destination` and `Source` are identical, then no operation should be performed.
+    /// 1. If `Destination` and `Source` are identical, then no operation should be performed.
     ///
-    /// - If `Destination` > `Source` and `Destination` < ( `Source` + `Length` ), then the data should be copied from
+    /// 2. If `Destination` > `Source` and `Destination` < ( `Source` + `Length` ), then the data should be copied from
     /// the `Source` buffer to the `Destination` buffer starting from the end of the buffers and working toward the
     /// beginning of the buffers.
     ///
-    /// Otherwise, the data should be copied from the `Source` buffer to the `Destination` buffer starting from the
+    /// 3. Otherwise, the data should be copied from the `Source` buffer to the `Destination` buffer starting from the
     /// beginning of the buffers and working toward the end of the buffers.
     ///
     /// ## Status Codes Returned
@@ -1985,6 +1982,30 @@ pub struct EFI_BOOT_SERVICES {
         Destination: *mut VOID,
         Source: *mut VOID,
         Length: UINTN,
+    ) -> VOID,
+    /// The `SetMem()` function fills a buffer with a specified value.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Buffer` | Pointer to the buffer to fill. |
+    /// | **IN** `Size` | Number of bytes in `Buffer` to fill. |
+    /// | **IN** `Value` | Value to fill `Buffer` with. |
+    ///
+    /// ## Description
+    ///
+    /// This function fills `Size` bytes of `Buffer` with `Value`. The implementation of `SetMem()` must be reentrant.
+    /// If `Buffer` crosses the top of the processor’s address space, the result of the `SetMem()` operation is
+    /// unpredictable.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// None.
+    pub SetMem: unsafe extern "efiapi" fn(
+        Buffer: *mut VOID,
+        Size: UINTN,
+        Value: UINT8,
     ) -> VOID,
     /// Creates an event in a group.
     ///
