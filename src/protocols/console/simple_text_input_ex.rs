@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::EFI_GUID;
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS};
 
 pub const EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -31,4 +31,39 @@ pub const EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID: EFI_GUID = unsafe {
 /// that the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` supports the same languages as the corresponding
 /// `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
 #[repr(C)]
-pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
+pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
+    /// Resets the input device hardware.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This`                 | A pointer to the `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL` instance.                                             |
+    /// | **IN** `ExtendedVerification` | Indicates that the driver may perform a more exhaustive verification operation of the device during reset. |
+    ///
+    /// ## Description
+    ///
+    /// The `Reset()` function resets the input device hardware.
+    ///
+    /// The implementation of `Reset` is required to clear the contents of any input queues resident
+    /// in memory used for buffering keystroke data and put the input stream in a known empty state.
+    ///
+    /// As part of initialization process, the firmware/device will make a quick but reasonable attempt
+    /// to verify that the device is functioning. If the `ExtendedVerification` flag is `TRUE` the
+    /// firmware may take an extended amount of time to verify the device is operating on reset.
+    /// Otherwise the reset operation is to occur as quickly as possible.
+    ///
+    /// The hardware verification process is not defined by this specification and is left up to the
+    /// platform firmware or driver to implement.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS`      | The device was reset.                                           |
+    /// | `EFI_DEVICE_ERROR` | The device is not functioning correctly and could not be reset. |
+    pub Reset: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
+}
