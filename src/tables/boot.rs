@@ -19,9 +19,7 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{
-    EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID,
-};
+use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -987,6 +985,93 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_OUT_OF_RESOURCES` | There is not enough memory available to complete the operation. |
     pub InstallConfigurationTable:
         unsafe extern "efiapi" fn(Guid: *mut EFI_GUID, Table: *mut VOID) -> EFI_STATUS,
+    /// Loads an EFI image into memory.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `BootPolicy` | If `TRUE`, indicates that the request originates from the boot manager, and that the boot manager is attempting to load `DevicePath` as a boot selection. Ignored if `SourceBuffer` is not `NULL`. |
+    /// | **IN** `ParentImageHandle` | The caller’s image handle. This field is used to initialize the `ParentHandle` field of the EFI Loaded Image Protocol for the image that is being loaded. |
+    /// | **IN** `DevicePath` | The `DeviceHandle` specific file path from which the image is loaded. |
+    /// | **IN** `SourceBuffer` | If not `NULL`, a pointer to the memory location containing a copy of the image to be loaded. |
+    /// | **IN** `SourceSize` | The size in bytes of `SourceBuffer`. Ignored if `SourceBuffer` is `NULL`. |
+    /// | **OUT** `ImageHandle` | Pointer to the returned image handle that is created when the image is successfully loaded. |
+    ///
+    /// ## Description
+    ///
+    /// The `LoadImage()` function loads an EFI image into memory and returns a handle to the image. The image is loaded
+    /// in one of two ways.
+    ///
+    /// - If `SourceBuffer` is not `NULL`, the function is a memory-to-memory load in which `SourceBuffer` points to the
+    /// image to be loaded and `SourceSize` indicates the image’s size in bytes. In this case, the caller has copied the
+    /// image into `SourceBuffer` and can free the buffer once loading is complete. The `DevicePath` is optional in this
+    /// case. A `DevicePath` should still be provided since certain portions of firmware may use it to make certain security
+    /// policy decisions.
+    ///
+    /// - If SourceBuffer is NULL, the function is a file copy operation that uses the `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`.
+    ///
+    /// If there is no instance of `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL` associated with file path, then this function will
+    /// attempt to use `EFI_LOAD_FILE_PROTOCOL` (`BootPolicy` is `TRUE`) or `EFI_LOAD_FILE2_PROTOCOL`, and then
+    /// `EFI_LOAD_FILE_PROTOCOL` (`BootPolicy` is `FALSE`).
+    ///
+    /// In all cases, this function will use the instance of these protocols associated with the handle that most closely
+    /// matches `DevicePath` will be used. See the boot service description for more information on how the closest handle
+    /// is located.
+    ///
+    /// In the case of `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`, the path name from the File Path Media Device Path node(s) of
+    /// `DevicePath` is used.
+    ///
+    /// In the case of `EFI_LOAD_FILE_PROTOCOL`, the remaining device path nodes of `DevicePath` and the `BootPolicy`
+    /// flag are passed to the `EFI_LOAD_FILE_PROTOCOL` function. The default image responsible for booting is loaded when
+    /// `DevicePath` specifies only the device (and there are no further device nodes). For more information see the
+    /// discussion of `EFI_LOAD_FILE_PROTOCOL`.
+    ///
+    /// In the case of `EFI_LOAD_FILE2_PROTOCOL`, the behavior is the same as above, except that it is only used if
+    /// `BootOption` is `FALSE`. For more information, see the discussion of the `EFI_LOAD_FILE2_PROTOCOL`.
+    ///
+    /// If the platform supports driver signing, as specified in Image Execution Information Table and the image signature
+    /// is not valid, then information about the image is recorded in the `EFI_IMAGE_EXECUTION_INFO_TABLE` and
+    /// `EFI_SECURITY_VIOLATION` is returned.
+    ///
+    /// If the platform supports user authentication, as described in User Identification and loading of images on the
+    /// specified `FilePath` is forbidden in the current user profile, then the information about the image is recorded
+    /// (see Deferred Execution in Image Execution Information Table) and `EFI_SECURITY_VIOLATION` is returned.
+    ///
+    /// Once the image is loaded, firmware creates and returns an `EFI_HANDLE` that identifies the image and supports
+    /// EFI Loaded Image Protocol and the `EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL`. The caller may fill in the image’s
+    /// “load options” data, or add additional protocol support to the handle before passing control to the newly loaded
+    /// image by calling `EFI_BOOT_SERVICES.StartImage()`. Also, once the image is loaded, the caller either starts it
+    /// by calling `StartImage()` or unloads it by calling `EFI_BOOT_SERVICES.UnloadImage()`.
+    ///
+    /// Once the image is loaded, `LoadImage()` installs `EFI_HII_PACKAGE_LIST_PROTOCOL` on the handle if the image contains
+    /// a custom PE/COFF resource with the type 'HII'. The protocol’s interface pointer points to the HII package list
+    /// which is contained in the resource’s data. The format of this is in `EFI_HII_PACKAGE_HEADER`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Image was loaded into memory correctly. |
+    /// | `EFI_NOT_FOUND` | Both `SourceBuffer` and `DevicePath` are NULL. |
+    /// | `EFI_INVALID_PARAMETER` | One of the parameters has an invalid value. |
+    /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `ParentImageHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `ParentImageHandle` is `NULL`. |
+    /// | `EFI_UNSUPPORTED` | The image type is not supported. |
+    /// | `EFI_OUT_OF_RESOURCES` | Image was not loaded due to insufficient resources. |
+    /// | `EFI_LOAD_ERROR` | Image was not loaded because the image format was corrupt or not understood. |
+    /// | `EFI_DEVICE_ERROR` | Image was not loaded because the device returned a read error. |
+    /// | `EFI_ACCESS_DENIED` | Image was not loaded because the platform policy prohibits the image from being loaded. `NULL` is returned in `ImageHandle`. |
+    /// | `EFI_SECURITY_VIOLATION` | Image was loaded and an `ImageHandle` was created with a valid `EFI_LOADED_IMAGE_PROTOCOL`. However, the current platform policy specifies that the image should not be started. |
+    pub LoadImage: unsafe extern "efiapi" fn(
+        BootPolicy: BOOLEAN,
+        ParentImageHandle: EFI_HANDLE,
+        DevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
+        SourceBuffer: *mut VOID,
+        SourceSize: UINTN,
+        ImageHandle: *mut EFI_HANDLE,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
