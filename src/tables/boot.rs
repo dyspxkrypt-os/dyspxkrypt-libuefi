@@ -18,7 +18,7 @@
 
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{EFI_EVENT, EFI_GUID, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
+use crate::types::{EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -146,6 +146,11 @@ pub enum EFI_TIMER_DELAY {
     TimerCancel,
     TimerPeriodic,
     TimerRelative,
+}
+
+#[repr(C)]
+pub enum EFI_INTERFACE_TYPE {
+    EFI_NATIVE_INTERFACE,
 }
 
 /// The EFI Boot Services containing a table header and pointers to all of the boot services.
@@ -619,6 +624,48 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_NOT_READY` | The event is not in the signaled state. |
     /// | `EFI_INVALID_PARAMETER` | `Event` is of type `EVT_NOTIFY_SIGNAL`. |
     pub CheckEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
+    /// Installs a protocol interface on a device handle. If the handle does not exist, it is created and added to the
+    /// list of handles in the system. `InstallMultipleProtocolInterfaces()` performs more error checking than
+    /// `InstallProtocolInterface()`, so it is recommended that `InstallMultipleProtocolInterfaces()` be used in place of
+    /// `InstallProtocolInterface()`.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN OUT** `Handle` | A pointer to the `EFI_HANDLE` on which the interface is to be installed. If `*Handle` is `NULL` on input, a new handle is created and returned on output. If `*Handle` is not NULL on input, the protocol is added to the handle, and the handle is returned unmodified. If `*Handle` is not a valid handle, then `EFI_INVALID_PARAMETER` is returned. |
+    /// | **IN** `Protocol` | The numeric ID of the protocol interface. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **IN** `InterfaceType` | Indicates whether `Interface` is supplied in native form. This value indicates the original execution environment of the request. |
+    /// | **IN** `Interface` | A pointer to the protocol interface. The `Interface` must adhere to the structure defined by `Protocol`. `NULL` can be used if a structure is not associated with `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// The `InstallProtocolInterface()` function installs a protocol interface (a GUID/Protocol Interface structure
+    /// pair) on a device handle. The same GUID cannot be installed more than once onto the same handle. If installation
+    /// of a duplicate GUID on a handle is attempted, an `EFI_INVALID_PARAMETER` will result.
+    ///
+    /// Installing a protocol interface allows other components to locate the Handle, and the interfaces installed on it.
+    ///
+    /// When a protocol interface is installed, the firmware calls all notification functions that have registered to wait
+    /// for the installation of `Protocol`. For more information, see the `EFI_BOOT_SERVICES.RegisterProtocolNotify()` function
+    /// description.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The protocol interface was installed. |
+    /// | `EFI_OUT_OF_RESOURCES` | Space for a new handle could not be allocated. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `InterfaceType` is not `EFI_NATIVE_INTERFACE`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is already installed on the handle specified by `Handle`. |
+    pub InstallProtocolInterface: unsafe extern "efiapi" fn(
+        Handle: *mut EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        InterfaceType: EFI_INTERFACE_TYPE,
+        Interface: *mut VOID,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
