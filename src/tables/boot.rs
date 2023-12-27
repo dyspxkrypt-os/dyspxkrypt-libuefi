@@ -1802,6 +1802,43 @@ pub struct EFI_BOOT_SERVICES {
         NoHandles: *mut UINTN,
         Buffer: *mut *mut EFI_HANDLE,
     ) -> EFI_STATUS,
+    /// Returns the first protocol instance that matches the given protocol.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Protocol` | Provides the protocol to search for. |
+    /// | **IN** `Registration` **OPTIONAL** | Optional registration key returned from `EFI_BOOT_SERVICES.RegisterProtocolNotify()`. If `Registration` is `NULL`, then it is ignored. |
+    /// | **OUT** `Interface` | On return, a pointer to the first interface that matches `Protocol` and `Registration`. |
+    ///
+    /// ## Description
+    ///
+    /// The `LocateProtocol()` function finds the first device handle that support `Protocol`, and returns a pointer to
+    /// the protocol interface from that handle in `Interface`. If no protocol instances are found, then `Interface` is set to `NULL`.
+    //
+    /// If `Interface` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `Protocol` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `Registration` is `NULL`, and there are no handles in the handle database that support `Protocol`, then
+    /// `EFI_NOT_FOUND` is returned.
+    ///
+    /// If `Registration` is not `NULL`, and there are no new handles for `Registration`, then `EFI_NOT_FOUND` is
+    /// returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | A protocol instance matching `Protocol` was found and returned in `Interface`. |
+    /// | `EFI_INVALID_PARAMETER` | `Interface` is `NULL`. `Protocol` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | No protocol instances were found that match `Protocol` and `Registration`. |
+    pub LocateProtocol: unsafe extern "efiapi" fn(
+        Protocol: *mut EFI_GUID,
+        Registration: *mut VOID,
+        Interface: *mut *mut VOID,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
