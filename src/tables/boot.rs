@@ -820,6 +820,45 @@ pub struct EFI_BOOT_SERVICES {
     ) -> EFI_STATUS,
     #[doc(hidden)]
     pub Reserved: *mut VOID,
+    /// Creates an event that is to be signaled whenever an interface is installed for a specified protocol.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Protocol` | The numeric ID of the protocol for which the event is to be registered. |
+    /// | **IN** `Event` | Event that is to be signaled whenever a protocol interface is registered for `Protocol`. The same `EFI_EVENT` may be used for multiple protocol notify registrations. |
+    /// | **OUT** `Registration` | A pointer to a memory location to receive the registration value. This value must be saved and used by the notification function of Event to retrieve the list of handles that have added a protocol interface of type `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// The `RegisterProtocolNotify()` function creates an event that is to be signaled whenever a protocol interface is
+    /// installed for `Protocol` by `InstallProtocolInterface()` or `EFI_BOOT_SERVICES.ReinstallProtocolInterface()`.
+    ///
+    /// Once `Event` has been signaled, the `EFI_BOOT_SERVICES.LocateHandle()` function can be called to identify the
+    /// newly installed, or reinstalled, handles that support `Protocol`. The `Registration` parameter in `EFI_BOOT_SERVICES.RegisterProtocolNotify()`
+    /// corresponds to the `SearchKey` parameter in `LocateHandle()`. Note that the same handle may be returned multiple
+    /// times if the handle reinstalls the target protocol ID multiple times. This is typical for removable media devices,
+    /// because when such a device reappears, it will reinstall the Block I/O protocol to indicate that the device needs
+    /// to be checked again. In response, layered Disk I/O and Simple File System protocols may then reinstall their
+    /// protocols to indicate that they can be re-checked, and so forth.
+    ///
+    /// Events that have been registered for protocol interface notification can be unregistered by calling `CloseEvent()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The notification event has been registered. |
+    /// | `EFI_OUT_OF_RESOURCES` | Space for the notification event could not be allocated. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Event` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Registration` is `NULL`. |
+    pub RegisterProtocolNotify: unsafe extern "efiapi" fn(
+        Protocol: *mut EFI_GUID,
+        Event: EFI_EVENT,
+        Registration: *mut *mut VOID,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
