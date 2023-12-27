@@ -24,9 +24,11 @@ pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 
 cfg_if::cfg_if! {
     if #[cfg(feature = "console-full")] {
+        pub mod absolute_pointer;
         pub mod simple_text_input_ex;
         pub mod simple_pointer;
 
+        pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
         pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
         pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
     } else {
