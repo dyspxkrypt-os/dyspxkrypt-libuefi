@@ -726,6 +726,62 @@ pub struct EFI_BOOT_SERVICES {
         OldInterface: *mut VOID,
         NewInterface: *mut VOID,
     ) -> EFI_STATUS,
+    /// Removes a protocol interface from a device handle. It is recommended to use `UninstallMultipleProtocolInterfaces()`
+    /// in place of `UninstallProtocolInterface()`.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle on which the interface was installed. If `Handle` is not a valid handle, then `EFI_INVALID_PARAMETER` is returned. |
+    /// | **IN** `Protocol` | The numeric ID of the interface. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **IN** `Interface` | A pointer to the interface. `NULL` can be used if a structure is not associated with `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// The `UninstallProtocolInterface()` function removes a protocol interface from the handle on which it was previously
+    /// installed. The `Protocol` and `Interface` values define the protocol interface to remove from the handle.
+    ///
+    /// The caller is responsible for ensuring that there are no references to a protocol interface that has been removed.
+    /// In some cases, outstanding reference information is not available in the protocol, so the protocol, once added,
+    /// cannot be removed. Examples include Console I/O, Block I/O, Disk I/O, and (in general) handles to device protocols.
+    ///
+    /// If the last protocol interface is removed from a handle, the handle is freed and is no longer valid.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// The extension to this service directly addresses the limitations described in the section above. There may be
+    /// some drivers that are currently consuming the protocol interface that needs to be uninstalled, so it may be
+    /// dangerous to just blindly remove a protocol interface from the system. Since the usage of protocol interfaces is
+    /// now being tracked for components that use the `EFI_BOOT_SERVICES.OpenProtocol()` and `EFI_BOOT_SERVICES.CloseProtocol()`
+    /// boot services, a safe version of this function can be implemented. Before the protocol interface is removed, an
+    /// attempt is made to force all the drivers that are consuming the protocol interface to stop consuming that protocol
+    /// interface. This is done by calling `EFI_BOOT_SERVICES.DisconnectController()` for the driver that currently have
+    /// the protocol interface open with an attribute of `EFI_OPEN_PROTOCOL_BY_DRIVER` or `EFI_OPEN_PROTOCOL_BY_DRIVER | EFI_OPEN_PROTOCOL_EXCLUSIVE`.
+    ///
+    /// If the disconnect succeeds, then those agents will have called the boot service `EFI_BOOT_SERVICES.CloseProtocol()`
+    /// to release the protocol interface. Lastly, all of the agents that have the protocol interface open with an attribute
+    /// of `EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL`, `EFI_OPEN_PROTOCOL_GET_PROTOCOL`, or `EFI_OPEN_PROTOCOL_TEST_PROTOCOL`
+    /// are closed. If there are any agents remaining that still have the protocol interface open, the protocol interface
+    /// is not removed from the handle and `EFI_ACCESS_DENIED` is returned. In addition, all of the drivers that were
+    /// disconnected with the boot service `DisconnectController()` earlier, are reconnected with the boot service
+    /// `EFI_BOOT_SERVICES.ConnectController()`. If there are no agents remaining that are consuming the protocol interface,
+    /// then the protocol interface is removed from the handle as described above.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The interface was removed. |
+    /// | `EFI_NOT_FOUND` | The interface was not found. |
+    /// | `EFI_ACCESS_DENIED` | The interface was not removed because the interface is still being used by a driver. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    pub UninstallProtocolInterface: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        Interface: *mut VOID,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
