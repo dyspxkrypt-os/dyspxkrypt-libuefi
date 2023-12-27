@@ -721,7 +721,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
     /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
     pub ReinstallProtocolInterface: unsafe extern "efiapi" fn(
-        Handle: *mut EFI_HANDLE,
+        Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         OldInterface: *mut VOID,
         NewInterface: *mut VOID,
@@ -781,6 +781,42 @@ pub struct EFI_BOOT_SERVICES {
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         Interface: *mut VOID,
+    ) -> EFI_STATUS,
+    /// Queries a handle to determine if it supports a specified protocol.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle being queried. If `Handle` is `NULL`, then `EFI_INVALID_PARAMETER` is returned. |
+    /// | **IN** `Protocol` | The numeric ID of the interface. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **OUT** `Interface` | Supplies the address where a pointer to the corresponding `Protocol` `Interface` is returned. `NULL` will be returned in `*Interface` if a structure is not associated with `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// The `HandleProtocol()` function queries `Handle` to determine if it supports `Protocol`. If it does, then on return
+    /// `Interface` points to a pointer to the corresponding `Protocol` `Interface`. `Interface` can then be passed to any
+    /// protocol service to identify the context of the request.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// The `HandleProtocol()` function is still available for use by old EFI applications and drivers. However, all new
+    /// applications and drivers should use `EFI_BOOT_SERVICES.OpenProtocol()` in place of `HandleProtocol()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The interface information for the specified protocol was returned. |
+    /// | `EFI_UNSUPPORTED` | The device does not support the specified protocol. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Interface` is `NULL`. |
+    #[deprecated(since = "0.1.0", note = "use the OpenProtocol() function instead")]
+    pub HandleProtocol: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        Interface: *mut *mut VOID,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
