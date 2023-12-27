@@ -1746,6 +1746,62 @@ pub struct EFI_BOOT_SERVICES {
         ProtocolBuffer: *mut *mut *mut EFI_GUID,
         ProtocolBufferCount: *mut UINTN,
     ) -> EFI_STATUS,
+    /// Returns an array of handles that support the requested protocol in a buffer allocated from pool.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `SearchType` | Specifies which handle(s) are to be returned. |
+    /// | **IN** `Protocol` **OPTIONAL** | Provides the protocol to search by. This parameter is only valid for a `SearchType` of `ByProtocol`. |
+    /// | **IN** `SearchKey` **OPTIONAL** | Supplies the search key depending on the `SearchType`. |
+    /// | **OUT** `NoHandles` | The number of handles returned in `Buffer`. |
+    /// | **OUT** `Buffer` | A pointer to the buffer to return the requested array of handles that support `Protocol`. This buffer is allocated with a call to the Boot Service `EFI_BOOT_SERVICES.AllocatePool()`. It is the caller’s responsibility to call the Boot Service `EFI_BOOT_SERVICES.FreePool()` when the caller no longer requires the contents of `Buffer`. |
+    ///
+    /// ## Description
+    ///
+    /// The `LocateHandleBuffer()` function returns one or more handles that match the SearchType request. `Buffer` is
+    /// allocated from pool, and the number of entries in `Buffer` is returned in `NoHandles`. Each `SearchType` is described
+    /// below:
+    ///
+    /// #### `AllHandles`
+    ///
+    /// `Protocol` and `SearchKey` are ignored and the function returns an array of every handle in the system.
+    ///
+    /// #### `ByRegisterNotify`
+    ///
+    /// `SearchKey` supplies the `Registration` returned by `EFI_BOOT_SERVICES.RegisterProtocolNotify()`. The function
+    /// returns the next handle that is new for the `Registration`. Only one handle is returned at a time, and the caller
+    /// must loop until no more handles are returned. `Protocol` is ignored for this search type.
+    ///
+    /// #### `ByProtocol`
+    ///
+    /// All handles that `support` Protocol are returned. `SearchKey` is ignored for this search type.
+    ///
+    /// If `NoHandles` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `Buffer` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If there are no handles in the handle database that match the search criteria, then `EFI_NOT_FOUND` is returned.
+    ///
+    /// If there are not enough resources available to allocate `Buffer`, then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The array of handles was returned in `Buffer`, and the number of handles in `Buffer` was returned in `NoHandles`. |
+    /// | `EFI_INVALID_PARAMETER` | `NoHandles` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Buffer` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | No handles match the search. |
+    /// | `EFI_OUT_OF_RESOURCES` | There is not enough pool memory to store the matching results. |
+    pub LocateHandleBuffer: unsafe extern "efiapi" fn(
+        SearchType: EFI_LOCATE_SEARCH_TYPE,
+        Protocol: *mut EFI_GUID,
+        SearchKey: *mut VOID,
+        NoHandles: *mut UINTN,
+        Buffer: *mut *mut EFI_HANDLE,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
