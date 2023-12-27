@@ -1354,6 +1354,100 @@ pub struct EFI_BOOT_SERVICES {
         DataSize: UINTN,
         WatchdogData: *mut CHAR16,
     ) -> EFI_STATUS,
+    /// Connects one or more drivers to a controller.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ControllerHandle` | The handle of the controller to which driver(s) are to be connected. |
+    /// | **IN** `DriverImageHandle` | A pointer to an ordered list handles that support the `EFI_DRIVER_BINDING_PROTOCOL`. The list is terminated by a `NULL` handle value. These handles are candidates for the Driver Binding Protocol(s) that will manage the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. This parameter is typically used to debug new drivers. |
+    /// | **IN** `RemainingDevicePath` | A pointer to the device path that specifies a child of the controller specified by `ControllerHandle`. This is an optional parameter that may be `NULL`. If it is `NULL`, then handles for all the children of `ControllerHandle` will be created. This parameter is passed unchanged to the `EFI_DRIVER_BINDING_PROTOCOL.Supported()` and `EFI_DRIVER_BINDING_PROTOCOL.Start()` services of the `EFI_DRIVER_BINDING_PROTOCOL` attached to `ControllerHandle`. |
+    /// | **IN** `Recursive` | If `TRUE`, then `ConnectController()` is called recursively until the entire tree of controllers below the controller specified by `ControllerHandle` have been created. If `FALSE`, then the tree of controllers is only expanded one level. |
+    ///
+    /// ## Description
+    ///
+    /// This function connects one or more drivers to the controller specified by `ControllerHandle`. If `ControllerHandle`
+    /// is `NULL`, then `EFI_INVALID_PARAMETER` is returned. If there are no `EFI_DRIVER_BINDING_PROTOCOL` instances present
+    /// in the system, then return `EFI_NOT_FOUND`. If there are not enough resources available to complete this function,
+    /// then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// If the platform supports user authentication, as specified in User Identification the device path associated with
+    /// `ControllerHandle` is checked against the connect permissions in the current user profile. If forbidden, then
+    /// `EFI_SECURITY_VIOLATION` is returned. Then, before connecting any of the `DriverImageHandles`, the device path
+    /// associated with the handle is checked against the connect permissions in the current user profile.
+    ///
+    /// If `Recursive` is `FALSE`, then this function returns after all drivers have been connected to `ControllerHandle`.
+    /// If `Recursive` is `TRUE`, then `ConnectController()` is called recursively on all of the child controllers of
+    /// `ControllerHandle`. The child controllers can be identified by searching the handle database for all the controllers
+    /// that have opened `ControllerHandle` with an attribute of `EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER`.
+    ///
+    /// This functions uses five precedence rules when deciding the order that drivers are tested against controllers.
+    /// These five rules from highest precedence to lowest precedence are as follows:
+    ///
+    /// 1. Context Override: `DriverImageHandle` is an ordered list of handles that support the `EFI_DRIVER_BINDING_PROTOCOL`.
+    /// The highest priority image handle is the first element of the list, and the lowest priority image handle is the
+    /// last element of the list. The list is terminated with a `NULL` image handle.
+    ///
+    /// 2. Platform Driver Override: If an `EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL` instance is present in the system,
+    /// then the EFI Platform Driver Override Protocol service of this protocol is used to retrieve an ordered list of
+    /// image handles for `ControllerHandle`. From this list, the image handles found in rule (1) above are removed.
+    /// The first image handle returned from `GetDriver()` has the highest precedence, and the last image handle returned
+    /// from `GetDriver()` has the lowest precedence. The ordered list is terminated when `GetDriver()` returns `EFI_NOT_FOUND`.
+    /// It is legal for no image handles to be returned by `GetDriver()`. There can be at most a single instance in the
+    /// system of the `EFI_PLATFORM_DRIVER_OVERRIDE_PROTOCOL`. If there is more than one, then the system behavior is
+    /// not deterministic.
+    ///
+    /// 3. Driver Family Override Search: The list of available driver image handles can be found by using the boot
+    /// service `EFI_BOOT_SERVICES.LocateHandle()` with a SearchType of `ByProtocol` for the GUID of the `EFI_DRIVER_FAMILY_OVERRIDE_PROTOCOL`.
+    /// From this list, the image handles found in rules (1), and (2) above are removed. The remaining image handles are
+    /// sorted from highest to lowest based on the value returned from the `GetVersion()` function of the `EFI_DRIVER_FAMILY_OVERRIDE_PROTOCOL`
+    /// associated with each image handle.
+    ///
+    /// 4. Bus Specific Driver Override: If there is an instance of the `EFI_BUS_SPECIFIC_DRIVER_OVERRIDE_PROTOCOL` attached
+    /// to `ControllerHandle`, then the EFI Platform Driver Override Protocol service of this protocol is used to retrieve
+    /// an ordered list of image handle for `ControllerHandle`. From this list, the image handles found in rules (1), (2),
+    /// and (3) above are removed. The first image handle returned from `GetDriver()` has the highest precedence, and the
+    /// last image handle returned from `GetDriver()` has the lowest precedence. The ordered list is terminated when `GetDriver()`
+    /// returns `EFI_NOT_FOUND`. It is legal for no image handles to be returned by `GetDriver()`.
+    ///
+    /// 5. Driver Binding Search: The list of available driver image handles can be found by using the boot service
+    /// `EFI_BOOT_SERVICES.LocateHandle()` with a SearchType of ByProtocol for the GUID of the `EFI_DRIVER_BINDING_PROTOCOL`.
+    /// From this list, the image handles found in rules (1), (2), (3), and (4) above are removed. The remaining image
+    /// handles are sorted from highest to lowest based on the Version field of the `EFI_DRIVER_BINDING_PROTOCOL`
+    /// instance associated with each image handle.
+    ///
+    /// Each of the five groups of image handles listed above is tested against ControllerHandle in order by using the
+    /// `EFI_DRIVER_BINDING_PROTOCOL.Supported()`. `RemainingDevicePath` is passed into `Supported()` unmodified. The
+    /// first image handle whose `Supported()` service returns `EFI_SUCCESS` is marked so the image handle will not be
+    /// tried again during this call to `ConnectController()`. Then, `EFI_DRIVER_BINDING_PROTOCOL.Start()` service of the
+    /// `EFI_DRIVER_BINDING_PROTOCOL` is called for `ControllerHandle`. Once again, `RemainingDevicePath` is passed in
+    /// unmodified. Every time `Supported()` returns `EFI_SUCCESS`, the search for drivers restarts with the highest
+    /// precedence image handle. This process is repeated until no image handles pass the `Supported()` check.
+    ///
+    /// If at least one image handle returned `EFI_SUCCESS` from its `Start()` service, then `EFI_SUCCESS` is returned.
+    ///
+    /// If no image handles returned `EFI_SUCCESS` from their `Start()` service then `EFI_NOT_FOUND` is returned unless
+    /// `RemainingDevicePath` is not `NULL`, and `RemainingDevicePath` is an End Node. In this special case, `EFI_SUCCESS`
+    /// is returned because it is not an error to fail to start a child controller that is specified by an End Device Path
+    /// Node.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | One or more drivers were connected to `ControllerHandle`. |
+    /// | `EFI_SUCCESS` | No drivers were connected to `ControllerHandle`, but `RemainingDevicePath` is not `NULL`, and it is an End Device Path Node. |
+    /// | `EFI_INVALID_PARAMETER` | `ControllerHandle` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | There are no `EFI_DRIVER_BINDING_PROTOCOL` instances present in the system. |
+    /// | `EFI_NOT_FOUND` | No drivers were connected to `ControllerHandle`. |
+    /// | `EFI_SECURITY_VIOLATION` | The user has no permission to start UEFI device drivers on the device path associated with the `ControllerHandle` or specified by the `RemainingDevicePath`. |
+    pub ConnectController: unsafe extern "efiapi" fn(
+        ControllerHandle: EFI_HANDLE,
+        DriverImageHandle: *mut EFI_HANDLE,
+        RemainingDevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
+        Recursive: BOOLEAN,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
