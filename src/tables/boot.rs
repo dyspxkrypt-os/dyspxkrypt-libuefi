@@ -19,7 +19,7 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
+use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -1053,7 +1053,7 @@ pub struct EFI_BOOT_SERVICES {
     /// | Status Code             | Description                                                                                                                                                                                                 |
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | Image was loaded into memory correctly. |
-    /// | `EFI_NOT_FOUND` | Both `SourceBuffer` and `DevicePath` are NULL. |
+    /// | `EFI_NOT_FOUND` | Both `SourceBuffer` and `DevicePath` are `NULL`. |
     /// | `EFI_INVALID_PARAMETER` | One of the parameters has an invalid value. |
     /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is `NULL`. |
     /// | `EFI_INVALID_PARAMETER` | `ParentImageHandle` is `NULL`. |
@@ -1071,6 +1071,48 @@ pub struct EFI_BOOT_SERVICES {
         SourceBuffer: *mut VOID,
         SourceSize: UINTN,
         ImageHandle: *mut EFI_HANDLE,
+    ) -> EFI_STATUS,
+    /// Transfers control to a loaded image’s entry point.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `ImageHandle` | Handle of image to be started. |
+    /// | **OUT** `ExitDataSize` | Pointer to the size, in bytes, of `ExitData`. If `ExitData` is `NULL`, then this parameter is ignored and the contents of `ExitDataSize` are not modified. |
+    /// | **OUT** `ExitData` | Pointer to a pointer to a data buffer that includes a null-terminated string, optionally followed by additional binary data. The string is a description that the caller may use to further indicate the reason for the image’s exit. |
+    ///
+    /// ## Description
+    ///
+    /// The `StartImage()` function transfers control to the entry point of an image that was loaded by `EFI_BOOT_SERVICES.LoadImage()`.
+    /// The image may only be started one time.
+    ///
+    /// Control returns from `StartImage()` when the loaded image’s `EFI_IMAGE_ENTRY_POINT` returns or when the loaded
+    /// image calls `EFI_BOOT_SERVICES.Exit()` When that call is made, the `ExitData` buffer and `ExitDataSize` from `Exit()`
+    /// are passed back through the `ExitData` buffer and `ExitDataSize` in this function. The caller of this function is
+    /// responsible for returning the `ExitData` buffer to the pool by calling `EFI_BOOT_SERVICES.FreePool()` when the buffer
+    /// is no longer needed. Using `Exit()` is similar to returning from the image’s `EFI_IMAGE_ENTRY_POINT` except that
+    /// `Exit()` may also return additional `ExitData`. `Exit()` function description defines clean up procedure performed
+    /// by the firmware once loaded image returns control.
+    ///
+    /// #### EFI 1.10 Extension
+    ///
+    /// To maintain compatibility with UEFI drivers that are written to the EFI 1.02 Specification, `StartImage()` must
+    /// monitor the handle database before and after each image is started. If any handles are created or modified when
+    /// an image is started, then `EFI_BOOT_SERVICES.ConnectController()` must be called with the `Recursive` parameter
+    /// set to `TRUE` for each of the newly created or modified handles before `StartImage()` returns.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_INVALID_PARAMETER` | `ImageHandle` is either an invalid image handle or the image has already been initialized with `StartImage` |
+    /// | `EFI_SECURITY_VIOLATION` | The current platform policy specifies that the image should not be started. |
+    /// | exit code from image | Exit code from image. |
+    pub StartImage: unsafe extern "efiapi" fn(
+        ImageHandle: EFI_HANDLE,
+        ExitDataSize: *mut UINTN,
+        ExitData: *mut *mut CHAR16,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
