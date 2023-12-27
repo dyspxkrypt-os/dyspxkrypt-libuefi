@@ -1620,6 +1620,51 @@ pub struct EFI_BOOT_SERVICES {
         ControllerHandle: EFI_HANDLE,
         Attributes: UINT32,
     ) -> EFI_STATUS,
+    /// Closes a protocol on a handle that was opened using `EFI_BOOT_SERVICES.OpenProtocol()`.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle for the protocol interface that was previously opened with `OpenProtocol()`, and is now being closed. |
+    /// | **IN** `Protocol` | The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **IN** `AgentHandle` | The handle of the agent that is closing the protocol interface. For agents that follow the UEFI Driver Model, this parameter is the handle that contains the `EFI_DRIVER_BINDING_PROTOCOL` instance that is produced by the UEFI driver that is opening the protocol interface. For UEFI applications, this is the image handle of the UEFI application. For applications that used `EFI_BOOT_SERVICES.HandleProtocol()` to open the protocol interface, this will be the image handle of the EFI firmware. |
+    /// | **IN** `ControllerHandle` | If the agent that opened a protocol is a driver that follows the UEFI Driver Model, then this parameter is the controller handle that required the protocol interface. If the agent does not follow the UEFI Driver Model, then this parameter is optional and may be `NULL`. |
+    ///
+    /// ## Description
+    ///
+    /// This function updates the handle database to show that the protocol instance specified by `Handle` and `Protocol`
+    /// is no longer required by the agent and controller specified `AgentHandle` and `ControllerHandle`.
+    ///
+    /// If `Handle` or `AgentHandle` is `NULL`, then `EFI_INVALID_PARAMETER` is returned. If `ControllerHandle` is `NULL`,
+    /// then `EFI_INVALID_PARAMETER` is returned. If `Protocol` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If the interface specified by `Protocol` is not supported by the handle specified by `Handle`, then `EFI_NOT_FOUND`
+    /// is returned.
+    ///
+    /// If the interface specified by `Protocol` is supported by the handle specified by `Handle`, then a check is made
+    /// to see if the protocol instance specified by `Protocol` and `Handle` was opened by `AgentHandle` and `ControllerHandle`
+    /// with `EFI_BOOT_SERVICES.OpenProtocol()`. If the protocol instance was not opened by `AgentHandle` and `ControllerHandle`,
+    /// then `EFI_NOT_FOUND` is returned. If the protocol instance was opened by `AgentHandle` and `ControllerHandle`,
+    /// then all of those references are removed from the handle database, and `EFI_SUCCESS` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The protocol instance was closed. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `AgentHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `ControllerHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | `Handle` does not support the protocol specified by `Protocol`. |
+    /// | `EFI_NOT_FOUND` | The protocol interface specified by `Handle` and `Protocol` is not currently open by `AgentHandle` and `ControllerHandle`. |
+    pub CloseProtocol: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        AgentHandle: EFI_HANDLE,
+        ControllerHandle: EFI_HANDLE,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
