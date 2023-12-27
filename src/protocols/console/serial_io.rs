@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::EFI_GUID;
+use crate::types::{EFI_GUID, UINT32};
 
 pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -27,5 +27,14 @@ pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
+pub const EFI_SERIAL_IO_PROTOCOL_REVISION: UINT32 = 0x00010000;
+pub const EFI_SERIAL_IO_PROTOCOL_REVISION1p1: UINT32 = 0x00010001;
+
+/// This protocol is used to communicate with any type of character-based I/O device.
 #[repr(C)]
-pub struct EFI_SERIAL_IO_PROTOCOL;
+pub struct EFI_SERIAL_IO_PROTOCOL {
+    /// The revision to which the `EFI_SERIAL_IO_PROTOCOL` adheres. All future revisions must be
+    /// backwards compatible. If a future version is not back wards compatible, it is not the same
+    /// GUID.
+    pub Revision: UINT32,
+}
