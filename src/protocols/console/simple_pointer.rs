@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, INT32};
+use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_STATUS, INT32};
 
 pub const EFI_SIMPLE_POINTER_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -88,10 +88,24 @@ pub struct EFI_SIMPLE_POINTER_PROTOCOL {
         This: *mut EFI_SIMPLE_POINTER_PROTOCOL,
         State: *mut EFI_SIMPLE_POINTER_STATE,
     ) -> EFI_STATUS,
+    /// Event to use with `EFI_BOOT_SERVICES.WaitForEvent()` to wait for input from the pointer
+    /// device.
+    pub WaitForInput: EFI_EVENT,
+    /// Pointer to `EFI_SIMPLE_POINTER_MODE` data.
+    pub Mode: *mut EFI_SIMPLE_INPUT_MODE,
 }
 
 #[repr(C)]
 pub struct EFI_SIMPLE_POINTER_STATE {
+    pub RelativeMovementX: INT32,
+    pub RelativeMovementY: INT32,
+    pub RelativeMovementZ: INT32,
+    pub LeftButton: BOOLEAN,
+    pub RightButton: BOOLEAN,
+}
+
+#[repr(C)]
+pub struct EFI_SIMPLE_INPUT_MODE {
     pub RelativeMovementX: INT32,
     pub RelativeMovementY: INT32,
     pub RelativeMovementZ: INT32,
