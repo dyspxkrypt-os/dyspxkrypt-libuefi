@@ -16,7 +16,4 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod console;
-pub mod device_path;
-#[cfg(feature = "image")]
-pub mod image;
+pub mod loaded_image;
