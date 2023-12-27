@@ -1665,6 +1665,49 @@ pub struct EFI_BOOT_SERVICES {
         AgentHandle: EFI_HANDLE,
         ControllerHandle: EFI_HANDLE,
     ) -> EFI_STATUS,
+    /// Retrieves the list of agents that currently have a protocol interface opened.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle for the protocol interface that is being queried. |
+    /// | **IN** `Protocol` | The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **OUT** `EntryBuffer` | A pointer to a buffer of open protocol information in the form of `EFI_OPEN_PROTOCOL_INFORMATION_ENTRY` structures. The buffer is allocated by this service, and it is the caller’s responsibility to free this buffer when the caller no longer requires the buffer’s contents. |
+    /// | **OUT** `EntryCount` | A pointer to the number of entries in `EntryBuffer`. |
+    ///
+    /// ## Description
+    ///
+    /// This function allocates and returns a buffer of `EFI_OPEN_PROTOCOL_INFORMATION_ENTRY` structures. The buffer is
+    /// returned in `EntryBuffer`, and the number of entries is returned in `EntryCount`.
+    ///
+    /// If the interface specified by `Protocol` is not supported by the handle specified by `Handle`, then `EFI_NOT_FOUND`
+    /// is returned.
+    ///
+    /// If the interface specified by `Protocol` is supported by the handle specified by `Handle`, then `EntryBuffer` is
+    /// allocated with the boot service `EFI_BOOT_SERVICES.AllocatePool()`, and `EntryCount` is set to the number of
+    /// entries in `EntryBuffer`. Each entry of `EntryBuffer` is filled in with the image handle, controller handle, and
+    /// attributes that were passed to `EFI_BOOT_SERVICES.OpenProtocol()` when the protocol interface was opened. The
+    /// field `OpenCount` shows the number of times that the protocol interface has been opened by the agent specified by
+    /// `ImageHandle`, `ControllerHandle`, and `Attributes`. After the contents of `EntryBuffer` have been filled in,
+    /// `EFI_SUCCESS` is returned. It is the caller’s responsibility to call `EFI_BOOT_SERVICES.FreePool()` on `EntryBuffer`
+    /// when the caller no longer required the contents of `EntryBuffer`.
+    ///
+    /// If there are not enough resources available to allocate `EntryBuffer`, then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The open protocol information was returned in `EntryBuffer`, and the number of entries was returned `EntryCount`. |
+        /// | `EFI_NOT_FOUND` | `Handle` does not support the protocol specified by `Protocol`. |
+    /// | `EFI_OUT_OF_RESOURCES` | There are not enough resources available to allocate `EntryBuffer`. |
+    pub OpenProtocolInformation: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        EntryBuffer: *mut *mut EFI_OPEN_PROTOCOL_INFORMATION_ENTRY,
+        EntryCount: *mut UINTN,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
@@ -1825,6 +1868,14 @@ pub struct EFI_MEMORY_DESCRIPTOR {
     /// Attributes of the memory region that describe the bit mask of capabilities for that memory region,
     /// and not necessarily the current settings for that memory region.
     pub Attribute: UINT64,
+}
+
+#[repr(C)]
+pub struct EFI_OPEN_PROTOCOL_INFORMATION_ENTRY {
+    pub AgentHandle: EFI_HANDLE,
+    pub ControllerHandle: EFI_HANDLE,
+    pub Attributes: UINT32,
+    pub OpenCount: UINT32,
 }
 
 /// A physical address.
