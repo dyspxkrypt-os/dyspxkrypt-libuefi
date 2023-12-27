@@ -937,13 +937,57 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The resulting handle was returned. |
     /// | `EFI_NOT_FOUND` | No handles match the search. |
-    /// | `EFI_INVALID_PARAMETER` | `Protocol` is NULL |
-    /// | `EFI_INVALID_PARAMETER` | `DevicePath` is NULL. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `DevicePath` is `NULL`. |
     /// | `EFI_INVALID_PARAMETER` | A handle matched the search and `Device` is NULL. |
     pub LocateDevicePath: unsafe extern "efiapi" fn(
         Protocol: *mut EFI_GUID,
         DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
         Device: *mut EFI_HANDLE,
+    ) -> EFI_STATUS,
+    /// Adds, updates, or removes a configuration table entry from the EFI System Table.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Guid` | A pointer to the GUID for the entry to add, update, or remove. |
+    /// | **IN** `Table` | A pointer to the configuration table for the entry to add, update, or remove. May be `NULL`. |
+    ///
+    /// ## Description
+    ///
+    /// The `InstallConfigurationTable()` function is used to maintain the list of configuration tables that are stored
+    /// in the EFI System Table. The list is stored as an array of (GUID, Pointer) pairs. The list must be allocated from
+    /// pool memory with `PoolType` set to `EfiRuntimeServicesData`.
+    ///
+    /// If `Guid` is `NULL`, `EFI_INVALID_PARAMETER` is returned. If `Guid` is valid, there are four possibilities:
+    ///
+    /// - If `Guid` is not present in the System Table, and `Table` is not `NULL`, then the (Guid, Table) pair is added
+    /// to the System Table. See Note below.
+    ///
+    /// - If `Guid` is not present in the System Table, and `Table` is `NULL`, then `EFI_NOT_FOUND` is returned.
+    ///
+    /// - If `Guid` is present in the System Table, and `Table` is not `NULL`, then the (Guid, Table) pair is updated with
+    /// the new `Table` value.
+    ///
+    /// - If `Guid` is present in the System Table, and `Table` is `NULL`, then the entry associated with `Guid` is removed
+    /// from the System Table.
+    ///
+    /// If an add, modify, or remove operation is completed, then `EFI_SUCCESS` is returned.
+    ///
+    /// **Note:** If there is not enough memory to perform an add operation, then `EFI_OUT_OF_RESOURCES` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The (`Guid`, `Table`) pair was added, updated, or removed. |
+    /// | `EFI_INVALID_PARAMETER` | `Guid` is `NULL`. |
+    /// | `EFI_NOT_FOUND` | An attempt was made to delete a nonexistent entry. |
+    /// | `EFI_OUT_OF_RESOURCES` | There is not enough memory available to complete the operation. |
+    pub InstallConfigurationTable: unsafe extern "efiapi" fn(
+        Guid: *mut EFI_GUID,
+        Table: *mut VOID,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
