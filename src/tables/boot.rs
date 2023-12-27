@@ -53,6 +53,13 @@ pub const EVT_NOTIFY_SIGNAL: UINT32 = 0x00000200;
 pub const EVT_SIGNAL_EXIT_BOOT_SERVICES: UINT32 = 0x00000201;
 pub const EVT_SIGNAL_VIRTUAL_ADDRESS_CHANGE: UINT32 = 0x60000202;
 
+pub const EFI_OPEN_PROTOCOL_BY_HANDLE_PROTOCOL: UINT32 = 0x00000001;
+pub const EFI_OPEN_PROTOCOL_GET_PROTOCOL: UINT32 = 0x00000002;
+pub const EFI_OPEN_PROTOCOL_TEST_PROTOCOL: UINT32 = 0x00000004;
+pub const EFI_OPEN_PROTOCOL_BY_CHILD_CONTROLLER: UINT32 = 0x00000008;
+pub const EFI_OPEN_PROTOCOL_BY_DRIVER: UINT32 = 0x00000010;
+pub const EFI_OPEN_PROTOCOL_EXCLUSIVE: UINT32 = 0x00000020;
+
 pub const EFI_EVENT_GROUP_EXIT_BOOT_SERVICES: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0x27ABF055,
@@ -1497,6 +1504,121 @@ pub struct EFI_BOOT_SERVICES {
         ControllerHandle: EFI_HANDLE,
         DriverImageHandle: EFI_HANDLE,
         ChildHandle: EFI_HANDLE,
+    ) -> EFI_STATUS,
+    /// Queries a handle to determine if it supports a specified protocol. If the protocol is supported by the handle,
+    /// it opens the protocol on behalf of the calling agent. This is an extended version of the EFI boot service
+    /// `EFI_BOOT_SERVICES.HandleProtocol()`.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Handle` | The handle for the protocol interface that is being opened. |
+    /// | **IN** `Protocol` | The published unique identifier of the protocol. It is the caller’s responsibility to pass in a valid GUID. |
+    /// | **OUT** `Interface` **OPTIONAL** | Supplies the address where a pointer to the corresponding `Protocol` `Interface` is returned. `NULL` will be returned in `*Interface` if a structure is not associated with `Protocol`. This parameter is optional, and will be ignored if `Attributes` is `EFI_OPEN_PROTOCOL_TEST_PROTOCOL`. |
+    /// | **IN** `AgentHandle` | The handle of the agent that is opening the protocol interface specified by `Protocol` and `Interface`. For agents that follow the UEFI Driver Model, this parameter is the handle that contains the `EFI_DRIVER_BINDING_PROTOCOL` instance that is produced by the UEFI driver that is opening the protocol interface. For UEFI applications, this is the image handle of the UEFI application that is opening the protocol interface. For applications that use `HandleProtocol()` to open a protocol interface, this parameter is the image handle of the EFI firmware. |
+    /// | **IN** `ControllerHandle` | If the agent that is opening a protocol is a driver that follows the UEFI Driver Model, then this parameter is the controller handle that requires the protocol interface. If the agent does not follow the UEFI Driver Model , then this parameter is optional and may be `NULL`. |
+    /// | **IN** `Attributes` | The open mode of the protocol interface specified by `Handle` and `Protocol`. |
+    ///
+    /// ## Description
+    ///
+    /// This function opens a protocol interface on the handle specified by `Handle` for the protocol specified by `Protocol`.
+    /// The first three parameters are the same as `EFI_BOOT_SERVICES.HandleProtocol()`. The only difference is that the
+    /// agent that is opening a protocol interface is tracked in an EFI’s internal handle database. The tracking is used'
+    /// by the UEFI Driver Model, and also used to determine if it is safe to uninstall or reinstall a protocol interface.
+    ///
+    /// The agent that is opening the protocol interface is specified by `AgentHandle`, `ControllerHandle`, and `Attributes`.
+    /// If the protocol interface can be opened, then `AgentHandle`, `ControllerHandle`, and `Attributes` are added to the
+    /// list of agents that are consuming the protocol interface specified by `Handle` and `Protocol`. In addition, the
+    /// protocol interface is returned in `Interface`, and `EFI_SUCCESS` is returned. If Attributes is `TEST_PROTOCOL`,
+    /// then `Interface` is optional, and can be `NULL`.
+    ///
+    /// There are a number of reasons that this function call can return an error. If an error is returned, then
+    /// `AgentHandle`, `ControllerHandle`, and `Attributes` are not added to the list of agents consuming the protocol
+    /// interface specified by `Handle` and `Protocol`. Interface is returned unmodified for all error conditions except
+    /// `EFI_UNSUPPORTED` and `EFI_ALREADY_STARTED`, `NULL` will be returned in `*Interface` when `EFI_UNSUPPORTED` and
+    /// `Attributes` is not `EFI_OPEN_PROTOCOL_TEST_PROTOCOL`, the protocol interface will be returned in `*Interface`
+    /// when `EFI_ALREADY_STARTED` is returned.
+    ///
+    /// The following is the list of conditions that must be checked before this function can return `EFI_SUCCESS`:
+    ///
+    /// - If `Protocol` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Interface` is `NULL` and `Attributes` is not `TEST_PROTOCOL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Handle` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Handle` does not support `Protocol`, then `EFI_UNSUPPORTED` is returned.
+    ///
+    /// - If `Attributes` is not a legal value, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Attributes` is `BY_CHILD_CONTROLLER`, `BY_DRIVER`, `EXCLUSIVE`, or `BY_DRIVER|EXCLUSIVE`, and `AgentHandle`
+    /// is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Attributes` is `BY_CHILD_CONTROLLER`, `BY_DRIVER`, or `BY_DRIVER|EXCLUSIVE`, and `ControllerHandle` is `NULL`,
+    /// then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// - If `Attributes` is `BY_CHILD_CONTROLLER` and `Handle` is identical to `ControllerHandle`, then `EFI_INVALID_PARAMETER`
+    /// is returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER`, `BY_DRIVER|EXCLUSIVE`, or `EXCLUSIVE`, and there are any items on the open list
+    /// of the protocol interface with an attribute of `EXCLUSIVE` or `BY_DRIVER|EXCLUSIVE`, then `EFI_ACCESS_DENIED` is
+    /// returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER`, and there are any items on the open list of the protocol interface with an
+    /// attribute of `BY_DRIVER`, and `AgentHandle` is the same agent handle in the open list item, then `EFI_ALREADY_STARTED`
+    /// is returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER`, and there are any items on the open list of the protocol interface with an
+    /// attribute of `BY_DRIVER`, and `AgentHandle` is different than the agent handle in the open list item, then
+    /// `EFI_ACCESS_DENIED` is returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER|EXCLUSIVE`, and there are any items on the open list of the protocol interface
+    /// with an attribute of `BY_DRIVER|EXCLUSIVE`, and `AgentHandle` is the same agent handle in the open list item, then
+    /// `EFI_ALREADY_STARTED` is returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER|EXCLUSIVE`, and there are any items on the open list of the protocol interface
+    /// with an attribute of `BY_DRIVER|EXCLUSIVE`, and `AgentHandle` is different than the agent handle in the open list
+    /// item, then `EFI_ACCESS_DENIED` is returned.
+    ///
+    /// - If `Attributes` is `BY_DRIVER|EXCLUSIVE` or `EXCLUSIVE`, and there is an item on the open list of the protocol
+    /// interface with an attribute of `BY_DRIVER`, then the boot service `EFI_BOOT_SERVICES.DisconnectController()` is
+    /// called for the driver on the open list. If there is an item in the open list of the protocol interface with an
+    /// attribute of `BY_DRIVER` remaining after the `DisconnectController()` call has been made, `EFI_ACCESS_DENIED` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | An item was added to the open list for the protocol interface, and the protocol interface was returned in Interface. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Interface` is `NULL`, and `Attributes` is not `TEST_PROTOCOL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
+    /// | `EFI_UNSUPPORTED` | `Handle` does not support `Protocol`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is not a legal value. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_CHILD_CONTROLLER` and `AgentHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_DRIVER` and `AgentHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_DRIVER|EXCLUSIVE` and `AgentHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `EXCLUSIVE` and `AgentHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_CHILD_CONTROLLER` and `ControllerHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_DRIVER` and `ControllerHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_DRIVER|EXCLUSIVE` and `ControllerHandle` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Attributes` is `BY_CHILD_CONTROLLER` and `Handle` is identical to `ControllerHandle`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `BY_DRIVER` and there is an item on the open list with an attribute of `BY_DRIVER|EXCLUSIVE` or `EXCLUSIVE`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `BY_DRIVER|EXCLUSIVE` and there is an item on the open list with an attribute of `EXCLUSIVE`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `EXCLUSIVE` and there is an item on the open list with an attribute of `BY_DRIVER|EXCLUSIVE` or `EXCLUSIVE`. |
+    /// | `EFI_ALREADY_STARTED` | `Attributes` is `BY_DRIVER` and there is an item on the open list with an attribute of `BY_DRIVER` whose agent handle is the same as `AgentHandle`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `BY_DRIVER` and there is an item on the open list with an attribute of `BY_DRIVER` whose agent handle is different than `AgentHandle`. |
+    /// | `EFI_ALREADY_STARTED` | `Attributes` is `BY_DRIVER|EXCLUSIVE` and there is an item on the open list with an attribute of `BY_DRIVER|EXCLUSIVE` whose agent handle is the same as `AgentHandle`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `BY_DRIVER|EXCLUSIVE` and there is an item on the open list with an attribute of `BY_DRIVER|EXCLUSIVE` whose agent handle is different than `AgentHandle`. |
+    /// | `EFI_ACCESS_DENIED` | `Attributes` is `BY_DRIVER|EXCLUSIVE` or `EXCLUSIVE` and there are items in the open list with an attribute of `BY_DRIVER` that could not be removed when `EFI_BOOT_SERVICES.DisconnectController()` was called for that open item. |
+    pub OpenProtocol: unsafe extern "efiapi" fn(
+        Handle: EFI_HANDLE,
+        Protocol: *mut EFI_GUID,
+        Interface: *mut *mut VOID,
+        AgentHandle: EFI_HANDLE,
+        ControllerHandle: EFI_HANDLE,
+        Attributes: UINT32,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
