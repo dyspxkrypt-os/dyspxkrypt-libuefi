@@ -19,7 +19,10 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINT8, UINTN, VOID};
+use crate::types::{
+    BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_HANDLE, EFI_STATUS, EFI_TPL, UINT32, UINT64, UINT8,
+    UINTN, VOID,
+};
 
 pub const EFI_BOOT_SERVICES_SIGNATURE: UINT64 = 0x56524553544f4F42;
 pub const EFI_BOOT_SERVICES_REVISION: UINT32 = EFI_SPECIFICATION_VERSION;
@@ -1873,10 +1876,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | `EFI_OUT_OF_RESOURCES` | There was not enough memory in pool to install all the protocols. |
     /// | `EFI_INVALID_PARAMETER` | `Handle` is `NULL`. |
     /// | `EFI_INVALID_PARAMETER` | `Protocol` is already installed on the handle specified by `Handle`. |
-    pub InstallMultipleProtocolInterfaces: unsafe extern "efiapi" fn(
-        Handle: *mut EFI_HANDLE,
-        ...
-    ) -> EFI_STATUS,
+    pub InstallMultipleProtocolInterfaces:
+        unsafe extern "efiapi" fn(Handle: *mut EFI_HANDLE, ...) -> EFI_STATUS,
     /// Removes one or more protocol interfaces into the boot services environment.
     ///
     /// ## Parameters
@@ -1904,10 +1905,8 @@ pub struct EFI_BOOT_SERVICES {
     /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | All the protocol interfaces were installed. |
     /// | `EFI_ALREADY_STARTED` | A Device Path Protocol instance was passed in that is already present in the handle database. |
-    pub UninstallMultipleProtocolInterfaces: unsafe extern "efiapi" fn(
-        Handle: *mut EFI_HANDLE,
-        ...
-    ) -> EFI_STATUS,
+    pub UninstallMultipleProtocolInterfaces:
+        unsafe extern "efiapi" fn(Handle: *mut EFI_HANDLE, ...) -> EFI_STATUS,
     /// Computes and returns a 32-bit CRC for a data buffer.
     ///
     /// ## Parameters
@@ -1978,11 +1977,8 @@ pub struct EFI_BOOT_SERVICES {
     /// ## Status Codes Returned
     ///
     /// None.
-    pub CopyMem: unsafe extern "efiapi" fn(
-        Destination: *mut VOID,
-        Source: *mut VOID,
-        Length: UINTN,
-    ) -> VOID,
+    pub CopyMem:
+        unsafe extern "efiapi" fn(Destination: *mut VOID, Source: *mut VOID, Length: UINTN) -> VOID,
     /// The `SetMem()` function fills a buffer with a specified value.
     ///
     /// ## Parameters
@@ -2002,11 +1998,7 @@ pub struct EFI_BOOT_SERVICES {
     /// ## Status Codes Returned
     ///
     /// None.
-    pub SetMem: unsafe extern "efiapi" fn(
-        Buffer: *mut VOID,
-        Size: UINTN,
-        Value: UINT8,
-    ) -> VOID,
+    pub SetMem: unsafe extern "efiapi" fn(Buffer: *mut VOID, Size: UINTN, Value: UINT8) -> VOID,
     /// Creates an event in a group.
     ///
     /// ## Parameters
