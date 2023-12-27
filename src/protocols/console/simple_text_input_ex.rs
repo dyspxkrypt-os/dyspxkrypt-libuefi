@@ -17,7 +17,7 @@
  */
 
 use crate::protocols::console::simple_text_input::EFI_INPUT_KEY;
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT8};
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT8, VOID};
 
 pub const EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -164,6 +164,35 @@ pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         KeyToggleState: *mut EFI_KEY_TOGGLE_STATE,
     ) -> EFI_STATUS,
+    /// Register a notification function for a particular keystroke for the input device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL` instance. |
+    /// | **IN** `KeyData` | A pointer to a buffer that is filled in with the keystroke information for the key that was pressed. If `KeyData.Key`, `KeyData.KeyState.KeyToggleState` and `KeyData.KeyState.KeyShiftState` are `0`, then any incomplete keystroke will trigger a notification of the `KeyNotificationFunction`. |
+    /// | **IN** `KeyNotificationFunction` | Points to the function to be called when the key sequence is typed specified by `KeyData`. This notification function should be called at `<= TPL_CALLBACK`. |
+    /// | **OUT** `NotifyHandle` | Points to the unique handle assigned to the registered notification. |
+    ///
+    /// ## Description
+    ///
+    /// The `RegisterKeystrokeNotify()` function registers a function which will be called when a
+    /// specified keystroke will occur. The keystroke being specified can be for any combination of
+    /// `KeyData.Key` or `KeyData.KeyState` information.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Key notify was registered successfully. |
+    /// | `EFI_OUT_OF_RESOURCES` | Unable to allocate necessary data structures. |
+    pub RegisterKeyNotify: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
+        KeyData: *mut EFI_KEY_DATA,
+        KeyNotificationFunction: EFI_KEY_NOTIFY_FUNCTION,
+        NotifyHandle: *mut *mut VOID,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
@@ -185,3 +214,7 @@ pub struct EFI_KEY_STATE {
 }
 
 pub type EFI_KEY_TOGGLE_STATE = UINT8;
+
+pub type EFI_KEY_NOTIFY_FUNCTION = unsafe extern "efiapi" fn(
+    KeyData: *mut EFI_KEY_DATA,
+) -> EFI_STATUS;
