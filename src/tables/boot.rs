@@ -1911,6 +1911,40 @@ pub struct EFI_BOOT_SERVICES {
         Handle: *mut EFI_HANDLE,
         ...
     ) -> EFI_STATUS,
+    /// Computes and returns a 32-bit CRC for a data buffer.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Data` | A pointer to the buffer on which the 32-bit CRC is to be computed. |
+    /// | **IN** `DataSize` | The number of bytes in the buffer `Data`. |
+    /// | **OUT** `Handle` | The 32-bit CRC that was computed for the data buffer specified by `Data` and `DataSize`. |
+    ///
+    /// ## Description
+    ///
+    /// This function computes the 32-bit CRC for the data buffer specified by `Data` and `DataSize`. If the 32-bit CRC
+    /// is computed, then it is returned in `Crc32` and `EFI_SUCCESS` is returned.
+    ///
+    /// If `Data` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `Crc32` is `NULL`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// If `DataSize` is `0`, then `EFI_INVALID_PARAMETER` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The 32-bit CRC was computed for the data buffer and returned in `Crc32`. |
+    /// | `EFI_INVALID_PARAMETER` | `Data` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `Crc32` is `NULL`. |
+    /// | `EFI_INVALID_PARAMETER` | `DataSize` is `0`. |
+    pub CalculateCrc32: unsafe extern "efiapi" fn(
+        Data: *mut VOID,
+        DataSize: UINTN,
+        Crc32: *mut UINT32,
+    ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
     /// ## Parameters
