@@ -16,6 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::system::EFI_SPECIFICATION_VERSION;
 use crate::tables::EFI_TABLE_HEADER;
 use crate::types::{
@@ -904,6 +905,45 @@ pub struct EFI_BOOT_SERVICES {
         SearchKey: *mut VOID,
         BufferSize: UINTN,
         Buffer: *mut EFI_HANDLE,
+    ) -> EFI_STATUS,
+    /// Locates the handle to a device on the device path that supports the specified protocol.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter       | Description                                                                                                              |
+    /// | --------------- | ------------------------------------------------------------------------------------------------------------------------ |
+    /// | **IN** `Protocol` | The protocol to search for. |
+    /// | **IN OUT** `DevicePath` | On input, a pointer to a pointer to the device path. On output, the device path pointer is modified to point to the remaining part of the device path–that is, when the function finds the closest handle, it splits the device path into two parts, stripping off the front part, and returning the remaining portion. |
+    /// | **OUT** `Device` | A pointer to the returned device handle. |
+    ///
+    /// ## Description
+    ///
+    /// The `LocateDevicePath()` function locates all devices on DevicePath that support Protocol and returns the handle
+    /// to the device that is closest to `DevicePath`. `DevicePath` is advanced over the device path nodes that were matched.
+    ///
+    /// This function is useful for locating the proper instance of a protocol interface to use from a logical parent device
+    /// driver. For example, a target device driver may issue the request with its own device path and locate the interfaces
+    /// to perform I/O on its bus. It can also be used with a device path that contains a file path to strip off the file
+    /// system portion of the device path, leaving the file path and handle to the file system driver needed to access the
+    /// file.
+    ///
+    /// If the handle for `DevicePath` supports the protocol (a direct match), the resulting device path is advanced to
+    /// the device path terminator node. If `DevicePath` is a multi-instance device path, the function will operate on
+    /// the first instance.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code             | Description                                                                                                                                                                                                 |
+    /// | ----------------------- | ----------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The resulting handle was returned. |
+    /// | `EFI_NOT_FOUND` | No handles match the search. |
+    /// | `EFI_INVALID_PARAMETER` | `Protocol` is NULL |
+    /// | `EFI_INVALID_PARAMETER` | `DevicePath` is NULL. |
+    /// | `EFI_INVALID_PARAMETER` | A handle matched the search and `Device` is NULL. |
+    pub LocateDevicePath: unsafe extern "efiapi" fn(
+        Protocol: *mut EFI_GUID,
+        DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
+        Device: *mut EFI_HANDLE,
     ) -> EFI_STATUS,
     /// Creates an event in a group.
     ///
