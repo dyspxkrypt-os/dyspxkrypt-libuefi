@@ -193,6 +193,30 @@ pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
         KeyNotificationFunction: EFI_KEY_NOTIFY_FUNCTION,
         NotifyHandle: *mut *mut VOID,
     ) -> EFI_STATUS,
+    /// Remove the notification that was previously registered.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL` instance. |
+    /// | **IN** `NotificationHandle` | The handle of the notification function being unregistered. |
+    ///
+    /// ## Description
+    ///
+    /// The `UnregisterKeystrokeNotify()` function removes the notification which was previously
+    /// registered.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Key notify was unregistered successfully. |
+    /// | `EFI_INVALID_PARAMETER` | The `NotificationHandle` is invalid. |
+    pub UnregisterKeyNotify: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
+        NotificationHandle: *mut VOID,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
