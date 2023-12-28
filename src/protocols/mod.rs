@@ -22,7 +22,13 @@ pub mod device_path;
 #[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "image", feature = "image-full"))))]
 pub mod image;
-#[cfg(any(feature = "media-file", feature = "media-full"))]
-#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+#[cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full"))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full")))
+)]
 pub mod media;

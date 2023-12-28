@@ -28,6 +28,9 @@ pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
 };
 
 pub const EFI_SERIAL_IO_PROTOCOL_REVISION: UINT32 = 0x00010000;
+#[cfg(feature = "console-serial-v1p1")]
+#[cfg_attr(doc, doc(cfg(feature = "console-serial-v1p1")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "console-serial-v1p1")))]
 pub const EFI_SERIAL_IO_PROTOCOL_REVISION1p1: UINT32 = 0x00010001;
 
 pub const EFI_SERIAL_CLEAR_TO_SEND: UINT32 = 0x0010;
@@ -264,6 +267,9 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     /// Pointer to a GUID identifying the device connected to the serial port. This field is `NULL` when the protocol is
     /// installed by the serial port driver and may be populated by a platform driver for a serial port with a known device
     /// attached. The field will remain `NULL` if there is no platform serial device identification information available.
+    #[cfg(feature = "console-serial-v1p1")]
+    #[cfg_attr(doc, doc(cfg(feature = "console-serial-v1p1")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "console-serial-v1p1")))]
     pub DeviceTypeGuid: *mut EFI_GUID,
 }
 
