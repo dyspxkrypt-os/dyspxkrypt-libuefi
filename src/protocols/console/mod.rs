@@ -37,11 +37,11 @@ pub mod serial_io;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
-pub mod simple_text_input_ex;
+pub mod simple_pointer;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
-pub mod simple_pointer;
+pub mod simple_text_input_ex;
 
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
@@ -58,8 +58,8 @@ pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
-pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
+pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
-pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
+pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
