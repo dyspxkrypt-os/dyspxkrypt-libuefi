@@ -19,4 +19,6 @@
 pub mod console;
 pub mod device_path;
 #[cfg(feature = "image")]
+#[cfg_attr(doc, doc(cfg(feature = "image")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "image")))]
 pub mod image;
