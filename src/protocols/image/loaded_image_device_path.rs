@@ -16,13 +16,17 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod console;
-pub mod device_path;
-#[cfg(feature = "image")]
-#[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "image", feature = "image-full"))))]
-pub mod image;
-#[cfg(any(feature = "media-file", feature = "media-full"))]
-#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
-pub mod media;
+use crate::types::EFI_GUID;
+
+/// When installed, the Loaded Image Device Path Protocol specifies the device path that was used when a PE/COFF image
+/// was loaded through the EFI Boot Service `LoadImage()`.
+pub use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL as EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL;
+
+pub const EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0xBC62157E,
+        0x3E33,
+        0x4FEC,
+        [0x99, 0x20, 0x2D, 0x3B, 0x36, 0xD7, 0x50, 0xDF],
+    )
+};

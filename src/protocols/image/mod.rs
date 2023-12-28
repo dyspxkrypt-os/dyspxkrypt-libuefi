@@ -17,3 +17,19 @@
  */
 
 pub mod loaded_image;
+#[cfg(feature = "image-dev-path")]
+#[cfg_attr(doc, doc(cfg(any(feature = "image-dev-path", feature = "image-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "image-dev-path", feature = "image-full")))
+)]
+pub mod loaded_image_device_path;
+
+pub use loaded_image::EFI_LOADED_IMAGE_PROTOCOL;
+#[cfg(feature = "image-dev-path")]
+#[cfg_attr(doc, doc(cfg(any(feature = "image-dev-path", feature = "image-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "image-dev-path", feature = "image-full")))
+)]
+pub use loaded_image_device_path::EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL;
