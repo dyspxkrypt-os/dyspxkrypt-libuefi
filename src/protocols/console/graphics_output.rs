@@ -16,24 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub mod simple_text_input;
-pub mod simple_text_output;
+use crate::types::EFI_GUID;
 
-pub use simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
-pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
+pub const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x9042A9DE,
+        0x23DC,
+        0x4A38,
+        [0x96, 0xFB, 0x7A, 0xDE, 0xD0, 0x80, 0x51, 0x6A],
+    )
+};
 
-cfg_if::cfg_if! {
-    if #[cfg(feature = "console-full")] {
-        pub mod absolute_pointer;
-        pub mod graphics_output;
-        pub mod serial_io;
-        pub mod simple_text_input_ex;
-        pub mod simple_pointer;
-
-        pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
-        pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
-        pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
-        pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
-    } else {
-    }
-}
+/// Provides a basic abstraction to set video modes and copy pixels to and from the graphics
+/// controller’s frame buffer. The linear address of the hardware frame buffer is also exposed so
+/// software can write directly to the video hardware.
+pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL;
