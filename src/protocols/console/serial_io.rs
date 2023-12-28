@@ -61,6 +61,25 @@ pub enum EFI_STOP_BITS_TYPE {
 }
 
 /// This protocol is used to communicate with any type of character-based I/O device.
+///
+/// The Serial I/O protocol is used to communicate with UART-style serial devices. These can be standard UART serial
+/// ports in PC-AT systems, serial ports attached to a USB interface, or potentially any character-based I/O device.
+///
+/// The Serial I/O protocol can control byte I/O style devices from a generic device, to a device with features such as
+/// a UART. As such many of the serial I/O features are optional to allow for the case of devices that do not have UART
+/// controls. Each of these options is called out in the specific serial I/O functions.
+///
+/// The default attributes for all UART-style serial device interfaces are: 115,200 baud, a 1 byte receive FIFO, a 1,000,000
+/// microsecond timeout per character, no parity, 8 data bits, and 1 stop bit. Flow control is the responsibility of the
+/// software that uses the protocol. Hardware flow control can be implemented through the use of the
+/// `EFI_SERIAL_IO_PROTOCOL.GetControl()` and `EFI_SERIAL_IO_PROTOCOL.SetControl()` functions to monitor and assert the
+/// flow control signals. The XON/XOFF flow control algorithm can be implemented in software by inserting XON and XOFF
+/// characters into the serial data stream as required.
+///
+/// Special care must be taken if a significant amount of data is going to be read from a serial device. Since UEFI
+/// drivers are polled mode drivers, characters received on a serial device might be missed. It is the responsibility
+/// of the software that uses the protocol to check for new data often enough to guarantee that no characters will be
+/// missed. The required polling frequency depends on the baud rate of the connection and the depth of the receive FIFO.
 #[repr(C)]
 pub struct EFI_SERIAL_IO_PROTOCOL {
     /// The revision to which the `EFI_SERIAL_IO_PROTOCOL` adheres. All future revisions must be

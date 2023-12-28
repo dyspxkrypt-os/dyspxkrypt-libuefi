@@ -72,9 +72,13 @@ pub enum EFI_GRAPHICS_OUTPUT_BLT_OPERATION {
     EfiGraphicsOutputBltOperationMax,
 }
 
-/// Provides a basic abstraction to set video modes and copy pixels to and from the graphics
+/// This protocol provides a basic abstraction to set video modes and copy pixels to and from the graphics
 /// controller’s frame buffer. The linear address of the hardware frame buffer is also exposed so
 /// software can write directly to the video hardware.
+///
+/// The `EFI_GRAPHICS_OUTPUT_PROTOCOL` provides a software abstraction to allow pixels to be drawn directly to the frame
+/// buffer. The `EFI_GRAPHICS_OUTPUT_PROTOCOL` is designed to be lightweight and to support the basic needs of graphics
+/// output prior to Operating System boot.
 #[repr(C)]
 pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
     /// Returns information for an available graphics mode that the graphics device and the set of

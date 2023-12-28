@@ -49,6 +49,9 @@ pub const EFI_CAPS_LOCK_ACTIVE: UINT8 = 0x04;
 /// This protocol is used to obtain input from the `ConsoleIn` device. The EFI specification requires
 /// that the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` supports the same languages as the corresponding
 /// `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
+///
+/// The `EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL` is used on the `ConsoleIn` device. It is an extension to the Simple Text Input
+/// protocol which allows a variety of extended shift state information to be returned.
 #[repr(C)]
 pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
     /// Resets the input device hardware.

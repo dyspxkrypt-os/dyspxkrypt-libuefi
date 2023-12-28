@@ -30,6 +30,12 @@ pub const EFI_ABSOLUTE_POINTER_PROTOCOL_GUID: EFI_GUID = unsafe {
 pub const EFI_ABSP_SupportsAltActive: UINT32 = 0x00000001;
 pub const EFI_ABSP_SupportsPressureAsZ: UINT32 = 0x00000002;
 
+/// This protocol provides services that allow information about an absolute pointer device to be retrieved.
+///
+/// The `EFI_ABSOLUTE_POINTER_PROTOCOL` provides a set of services for a pointer device that can be used as an input
+/// device from an application written to this specification. The services include the ability to reset the pointer
+/// device, retrieve the state of the pointer device, and retrieve the capabilities of the pointer device. In addition
+/// certain data items describing the device are provided.
 #[repr(C)]
 pub struct EFI_ABSOLUTE_POINTER_PROTOCOL {
     /// Resets the pointer device hardware.

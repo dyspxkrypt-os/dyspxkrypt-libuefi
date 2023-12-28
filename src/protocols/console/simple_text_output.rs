@@ -114,6 +114,9 @@ pub const EFI_BACKGROUND_MAGENTA: UINTN = 0x50;
 pub const EFI_BACKGROUND_BROWN: UINTN = 0x60;
 pub const EFI_BACKGROUND_LIGHTGRAY: UINTN = 0x70;
 
+/// The Simple Text Output protocol defines the minimum requirements for a text-based `ConsoleOut` device. The EFI specification
+/// requires that the `EFI_SIMPLE_TEXT_INPUT_PROTOCOL` support the same languages as the corresponding `EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL`.
+///
 /// This protocol is used to control text-based output devices.
 ///
 /// The `SIMPLE_TEXT_OUTPUT` protocol is used to control text-based output devices. It is the minimum

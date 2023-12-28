@@ -15,3 +15,8 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#[cfg(any(feature = "media-file"))]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+pub mod load_file;

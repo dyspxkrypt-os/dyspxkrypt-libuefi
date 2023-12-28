@@ -28,6 +28,10 @@ pub const EFI_SIMPLE_POINTER_PROTOCOL_GUID: EFI_GUID = unsafe {
 };
 
 /// This protocol provides services that allow information about a pointer device to be retrieved.
+///
+/// The `EFI_SIMPLE_POINTER_PROTOCOL` provides a set of services for a pointer device that can use used as an input
+/// device from an application written to this specification. The services include the ability to reset the pointer
+/// device, retrieve get the state of the pointer device, and retrieve the capabilities of the pointer device.
 #[repr(C)]
 pub struct EFI_SIMPLE_POINTER_PROTOCOL {
     /// Resets the pointer device hardware.
