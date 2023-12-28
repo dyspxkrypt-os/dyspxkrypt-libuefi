@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, UINT32, UINT64, UINT8};
+use crate::types::{EFI_GUID, EFI_STATUS, UINT32, UINT64, UINT8, UINTN, VOID};
 
 pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -183,5 +183,33 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     pub GetControl: unsafe extern "efiapi" fn(
         This: *mut EFI_SERIAL_IO_PROTOCOL,
         Control: *mut UINT32,
+    ) -> EFI_STATUS,
+    /// Writes data to a serial device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **IN OUT** `BufferSize` | On input, the size of the Buffer. On output, the amount of data actually written. |
+    /// | **IN** `Buffer` | The buffer of data to write. |
+    ///
+    /// ## Description
+    ///
+    /// The `Write()` function writes the specified number of bytes to a serial device. If a time out error occurs while
+    /// data is being sent to the serial port, transmission of this buffer will terminate, and `EFI_TIMEOUT` will be
+    /// returned. In all cases the number of bytes actually written to the serial device is returned in `BufferSize`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was written. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_TIMEOUT` | The data write was stopped due to a timeout. |
+    pub Write: unsafe extern "efiapi" fn(
+        This: *mut EFI_SERIAL_IO_PROTOCOL,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
     ) -> EFI_STATUS,
 }
