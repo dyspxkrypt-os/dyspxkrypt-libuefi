@@ -96,6 +96,38 @@ pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
         SizeOfInfo: *mut UINTN,
         Info: *mut *mut EFI_GRAPHICS_OUTPUT_MODE_INFORMATION,
     ) -> EFI_STATUS,
+    /// Set the video device into the specified mode and clears the visible portions of the output
+    /// display to black.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **IN** `ModeNumber` | Abstraction that defines the current video mode. |
+    ///
+    /// ## Description
+    ///
+    /// This `SetMode()` function sets the graphics device and the set of active video output devices
+    /// to the video mode specified by `ModeNumber`. If `ModeNumber` is not supported `EFI_UNSUPPORTED`
+    /// is returned.
+    ///
+    /// If a device error occurs while attempting to set the video mode, then `EFI_DEVICE_ERROR` is
+    /// returned. Otherwise, the graphics device is set to the requested geometry, the set of active
+    /// output devices are set to the requested geometry, the visible portion of the hardware frame
+    /// buffer is cleared to black, and `EFI_SUCCESS` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The graphics mode specified by `ModeNumber` was selected. |
+    /// | `EFI_DEVICE_ERROR` | The device had an error and could not complete the request. |
+    /// | `EFI_UNSUPPORTED` | `ModeNumber` is not supported by this device. |
+    pub SetMode: unsafe extern "efiapi" fn(
+        This: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL,
+        ModeNumber: UINT32,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
