@@ -161,4 +161,27 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     /// | `EFI_DEVICE_ERROR` | The serial device is not functioning correctly. |
     pub SetControl:
         unsafe extern "efiapi" fn(This: *mut EFI_SERIAL_IO_PROTOCOL, Control: UINT32) -> EFI_STATUS,
+    /// Retrieves the status of the control bits on a serial device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **OUT** `Control` | A pointer to return the current control signals from the serial device. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetControl()` function retrieves the status of the control bits on a serial device.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The control bits were read from the serial device. |
+    /// | `EFI_DEVICE_ERROR` | The serial device is not functioning correctly. |
+    pub GetControl: unsafe extern "efiapi" fn(
+        This: *mut EFI_SERIAL_IO_PROTOCOL,
+        Control: *mut UINT32,
+    ) -> EFI_STATUS,
 }
