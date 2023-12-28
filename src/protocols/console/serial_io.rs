@@ -191,7 +191,7 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     /// | Parameter                     | Description                                                                                                |
     /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
     /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
-    /// | **IN OUT** `BufferSize` | On input, the size of the Buffer. On output, the amount of data actually written. |
+    /// | **IN OUT** `BufferSize` | On input, the size of the `Buffer`. On output, the amount of data actually written. |
     /// | **IN** `Buffer` | The buffer of data to write. |
     ///
     /// ## Description
@@ -212,4 +212,49 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Reads data from a serial device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **IN OUT** `BufferSize` | On input, the size of the `Buffer`. On output, the amount of data returned in `Buffer`. |
+    /// | **IN** `Buffer` | The buffer to return the data into. |
+    ///
+    /// ## Description
+    ///
+    /// The `Read()` function reads a specified number of bytes from a serial device. If a time out error or an overrun
+    /// error is detected while data is being read from the serial device, then no more characters will be read, and an
+    /// error will be returned. In all cases the number of bytes actually read is returned in `BufferSize`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was read. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_TIMEOUT` | The operation was stopped due to a timeout or overrun. |
+    pub Read: unsafe extern "efiapi" fn(
+        This: *mut EFI_SERIAL_IO_PROTOCOL,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    /// Pointer to `SERIAL_IO_MODE` data.
+    pub Mode: *mut SERIAL_IO_MODE,
+    /// Pointer to a GUID identifying the device connected to the serial port. This field is `NULL` when the protocol is
+    /// installed by the serial port driver and may be populated by a platform driver for a serial port with a known device
+    /// attached. The field will remain `NULL` if there is no platform serial device identification information available.
+    pub DeviceTypeGuid: *mut EFI_GUID,
+}
+
+#[repr(C)]
+pub struct SERIAL_IO_MODE {
+    pub ControlMask: UINT32,
+    pub Timeout: UINT32,
+    pub BaudRate: UINT64,
+    pub ReceiveFifoDepth: UINT32,
+    pub DataBits: UINT32,
+    pub Parity: UINT32,
+    pub StopBits: UINT32,
 }
