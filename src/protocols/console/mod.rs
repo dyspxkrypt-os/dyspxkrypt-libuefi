@@ -50,7 +50,7 @@ pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
-pub use graphics_output::EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE;
+pub use graphics_output::EFI_GRAPHICS_OUTPUT_PROTOCOL;
 #[cfg(feature = "console-full")]
 #[cfg_attr(doc, doc(cfg(feature = "console-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "console-full")))]
