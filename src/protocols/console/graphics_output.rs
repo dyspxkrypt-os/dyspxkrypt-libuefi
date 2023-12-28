@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, UINT32, UINTN};
+use crate::tables::boot::EFI_PHYSICAL_ADDRESS;
+use crate::types::{EFI_GUID, EFI_STATUS, UINT32, UINT8, UINTN};
 
 pub const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -44,7 +45,31 @@ pub enum EFI_GRAPHICS_PIXEL_FORMAT {
     /// This mode does not support a physical frame buffer.
     PixelBltOnly,
     /// Valid `EFI_GRAPHICS_PIXEL_FORMAT` enum values are less than this value.
-    PixelFormatMax
+    PixelFormatMax,
+}
+
+#[repr(C)]
+pub enum EFI_GRAPHICS_OUTPUT_BLT_OPERATION {
+    /// Write data from the `BltBuffer` pixel `(0, 0)` directly to every pixel of the video display
+    /// rectangle `(DestinationX, DestinationY)` `(DestinationX + Width, DestinationY + Height)`. Only
+    /// one pixel will be used from the `BltBuffer`. `Delta` is NOT used.
+    EfiBltVideoFill,
+    /// Read data from the video display rectangle `(SourceX, SourceY)` `(SourceX + Width, SourceY + Height)`
+    /// and place it in the `BltBuffer` rectangle `(DestinationX, DestinationY)` `(DestinationX + Width, DestinationY + Height)`.
+    /// If `DestinationX` or `DestinationY` is not zero then `Delta` must be set to the length in bytes
+    /// of a row in the `BltBuffer`.
+    EfiBltVideoToBltBuffer,
+    /// Write data from the `BltBuffer` rectangle `(SourceX, SourceY)` `(SourceX + Width, SourceY + Height)`
+    /// directly to the video display rectangle `(DestinationX, DestinationY)` `(DestinationX + Width, DestinationY + Height)`.
+    /// If `SourceX` or `SourceY` is not zero then `Delta` must be set to the length in bytes of a
+    /// row in the `BltBuffer`.
+    EfiBltBufferToVideo,
+    /// Copy from the video display rectangle `(SourceX, SourceY)` `(SourceX + Width, SourceY + Height)`
+    /// to the video display rectangle `(DestinationX, DestinationY)` `(DestinationX + Width, DestinationY + Height)`.
+    /// The `BltBuffer` and `Delta` are not used in this mode. There is no limitation on the overlapping
+    /// of the source and destination rectangles.
+    EfiBltVideoToVideo,
+    EfiGraphicsOutputBltOperationMax,
 }
 
 /// Provides a basic abstraction to set video modes and copy pixels to and from the graphics
@@ -128,6 +153,70 @@ pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
         This: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL,
         ModeNumber: UINT32,
     ) -> EFI_STATUS,
+    /// Blt a rectangle of pixels on the graphics screen. Blt stands for Block Transfer.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **IN** `BltBuffer` | The data to transfer to the graphics screen. Size is at least `Width*Height*sizeof(EFI_GRAPHICS_OUTPUT_BLT_PIXEL)`. |
+    /// | **IN** `BltOperation` | The operation to perform when copying `BltBuffer` on to the graphics screen. |
+    /// | **IN** `SourceX`, `SourceY` | The X and Y coordinates of the source for the `BltOperation`. The origin of the screen is `0, 0` and that is the upper left-hand corner of the screen. `SourceY` The Y coordinate of the source for the `BltOperation`. |
+    /// | **IN** `DestinationX`, `DestinationY` | The X and Y coordinates of the destination for the `BltOperation`. The origin of the screen is `0, 0` and that is the upper left-hand corner of the screen. |
+    /// | **IN** `Width` | The width of a rectangle in the blt rectangle in pixels. Each pixel is represented by an `EFI_GRAPHICS_OUTPUT_BLT_PIXEL` element. |
+    /// | **IN** `Height` | The height of a rectangle in the blt rectangle in pixels. Each pixel is represented by an `EFI_GRAPHICS_OUTPUT_BLT_PIXEL` element. |
+    /// | **IN** `Delta` | Not used for `EfiBltVideoFill` or the `EfiBltVideoToVideo` operation. If a `Delta` of zero is used, the entire `BltBuffer` is being operated on. If a sub-rectangle of the `BltBuffer` is being used then `Delta` represents the number of bytes in a row of the `BltBuffer`. |
+    ///
+    /// ## Description
+    ///
+    /// The `Blt()` function is used to draw the `BltBuffer` rectangle onto the video screen.
+    ///
+    /// The `BltBuffer` represents a rectangle of `Height` by `Width` pixels that will be drawn on
+    /// the graphics screen using the operation specified by `BltOperation`. The `Delta` value can be
+    /// used to enable the `BltOperation` to be performed on a sub-rectangle of the `BltBuffer`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | `BltBuffer` was drawn to the graphics screen. |
+    /// | `EFI_INVALID_PARAMETER` | `BltOperation` is not valid. |
+    /// | `EFI_DEVICE_ERROR` | The device had an error and could not complete the request. |
+    pub Blt: unsafe extern "efiapi" fn(
+        This: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL,
+        BltBuffer: *mut EFI_GRAPHICS_OUTPUT_BLT_PIXEL,
+        BltOperation: EFI_GRAPHICS_OUTPUT_BLT_OPERATION,
+        SourceX: UINTN,
+        SourceY: UINTN,
+        DestinationX: UINTN,
+        DestinationY: UINTN,
+        Width: UINTN,
+        Height: UINTN,
+        Delta: UINTN,
+    ) -> EFI_STATUS,
+    /// Pointer to `EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE` data.
+    pub Mode: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE,
+}
+
+#[repr(C)]
+pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE {
+    /// The number of modes supported by `QueryMode()` and `SetMode()`.
+    pub MaxMode: UINT32,
+    /// Current `Mode` of the graphics device. Valid mode numbers are `0` to `MaxMode-1`.
+    pub Mode: UINT32,
+    /// Pointer to read-only `EFI_GRAPHICS_OUTPUT_MODE_INFORMATION` data.
+    pub Info: *mut EFI_GRAPHICS_OUTPUT_MODE_INFORMATION,
+    /// Size of `Info` structure in bytes. Future versions of this specification may increase the
+    /// size of the `EFI_GRAPHICS_OUTPUT_MODE_INFORMATION` data.
+    pub SizeOfInfo: UINTN,
+    /// Base address of graphics linear frame buffer. `Info` contains information required to allow
+    /// software to draw directly to the frame buffer without using `Blt()`. Offset zero in
+    /// `FrameBufferBase` represents the upper left pixel of the display.
+    pub FrameBufferBase: EFI_PHYSICAL_ADDRESS,
+    /// Amount of frame buffer needed to support the active mode as defined by
+    /// `PixelsPerScanLine` x `VerticalResolution` x `PixelElementSize`.
+    pub FrameBufferSize: UINTN,
 }
 
 #[repr(C)]
@@ -165,4 +254,25 @@ pub struct EFI_PIXEL_BITMASK {
     pub GreenMask: UINT32,
     pub BlueMask: UINT32,
     pub ReservedMask: UINT32,
+}
+
+#[repr(C)]
+pub struct EFI_GRAPHICS_OUTPUT_BLT_PIXEL {
+    pub Blue: UINT8,
+    pub Green: UINT8,
+    pub Red: UINT8,
+    #[doc(hidden)]
+    Reserved: UINT8,
+}
+
+impl EFI_GRAPHICS_OUTPUT_BLT_PIXEL {
+    /// Construct a new `EFI_GRAPHICS_OUTPUT_BLT_PIXEL`.
+    pub fn new(Blue: UINT8, Green: UINT8, Red: UINT8) -> Self {
+        Self {
+            Blue,
+            Green,
+            Red,
+            Reserved: 0,
+        }
+    }
 }

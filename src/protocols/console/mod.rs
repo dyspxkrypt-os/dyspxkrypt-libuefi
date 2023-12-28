@@ -31,6 +31,7 @@ cfg_if::cfg_if! {
         pub mod simple_pointer;
 
         pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
+        pub use graphics_output::EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE;
         pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
         pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;
         pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
