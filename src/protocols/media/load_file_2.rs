@@ -16,18 +16,21 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
+use crate::protocols::media::EFI_LOAD_FILE_PROTOCOL;
 use crate::types::EFI_GUID;
 
-pub const EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
-        0xBC62157E,
-        0x3E33,
-        0x4FEC,
-        [0x99, 0x20, 0x2D, 0x3B, 0x36, 0xD7, 0x50, 0xDF],
+        0x4006C0C1,
+        0xFCB3,
+        0x403E,
+        [0x99, 0x6D, 0x4A, 0x6C, 0x87, 0x24, 0xE0, 0x6D],
     )
 };
 
-/// When installed, the Loaded Image Device Path Protocol specifies the device path that was used when a PE/COFF image
-/// was loaded through the EFI Boot Service `LoadImage()`.
-pub type EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL = EFI_DEVICE_PATH_PROTOCOL;
+/// This protocol is used to obtain files from arbitrary devices but are not used as boot options.
+///
+/// The `EFI_LOAD_FILE2_PROTOCOL` is a simple protocol used to obtain files from arbitrary devices
+/// that are not boot options. It is used by `LoadImage()` when its `BootOption` parameter is `FALSE`
+/// and the `FilePath` does not have an instance of the `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`.
+pub type EFI_LOAD_FILE2_PROTOCOL = EFI_LOAD_FILE_PROTOCOL;

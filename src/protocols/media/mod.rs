@@ -16,7 +16,20 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#[cfg(any(feature = "media-file"))]
+#[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 pub mod load_file;
+#[cfg(feature = "media-file")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+pub mod load_file_2;
+
+#[cfg(feature = "media-file")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+pub use load_file::EFI_LOAD_FILE_PROTOCOL;
+#[cfg(feature = "media-file")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
+pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
