@@ -30,6 +30,18 @@ pub const EFI_SERIAL_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
 pub const EFI_SERIAL_IO_PROTOCOL_REVISION: UINT32 = 0x00010000;
 pub const EFI_SERIAL_IO_PROTOCOL_REVISION1p1: UINT32 = 0x00010001;
 
+pub const EFI_SERIAL_CLEAR_TO_SEND: UINT32 = 0x0010;
+pub const EFI_SERIAL_DATA_SET_READY: UINT32 = 0x0020;
+pub const EFI_SERIAL_RING_INDICATE: UINT32 = 0x0040;
+pub const EFI_SERIAL_CARRIER_DETECT: UINT32 = 0x0080;
+pub const EFI_SERIAL_REQUEST_TO_SEND: UINT32 = 0x0002;
+pub const EFI_SERIAL_DATA_TERMINAL_READY: UINT32 = 0x0001;
+pub const EFI_SERIAL_INPUT_BUFFER_EMPTY: UINT32 = 0x0100;
+pub const EFI_SERIAL_OUTPUT_BUFFER_EMPTY: UINT32 = 0x0200;
+pub const EFI_SERIAL_HARDWARE_LOOPBACK_ENABLE: UINT32 = 0x1000;
+pub const EFI_SERIAL_SOFTWARE_LOOPBACK_ENABLE: UINT32 = 0x2000;
+pub const EFI_SERIAL_HARDWARE_FLOW_CONTROL_ENABLE: UINT32 = 0x4000;
+
 #[repr(C)]
 pub enum EFI_PARITY_TYPE {
     DefaultParity,
@@ -73,9 +85,7 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     /// | ------------------ | --------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | The device was reset. |
     /// | `EFI_DEVICE_ERROR` | The device is not functioning correctly and could not be reset. |
-    pub Reset: unsafe extern "efiapi" fn(
-        This: *mut EFI_SERIAL_IO_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub Reset: unsafe extern "efiapi" fn(This: *mut EFI_SERIAL_IO_PROTOCOL) -> EFI_STATUS,
     /// Sets the baud rate, receive FIFO depth, transmit/receive time out, parity, data bits, and
     /// stop bits on a serial device.
     ///
@@ -120,4 +130,35 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
         DataBits: UINT8,
         StopBits: EFI_STOP_BITS_TYPE,
     ) -> EFI_STATUS,
+    /// Sets the control bits on a serial device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_ABSOLUTE_POINTER_PROTOCOL` instance. |
+    /// | **IN** `Control` | Sets the bits of `Control` that are settable. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetControl()` function is used to assert or de-assert the control signals on a serial device. The following
+    /// signals are set according their bit settings:
+    ///
+    /// - Request to Send
+    ///
+    /// - Data Terminal Ready
+    ///
+    /// Only the `REQUEST_TO_SEND`, `DATA_TERMINAL_READY`, `HARDWARE_LOOPBACK_ENABLE`, `SOFTWARE_LOOPBACK_ENABLE`, and
+    /// `HARDWARE_FLOW_CONTROL_ENABLE` bits can be set with `SetControl()`. All the bits can be read with
+    /// `EFI_SERIAL_IO_PROTOCOL.GetControl()`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The new control bits were set on the serial device. |
+    /// | `EFI_UNSUPPORTED` | The serial device does not support this operation. |
+    /// | `EFI_DEVICE_ERROR` | The serial device is not functioning correctly. |
+    pub SetControl:
+        unsafe extern "efiapi" fn(This: *mut EFI_SERIAL_IO_PROTOCOL, Control: UINT32) -> EFI_STATUS,
 }
