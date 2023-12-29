@@ -128,4 +128,32 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
         DeviceNode: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
+    /// Creates a new path by appending the specified device path instance to the specified device path.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DevicePath` | Points to the device path. If `NULL`, then ignored. |
+    /// | **IN** `DevicePathInstance` | Points to the device path instance. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a new device path by appending a copy of the specified device path instance
+    /// to a copy of the specified device path in an allocated buffer. The end-of-device-path device
+    /// node is moved after the end of the appended device node and a new end-of-device-path-instance
+    /// node is inserted between. If `DevicePath` is `NULL`, then a copy of `DevicePathInstance` is
+    /// returned instead.
+    ///
+    /// The memory is allocated from EFI boot services memory. It is the responsibility of the caller
+    /// to free the memory allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the newly created device path or `NULL` if `DevicePathInstance`
+    /// is `NULL` or there was insufficient memory.
+    pub AppendDevicePathInstance: unsafe extern "efiapi" fn(
+        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
+        DevicePathInstance: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
 }
