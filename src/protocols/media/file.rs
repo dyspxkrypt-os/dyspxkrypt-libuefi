@@ -127,4 +127,26 @@ pub struct EFI_FILE_PROTOCOL {
         OpenMode: UINT64,
         Attributes: UINT64,
     ) -> EFI_STATUS,
+    /// Closes a specified file handle.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to close. |
+    ///
+    /// ## Description
+    ///
+    /// The `Close()` function closes a specified file handle. All “dirty” cached file data is flushed to the device,
+    /// and the file is closed. In all cases the handle is closed. The operation will wait for all pending asynchronous
+    /// I/O requests to complete before completing.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The file was closed. |
+    pub Close: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+    ) -> EFI_STATUS,
 }
