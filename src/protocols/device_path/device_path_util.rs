@@ -128,7 +128,8 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
         DeviceNode: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-    /// Creates a new path by appending the specified device path instance to the specified device path.
+    /// Creates a new path by appending the specified device path instance to the specified device
+    /// path.
     ///
     /// ## Parameters
     ///
@@ -155,5 +156,32 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     pub AppendDevicePathInstance: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
         DevicePathInstance: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
+    /// Creates a copy of the current device path instance and returns pointer to the next device path
+    /// instance.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN OUT** `DevicePathInstance` | On input, this holds the pointer to the current device path instance. On output, this holds the pointer to the next device path instance or `NULL` if there are no more device path instances in the device path. |
+    /// | **OUT** `DevicePathInstanceSize` | On output, this holds the size of the device path instance, in bytes or zero, if `DevicePathInstance` is `NULL`. If `NULL`, then the instance size is not output. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a copy of the current device path instance. It also updates `DevicePathInstance`
+    /// to point to the next device path instance in the device path (or `NULL` if no more) and updates
+    /// `DevicePathInstanceSize` to hold the size of the device path instance copy.
+    ///
+    /// The memory is allocated from EFI boot services memory. It is the responsibility of the caller
+    /// to free the memory allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the copy of the current device path instance or `NULL` if
+    /// `DevicePathInstance` was `NULL` on entry or there was insufficient memory.
+    pub GetNextDevicePathInstance: unsafe extern "efiapi" fn(
+        DevicePathInstance: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
+        DevicePathInstanceSize: *mut UINTN,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
 }
