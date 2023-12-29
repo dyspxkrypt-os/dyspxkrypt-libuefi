@@ -22,13 +22,67 @@ pub mod device_path;
 #[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "image", feature = "image-full"))))]
 pub mod image;
-#[cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full"))]
+#[cfg(any(
+    feature = "media-ata",
+    feature = "media-block",
+    feature = "media-block-v2",
+    feature = "media-block-v3",
+    feature = "media-crypt",
+    feature = "media-file",
+    feature = "media-file-v2",
+    feature = "media-fs",
+    feature = "media-nvdimm",
+    feature = "media-nvme",
+    feature = "media-partition",
+    feature = "media-ramdisk",
+    feature = "media-sd-mmc",
+    feature = "media-storesec",
+    feature = "media-tape",
+    feature = "media-ufs",
+    feature = "media-full"
+))]
 #[cfg_attr(
     doc,
-    doc(cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full")))
+    doc(cfg(any(
+        feature = "media-ata",
+        feature = "media-block",
+        feature = "media-block-v2",
+        feature = "media-block-v3",
+        feature = "media-crypt",
+        feature = "media-file",
+        feature = "media-file-v2",
+        feature = "media-fs",
+        feature = "media-nvdimm",
+        feature = "media-nvme",
+        feature = "media-partition",
+        feature = "media-ramdisk",
+        feature = "media-sd-mmc",
+        feature = "media-storesec",
+        feature = "media-tape",
+        feature = "media-ufs",
+        feature = "media-full"
+    )))
 )]
 #[cfg_attr(
     docsrs,
-    doc(cfg(any(feature = "media-file", feature = "media-fs", feature = "media-full")))
+    doc(cfg(any(
+        feature = "media-ata",
+        feature = "media-block",
+        feature = "media-block-v2",
+        feature = "media-block-v3",
+        feature = "media-crypt",
+        feature = "media-file",
+        feature = "media-file-v2",
+        feature = "media-fs",
+        feature = "media-nvdimm",
+        feature = "media-nvme",
+        feature = "media-partition",
+        feature = "media-ramdisk",
+        feature = "media-sd-mmc",
+        feature = "media-storesec",
+        feature = "media-tape",
+        feature = "media-ufs",
+        feature = "media-full"
+    )))
 )]
 pub mod media;
