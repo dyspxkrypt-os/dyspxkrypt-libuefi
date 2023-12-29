@@ -31,7 +31,7 @@ image-dev-path = []
 
 media-full = ["media-file-v2", "media-fs"]
 media-file = []
-media-file-v2 = []
+media-file-v2 = ["media-file"]
 media-fs = ["media-file-v2"]
 
 [package.metadata.docs.rs]

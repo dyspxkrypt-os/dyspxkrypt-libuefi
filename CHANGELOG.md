@@ -2,7 +2,18 @@
 
 ## Added
 
-- EFI loaded image protocol and its associating constants and structures (`EFI_LOADED_IMAGE_PROTOCOL`)
+- EFI loaded image protocol and its associating constants and structures (`EFI_LOADED_IMAGE_PROTOCOL`) (behind `image` or `image-full` feature flags)
+- EFI loaded image device path protocol and its associating constants and structures (`EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL`) (behind `image-full` feature flag)
+- EFI absolute pointer protocol and its associating constants and structures (`EFI_ABSOLUTE_POINTER_PROTOCOL`) (behind `console-pointer` or `console-full` feature flags)
+- EFI graphics output protocol and its associating constants and structures (`EFI_GRAPHICS_OUTPUT_PROTOCOL`) (behind `console-gop` or `console-full` feature flags)
+- EFI serial I/O protocol and its associating constants and structures (`EFI_SERIAL_IO_PROTOCOL`) (behind `console-serial` or `console-full` feature flags)
+- EFI simple pointer protocol and its associating constants and structures (`EFI_SIMPLE_POINTER_PROTOCOL`) (behind `console-pointer` or `console-full` feature flags)
+- EFI simple text input ex protocol and its associating constants and structures (`EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL`)  (behind `console-full` or `console-full` feature flags)
+- EFI device path utilities protocol and its associating constants and structures (`EFI_DEVICE_PATH_UTILITIES_PROTOCOL`)  (behind `dev-path-full` feature flag)
+- EFI file protocol and its associating constants and structures (`EFI_FILE_PROTOCOL`)  (behind `media-file`, `media-file-v2` or `media-full` feature flags)
+- EFI load file protocol and its associating constants and structures (`EFI_LOAD_FILE_PROTOCOL`)  (behind `media-file`, `media-file-v2` or `media-full` feature flags)
+- EFI load file 2 protocol and its associating constants and structures (`EFI_LOAD_FILE2_PROTOCOL`)  (behind `media-file`, `media-file-v2` or `media-full` feature flags)
+- EFI simple filesystem protocol and its associating constants and structures (`EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`)  (behind `media-fs` or `media-full` feature flags)
 
 ## Changed
 
