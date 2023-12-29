@@ -46,9 +46,8 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     ///
     /// This function returns the size of the specified device path, in bytes, including the end-of-path
     /// tag. If `DevicePath` is `NULL` then zero is returned.
-    pub GetDevicePathSize: unsafe extern "efiapi" fn(
-        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
-    ) -> UINTN,
+    pub GetDevicePathSize:
+        unsafe extern "efiapi" fn(DevicePath: *const EFI_DEVICE_PATH_PROTOCOL) -> UINTN,
     /// Create a duplicate of the specified path.
     ///
     /// ## Parameters
@@ -69,7 +68,8 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     /// insufficient memory.
     pub DuplicateDevicePath: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
-    ) -> *mut EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
+    )
+        -> *mut EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
     /// Create a new path by appending the second device path to the first.
     ///
     /// ## Parameters
@@ -226,7 +226,6 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     ///
     /// This function returns `TRUE` if the device path has more than one instance or `FALSE` if it
     /// is empty or contains only a single instance.
-    pub IsDevicePathMultiInstance: unsafe extern "efiapi" fn(
-        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
-    ) -> BOOLEAN,
+    pub IsDevicePathMultiInstance:
+        unsafe extern "efiapi" fn(DevicePath: *const EFI_DEVICE_PATH_PROTOCOL) -> BOOLEAN,
 }

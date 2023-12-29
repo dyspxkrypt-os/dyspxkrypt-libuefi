@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{CHAR16, EFI_STATUS, UINT64, UINTN, VOID};
+use crate::tables::runtime::EFI_TIME;
+use crate::types::{BOOLEAN, CHAR16, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_FILE_PROTOCOL_REVISION: UINT64 = 0x00010000;
 pub const EFI_FILE_PROTOCOL_REVISION2: UINT64 = 0x00020000;
@@ -40,6 +41,33 @@ pub const EFI_FILE_RESERVED: UINT64 = 0x0000000000000008;
 pub const EFI_FILE_DIRECTORY: UINT64 = 0x0000000000000010;
 pub const EFI_FILE_ARCHIVE: UINT64 = 0x0000000000000020;
 pub const EFI_FILE_VALID_ATTR: UINT64 = 0x0000000000000037;
+
+pub const EFI_FILE_INFO_ID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x09576E92,
+        0x6D3f,
+        0x11D2,
+        [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
+    )
+};
+
+pub const EFI_FILE_SYSTEM_INFO_ID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x09576E93,
+        0x6d3f,
+        0x11d2,
+        [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
+    )
+};
+
+pub const EFI_FILE_SYSTEM_VOLUME_LABEL_ID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0xDB47D7D3,
+        0xFE81,
+        0x11D3,
+        [0x9A, 0x35, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D],
+    )
+};
 
 /// This protocol provides file based access to supported file systems.
 ///
@@ -297,8 +325,153 @@ pub struct EFI_FILE_PROTOCOL {
     /// | `EFI_SUCCESS` | The position was set. |
     /// | `EFI_UNSUPPORTED` | The seek request for nonzero is not valid on open directories. |
     /// | `EFI_DEVICE_ERROR` | An attempt was made to set the position of a deleted file. |
-    pub SetPosition: unsafe extern "efiapi" fn(
+    pub SetPosition:
+        unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL, Position: UINT64) -> EFI_STATUS,
+    /// Returns information about a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle the requested information is for. |
+    /// | **IN** `InformationType` | The type identifier for the information being requested. |
+    /// | **IN OUT** `BufferSize` | On input, the size of `Buffer`. On output, the amount of data returned in `Buffer`. In both cases, the size is measured in bytes. |
+    /// | **OUT** `Buffer` | A pointer to the data buffer to return. The buffer’s type is indicated by `InformationType`. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetInfo()` function returns information of type `InformationType` for the requested file. If the file does
+    /// not support the requested information type, then `EFI_UNSUPPORTED` is returned. If the buffer is not large enough
+    /// to fit the requested structure, `EFI_BUFFER_TOO_SMALL` is returned and the `BufferSize` is set to the size of
+    /// buffer that is required to make the request.
+    ///
+    /// The information types defined by this specification are required information types that all file systems must
+    /// support.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The information was retrieved. |
+    /// | `EFI_UNSUPPORTED` | The `InformationType` is not known. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_BUFFER_TOO_SMALL` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    pub GetInfo: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
-        Position: UINT64,
+        InformationType: *mut EFI_GUID,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Sets information about a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle the information is for. |
+    /// | **IN** `InformationType` | The type identifier for the information being set. |
+    /// | **IN** `BufferSize` | The size, in bytes, of `Buffer`. |
+    /// | **IN** `Buffer` | A pointer to the data buffer to write. The buffer’s type is indicated by `InformationType`. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetInfo()` function sets information of type `InformationType` on the requested file. Because a read-only file
+    /// can be opened only in read-only mode, an `InformationType` of `EFI_FILE_INFO_ID` can be used with a read-only
+    /// file because this method is the only one that can be used to convert a read-only file to a read-write file. In
+    /// this circumstance, only the Attribute field of the `EFI_FILE_INFO` structure may be modified. One or more calls
+    /// to `SetInfo()` to change the `Attribute` field are permitted before it is closed. The file attributes will be
+    /// valid the next time the file is opened with `Open()`.
+    ///
+    /// An `InformationType` of `EFI_FILE_INFO_ID`, `EFI_FILE_SYSTEM_INFO_ID` or `EFI_FILE_SYSTEM_VOLUME_LABEL_ID` may
+    /// not be used on read-only media.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The information was set. |
+    /// | `EFI_UNSUPPORTED` | The `InformationType` is not known. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | `InformationType` is `EFI_FILE_INFO_ID` and the media is read-only. |
+    /// | `EFI_WRITE_PROTECTED` | `InformationType` is `EFI_FILE_PROTOCOL_SYSTEM_INFO_ID` and the media is read only. |
+    /// | `EFI_WRITE_PROTECTED` | InformationType is `EFI_FILE_SYSTEM_VOLUME_LABEL_ID` and the media is read-only. |
+    /// | `EFI_ACCESS_DENIED` | The `device` has no medium. |
+    /// | `EFI_ACCESS_DENIED` | The device reported an error. |
+    /// | `EFI_ACCESS_DENIED` | The file system structures are corrupted. |
+    /// | `EFI_ACCESS_DENIED` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    /// | `EFI_VOLUME_FULL` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    /// | `EFI_BAD_BUFFER_SIZE` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    pub SetInfo: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        InformationType: *mut EFI_GUID,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+}
+
+/// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
+/// In the case of `SetInfo()`, the following additional rules apply:
+///
+/// - On directories, the file size is determined by the contents of the directory and cannot be changed by setting
+/// `FileSize`. On directories, `FileSize` is ignored during a `SetInfo()`.
+///
+/// - The `PhysicalSize` is determined by the `FileSize` and cannot be changed. This value is ignored during a `SetInfo()`
+/// request.
+///
+/// - The `EFI_FILE_DIRECTORY` attribute bit cannot be changed. It must match the file’s actual type.
+///
+/// - A value of zero in `CreateTime`, `LastAccess`, or `ModificationTime` causes the fields to be ignored (and not
+/// updated).
+#[repr(C)]
+pub struct EFI_FILE_INFO<const N: UINTN = 0> {
+    /// Size of the `EFI_FILE_INFO` structure, including the null-terminated `FileName` string.
+    pub Size: UINT64,
+    /// The size of the file in bytes.
+    pub FileSize: UINT64,
+    /// The amount of physical space the file consumes on the file system volume.
+    pub PhysicalSize: UINT64,
+    /// The time the file was created.
+    pub CreateTime: EFI_TIME,
+    /// The time when the file was last accessed.
+    pub LastAccessTime: EFI_TIME,
+    /// The time when the file’s contents were last modified.
+    pub ModificationTime: EFI_TIME,
+    /// The attribute bits for the file.
+    pub Attribute: UINT64,
+    /// The null-terminated name of the file. For a root directory, the name is an empty string.
+    pub FileName: [CHAR16; N],
+}
+
+/// The `EFI_FILE_SYSTEM_INFO` data structure is an information structure that can be obtained on the root directory file
+/// handle. The root directory file handle is the file handle first obtained on the initial call to the `EFI_BOOT_SERVICES.HandleProtocol()`
+/// function to open the file system interface. All of the fields are read-only except for `VolumeLabel`. The system volume’s
+/// `VolumeLabel` can be created or modified by calling `EFI_FILE_PROTOCOL.SetInfo()` with an updated `VolumeLabel` field.
+#[repr(C)]
+pub struct EFI_FILE_SYSTEM_INFO<const N: UINTN = 0> {
+    /// Size of the `EFI_FILE_SYSTEM_INFO` structure, including the null-terminated `VolumeLabel` string.
+    pub Size: UINT64,
+    /// `TRUE` if the volume only supports read access.
+    pub ReadOnly: BOOLEAN,
+    /// The number of bytes managed by the file system.
+    pub VolumeSize: UINT64,
+    /// The number of available bytes for use by the file system.
+    pub FreeSpace: UINT64,
+    /// The nominal block size by which files are typically grown.
+    pub BlockSize: UINT32,
+    /// The null-terminated string that is the volume’s label.
+    pub VolumeLabel: [CHAR16; N],
+}
+
+/// The `EFI_FILE_SYSTEM_VOLUME_LABEL` data structure is an information structure that can be obtained on the root directory
+/// file handle. The root directory file handle is the file handle first obtained on the initial call to the `EFI_BOOT_SERVICES.HandleProtocol()`
+/// function to open the file system interface. The system volume’s `VolumeLabel` can be created or modified by calling
+/// `EFI_FILE_PROTOCOL.SetInfo()` with an updated `VolumeLabel` field.
+#[repr(C)]
+pub struct EFI_FILE_SYSTEM_VOLUME_LABEL<const N: UINTN = 0> {
+    /// The null-terminated string that is the volume’s label.
+    pub VolumeLabel: [CHAR16; N],
 }
