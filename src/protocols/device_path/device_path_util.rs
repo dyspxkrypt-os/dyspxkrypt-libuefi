@@ -16,7 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::EFI_GUID;
+use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
+use crate::types::{EFI_GUID, UINTN};
 
 pub const EFI_DEVICE_PATH_UTILITIES_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -32,4 +33,20 @@ pub const EFI_DEVICE_PATH_UTILITIES_PROTOCOL_GUID: EFI_GUID = unsafe {
 /// The `EFI_DEVICE_PATH_UTILITIES_PROTOCOL` provides common utilities for creating a manipulating
 /// device paths and device nodes.
 #[repr(C)]
-pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL;
+pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
+    /// Returns the size of the device path, in bytes.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DevicePath` | Points to the start of the EFI device path. |
+    ///
+    /// ## Description
+    ///
+    /// This function returns the size of the specified device path, in bytes, including the end-of-path
+    /// tag. If `DevicePath` is `NULL` then zero is returned.
+    pub GetDevicePathSize: unsafe extern "efiapi" fn(
+        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> UINTN,
+}

@@ -270,7 +270,7 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
     #[cfg(feature = "console-serial-v1p1")]
     #[cfg_attr(doc, doc(cfg(feature = "console-serial-v1p1")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "console-serial-v1p1")))]
-    pub DeviceTypeGuid: *mut EFI_GUID,
+    pub DeviceTypeGuid: *const EFI_GUID,
 }
 
 #[repr(C)]
