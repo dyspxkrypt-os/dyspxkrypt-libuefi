@@ -2,7 +2,7 @@
 name = "dyspxkrypt-libuefi"
 description = "Raw bindings of UEFI that conforms to the definitions of the UEFI Specification."
 categories = ["external-ffi-bindings", "no-std"]
-version = "0.2.0"
+version = "0.3.0-alpha.1"
 edition = "2021"
 authors = ["HTGAzureX1212."]
 readme = "README.md"
@@ -30,9 +30,24 @@ image = []
 image-dev-path = []
 
 media-full = ["media-file-v2", "media-fs"]
+media-ata = []
+media-block = []
+media-block-v2 = []
+media-block-v3 = []
+media-crypt = []
+media-disk = []
+media-disk-v2 = []
 media-file = []
 media-file-v2 = ["media-file"]
 media-fs = ["media-file-v2"]
+media-nvdimm = []
+media-nvme = []
+media-partition = []
+media-ramdisk = []
+media-sd-mmc = []
+media-storesec = []
+media-tape = []
+media-ufs = []
 
 [package.metadata.docs.rs]
 all-features = true
