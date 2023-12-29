@@ -245,4 +245,30 @@ pub struct EFI_FILE_PROTOCOL {
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Returns a file’s current position.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to get the current position on. |
+    /// | **OUT** `Position` | The address to return the file’s current position value. |
+    ///
+    /// ## Description
+    ///
+    /// The `GetPosition()` function returns the current file position for the file handle. For directories, the current
+    /// file position has no meaning outside of the file system driver and as such the operation is not supported. An
+    /// error is returned if `This` is a directory.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The position was returned. |
+    /// | `EFI_UNSUPPORTED` | The request is not valid on open directories. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to get the position from a deleted file. |
+    pub GetPosition: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        Position: *mut UINT64,
+    ) -> EFI_STATUS,
 }
