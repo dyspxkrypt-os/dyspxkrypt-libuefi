@@ -540,6 +540,52 @@ pub struct EFI_FILE_PROTOCOL {
         This: *mut EFI_FILE_PROTOCOL,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
+    /// Writes data to a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to write data to. |
+    /// | **IN OUT** `Token` | A pointer to the token associated with the transaction. |
+    ///
+    /// ## Description
+    ///
+    /// The `WriteEx()` function writes the specified number of bytes to the file at the current file position. The
+    /// current file position is advanced the actual number of bytes written, which is returned in `BufferSize`. Partial
+    /// writes only occur when there has been a data error during the write attempt (such as “file space full”). The
+    /// file is automatically grown to hold the data if required.
+    ///
+    /// Direct writes to opened directories are not supported.
+    ///
+    /// If non-blocking I/O is used the file pointer will be advanced based on the order that write requests were
+    /// submitted.
+    ///
+    /// If an error is returned from the call to `WriteEx()` and non-blocking I/O is being requested, the `Event`
+    /// associated with this request will not be signaled. If the call to `WriteEx()` succeeds then the `Event` will be
+    /// signaled upon completion of the write or if an error occurs during the processing of the request. The status of
+    /// the write request can be determined from the Status field of the `Token` once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Returned from the call WriteEx(): If `Event` is `NULL` (blocking I/O): The data was written successfully. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. Event will be signaled upon completion. Returned in the token after signaling `Event`. The data was written successfully. |
+    /// | `EFI_UNSUPPORTED` | Writes to open directory files are not supported. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to write to a deleted file. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    /// | `EFI_ACCESS_DENIED` | The file system structures are corrupted. |
+    /// | `EFI_VOLUME_FULL` | The file system structures are corrupted. |
+    #[cfg(feature = "media-file-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
+    pub WriteEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        Token: *mut EFI_FILE_IO_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 /// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
