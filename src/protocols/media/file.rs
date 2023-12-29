@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{CHAR16, EFI_STATUS, UINT64};
+use crate::types::{CHAR16, EFI_STATUS, UINT64, UINTN, VOID};
 
 pub const EFI_FILE_PROTOCOL_REVISION: UINT64 = 0x00010000;
 pub const EFI_FILE_PROTOCOL_REVISION2: UINT64 = 0x00020000;
@@ -170,5 +170,46 @@ pub struct EFI_FILE_PROTOCOL {
     /// | `EFI_WARN_DELETE_FAILURE` | The handle was closed, but the file was not deleted. |
     pub Delete: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
+    ) -> EFI_STATUS,
+    /// Reads data from a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to read data from. |
+    /// | **IN OUT** `BufferSize` | On input, the size of the `Buffer`. On output, the amount of data returned in `Buffer`. In both cases, the size is measured in bytes. |
+    /// | **OUT** `Buffer` | The buffer into which the data is read. |
+    ///
+    /// ## Description
+    ///
+    /// The `Read()` function reads data from a file.
+    ///
+    /// If `This` is not a directory, the function reads the requested number of bytes from the file at the file’s current
+    /// position and returns them in `Buffer`. If the read goes beyond the end of the file, the read length is truncated
+    /// to the end of the file. The file’s current position is increased by the number of bytes returned.
+    ///
+    /// If `This` is a directory, the function reads the directory entry at the file’s current position and returns the
+    /// entry in `Buffer`. If the `Buffer` is not large enough to hold the current directory entry, then `EFI_BUFFER_TOO_SMALL`
+    /// is returned and the current file position is not updated. `BufferSize` is set to be the size of the buffer needed
+    /// to read the entry. On success, the current position is updated to the next directory entry. If there are no more
+    /// directory entries, the read returns a zero-length buffer. `EFI_FILE_INFO` is the structure returned as the
+    /// directory entry.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was read. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to read from a deleted file. |
+    /// | `EFI_DEVICE_ERROR` | On entry, the current file position is beyond the end of the file. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_BUFFER_TOO_SMALL` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    pub Read: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
     ) -> EFI_STATUS,
 }
