@@ -16,18 +16,30 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{UINT64};
+use crate::types::{CHAR16, EFI_STATUS, UINT64};
 
 pub const EFI_FILE_PROTOCOL_REVISION: UINT64 = 0x00010000;
 pub const EFI_FILE_PROTOCOL_REVISION2: UINT64 = 0x00020000;
 #[cfg(not(feature = "media-file-v2"))]
 #[cfg_attr(doc, doc(not(feature = "media-file-v2")))]
 #[cfg_attr(docsrs, doc(not(feature = "media-file-v2")))]
-pub const EFI_FILE_PROTOCOL_LATEST_REVISION: UINT32 = EFI_FILE_PROTOCOL_REVISION;
+pub const EFI_FILE_PROTOCOL_LATEST_REVISION: UINT64 = EFI_FILE_PROTOCOL_REVISION;
 #[cfg(feature = "media-file-v2")]
 #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
 pub const EFI_FILE_PROTOCOL_LATEST_REVISION: UINT64 = EFI_FILE_PROTOCOL_REVISION2;
+
+pub const EFI_FILE_MODE_READ: UINT64 = 0x0000000000000001;
+pub const EFI_FILE_MODE_WRITE: UINT64 = 0x0000000000000002;
+pub const EFI_FILE_MODE_CREATE: UINT64 = 0x8000000000000000;
+
+pub const EFI_FILE_READ_ONLY: UINT64 = 0x0000000000000001;
+pub const EFI_FILE_HIDDEN: UINT64 = 0x0000000000000002;
+pub const EFI_FILE_SYSTEM: UINT64 = 0x0000000000000004;
+pub const EFI_FILE_RESERVED: UINT64 = 0x0000000000000008;
+pub const EFI_FILE_DIRECTORY: UINT64 = 0x0000000000000010;
+pub const EFI_FILE_ARCHIVE: UINT64 = 0x0000000000000020;
+pub const EFI_FILE_VALID_ATTR: UINT64 = 0x0000000000000037;
 
 /// This protocol provides file based access to supported file systems.
 ///
@@ -55,4 +67,64 @@ pub const EFI_FILE_PROTOCOL_LATEST_REVISION: UINT64 = EFI_FILE_PROTOCOL_REVISION
 #[repr(C)]
 pub struct EFI_FILE_PROTOCOL {
     pub Revision: UINT64,
+    /// Opens a new file relative to the source file’s location.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to the source location. This would typically be an open handle to a directory. |
+    /// | **OUT** `NewHandle` | A pointer to the location to return the opened handle for the new file. |
+    /// | **IN** `FileName` | The null-terminated string of the name of the file to be opened. The file name may contain the following path modifiers: "", ".", and "..". |
+    /// | **IN** `OpenMode` | The mode to open the file. The only valid combinations that the file may be opened with are: Read, Read/Write, or Create/Read/Write. |
+    /// | **IN** `Attributes` | Only valid for EFI_FILE_MODE_CREATE, in which case these are the attribute bits for the newly created file. |
+    ///
+    /// ## Description
+    ///
+    /// The `Open()` function opens the file or directory referred to by `FileName` relative to the location of `This`
+    /// and returns a `NewHandle`. The `FileName` may include the following path modifiers:
+    ///
+    /// - "\"
+    ///
+    /// If the filename starts with a "\" the relative location is the root directory that `This` resides on; otherwise
+    /// "" separates name components. Each name component is opened in turn, and the handle to the last file opened is
+    /// returned.
+    ///
+    /// - "."
+    ///
+    /// Opens the current location.
+    ///
+    /// - ".."
+    ///
+    /// Opens the parent directory for the current location. If the location is the root directory the request will
+    /// return an error, as there is no parent directory for the root directory.
+    ///
+    /// If `EFI_FILE_MODE_CREATE` is set, then the file is created in the directory. If the final location of `FileName`
+    /// does not refer to a directory, then the operation fails. If the file does not exist in the directory, then a
+    /// new file is created. If the file already exists in the directory, then the existing file is opened.
+    ///
+    /// If the medium of the device changes, all accesses (including the File handle) will result in `EFI_MEDIA_CHANGED`.
+    /// To access the new medium, the volume must be reopened.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The file was opened. |
+    /// | `EFI_NOT_FOUND` | The specified file could not be found on the device. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_MEDIA_CHANGED` | The device has a different medium in it or the medium is no longer supported. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | An attempt was made to create a file, or open a file for write when the media is write-protected. |
+    /// | `EFI_ACCESS_DENIED` | The service denied access to the file. |
+    /// | `EFI_OUT_OF_RESOURCES` | Not enough resources were available to open the file. |
+    /// | `EFI_VOLUME_FULL` | The volume is full. |
+    pub Open: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        NewHandle: *mut *mut EFI_FILE_PROTOCOL,
+        FileName: *mut CHAR16,
+        OpenMode: UINT64,
+        Attributes: UINT64,
+    ) -> EFI_STATUS,
 }
