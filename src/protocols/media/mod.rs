@@ -32,6 +32,10 @@ pub mod load_file_2;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 pub mod simple_filesystem;
+#[cfg(feature = "media-tape")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
+pub mod tape;
 
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
@@ -49,3 +53,7 @@ pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 pub use simple_filesystem::EFI_SIMPLE_FILE_SYSTEM_PROTOCOL;
+#[cfg(feature = "media-tape")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
+pub use tape::EFI_TAPE_IO_PROTOCOL;
