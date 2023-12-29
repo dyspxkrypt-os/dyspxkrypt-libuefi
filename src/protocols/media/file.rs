@@ -271,4 +271,34 @@ pub struct EFI_FILE_PROTOCOL {
         This: *mut EFI_FILE_PROTOCOL,
         Position: *mut UINT64,
     ) -> EFI_STATUS,
+    /// Sets a file’s current position.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to set the current position on. |
+    /// | **IN** `Position` | The byte position from the start of the file to set. |
+    ///
+    /// ## Description
+    ///
+    /// The `SetPosition()` function sets the current file position for the handle to the position supplied. With the
+    /// exception of seeking to position `0xFFFFFFFFFFFFFFFF`, only absolute positioning is supported, and seeking past
+    /// the end of the file is allowed (a subsequent write would grow the file). Seeking to position `0xFFFFFFFFFFFFFFFF`
+    /// causes the current position to be set to the end of the file.
+    ///
+    /// If `This` is a directory, the only position that may be set is zero. This has the effect of starting the read
+    /// process of the directory entries over.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The position was set. |
+    /// | `EFI_UNSUPPORTED` | The seek request for nonzero is not valid on open directories. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to set the position of a deleted file. |
+    pub SetPosition: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        Position: UINT64,
+    ) -> EFI_STATUS,
 }
