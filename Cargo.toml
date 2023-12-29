@@ -14,7 +14,7 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 
 [features]
 default = []
-full = ["console-full", "image-full", "media-full"]
+full = ["console-full", "dev-path-full", "image-full", "media-full"]
 
 console-full = ["console", "console-gop", "console-pointer", "console-serial", "console-serial-v1p1"]
 console = []
@@ -22,6 +22,8 @@ console-gop = []
 console-serial = []
 console-serial-v1p1 = []
 console-pointer = []
+
+dev-path-full = []
 
 image-full = ["image", "image-dev-path"]
 image = []
