@@ -491,6 +491,55 @@ pub struct EFI_FILE_PROTOCOL {
         Attributes: UINT64,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
+    /// Reads data from a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to read data from. |
+    /// | **IN OUT** `Token` | A pointer to the token associated with the transaction. |
+    ///
+    /// ## Description
+    ///
+    /// The `ReadEx()` function reads data from a file.
+    ///
+    /// If `This` is not a directory, the function reads the requested number of bytes from the file at the file’s current
+    /// position and returns them in `Buffer`. If the read goes beyond the end of the file, the read length is truncated
+    /// to the end of the file. The file’s current position is increased by the number of bytes returned.
+    ///
+    /// If `This` is a directory, the function reads the directory entry at the file’s current position and returns the
+    /// entry in `Buffer`. If the `Buffer` is not large enough to hold the current directory entry, then `EFI_BUFFER_TOO_SMALL`
+    /// is returned and the current file position is not updated. `BufferSize` is set to be the size of the buffer needed
+    /// to read the entry. On success, the current position is updated to the next directory entry. If there are no more
+    /// directory entries, the read returns a zero-length buffer. `EFI_FILE_INFO` is the structure returned as the
+    /// directory entry.
+    ///
+    /// If non-blocking I/O is used the file pointer will be advanced based on the order that read requests were submitted.
+    ///
+    /// If an error is returned from the call to `ReadEx()` and non-blocking I/O is being requested, the `Event`
+    /// associated with this request will not be signaled. If the call to `ReadEx()` succeeds then the `Event` will be
+    /// signaled upon completion of the read or if an error occurs during the processing of the request. The status of
+    /// the read request can be determined from the `Status` field of the Token once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Returned from the call `ReadEx()`: If `Event` is `NULL` (blocking I/O): The data was read successfully. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. Event will be signaled upon completion. Returned in the token after signaling `Event`. The data was read successfully. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to read from a deleted file. |
+    /// | `EFI_DEVICE_ERROR` | On entry, the current file position is beyond the end of the file. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_BUFFER_TOO_SMALL` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    #[cfg(feature = "media-file-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
+    pub ReadEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        Token: *mut EFI_FILE_IO_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 /// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
