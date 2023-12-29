@@ -434,9 +434,7 @@ pub struct EFI_FILE_PROTOCOL {
     /// | `EFI_WRITE_PROTECTED` | The file or medium is write-protected. |
     /// | `EFI_ACCESS_DENIED` | The file was opened read-only. |
     /// | `EFI_VOLUME_FULL` | The volume is full. |
-    pub Flush: unsafe extern "efiapi" fn(
-        This: *mut EFI_FILE_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub Flush: unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL) -> EFI_STATUS,
     /// Opens a new file relative to the source directory’s location.
     ///
     /// ## Parameters

@@ -2,6 +2,18 @@
 
 ## Added
 
+## Changed
+
+## Fixed
+
+## Removed
+
+# Dyspxkrypt LibUEFI 0.2.0 (29-12-2023)
+
+Second release.
+
+## Added
+
 - EFI loaded image protocol and its associating constants and structures (`EFI_LOADED_IMAGE_PROTOCOL`) (behind `image` or `image-full` feature flags)
 - EFI loaded image device path protocol and its associating constants and structures (`EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL`) (behind `image-full` feature flag)
 - EFI absolute pointer protocol and its associating constants and structures (`EFI_ABSOLUTE_POINTER_PROTOCOL`) (behind `console-pointer` or `console-full` feature flags)
@@ -14,12 +26,6 @@
 - EFI load file protocol and its associating constants and structures (`EFI_LOAD_FILE_PROTOCOL`)  (behind `media-file`, `media-file-v2` or `media-full` feature flags)
 - EFI load file 2 protocol and its associating constants and structures (`EFI_LOAD_FILE2_PROTOCOL`)  (behind `media-file`, `media-file-v2` or `media-full` feature flags)
 - EFI simple filesystem protocol and its associating constants and structures (`EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`)  (behind `media-fs` or `media-full` feature flags)
-
-## Changed
-
-## Fixed
-
-## Removed
 
 # Dyspxkrypt LibUEFI 0.1.0 (27-12-2023)
 
