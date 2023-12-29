@@ -49,4 +49,25 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     pub GetDevicePathSize: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> UINTN,
+    /// Create a duplicate of the specified path.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DevicePath` | Points to the start of the EFI device path. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a duplicate of the specified device path. The memory is allocated from
+    /// EFI boot services memory. It is the responsibility of the caller to free the memory allocated.
+    /// If `DevicePath` is `NULL` then `NULL` will be returned and no memory will be allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the duplicate device path `or` NULL if there was
+    /// insufficient memory.
+    pub DuplicateDevicePath: unsafe extern "efiapi" fn(
+        DevicePath: *const EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
+    ) -> *mut EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
 }
