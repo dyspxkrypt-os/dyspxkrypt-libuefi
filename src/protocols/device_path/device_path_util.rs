@@ -83,7 +83,7 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     ///
     /// This function creates a new device path by appending a copy of the second device path to a
     /// copy of the first device path in a newly allocated buffer. Only the end-of-device-path device
-    /// node from the second device path is retained. If `Src1` is `NULL` and `Src2` is non-`NULL` ,
+    /// node from the second device path is retained. If `Src1` is `NULL` and `Src2` is non-`NULL`,
     /// then a duplicate of `Src2` is returned. If `Src1` is non-`NULL` and `Src2` is `NULL`, then a
     /// duplicate of `Src1` is returned. If `Src1` and `Src2` are both `NULL`, then a copy of an
     /// end-of-device-path is returned.
@@ -98,5 +98,34 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     pub AppendDevicePath: unsafe extern "efiapi" fn(
         Src1: *const EFI_DEVICE_PATH_PROTOCOL,
         Src2: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
+    /// Creates a new path by appending the device node to the device path.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DevicePath` | Points to the device path. |
+    /// | **IN** `DeviceNode` | Points to the device node. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a new device path by appending a copy of the second device path to a
+    /// copy of the first device path in a newly allocated buffer. Only the end-of-device-path device
+    /// node from the second device path is retained. If `DevicePath` is `NULL` and `DeviceNode` is
+    /// non-`NULL`, then a duplicate of `DevicePath` is returned. If `DevicePath` is non-`NULL` and
+    /// `DeviceNode` is `NULL`, then a duplicate of `DevicePath` is returned. If `DevicePath` and
+    /// `DeviceNode` are both `NULL`, then a copy of an end-of-device-path is returned.
+    ///
+    /// The memory is allocated from EFI boot services memory. It is the responsibility of the caller
+    /// to free the memory allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the newly created device path or `NULL` if memory could not
+    /// be allocated.
+    pub AppendDeviceNode: unsafe extern "efiapi" fn(
+        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
+        DeviceNode: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
 }
