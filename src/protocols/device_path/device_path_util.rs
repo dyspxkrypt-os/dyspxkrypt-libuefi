@@ -65,9 +65,38 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     ///
     /// ## Returns
     ///
-    /// This function returns a pointer to the duplicate device path `or` NULL if there was
+    /// This function returns a pointer to the duplicate device path or `NULL` if there was
     /// insufficient memory.
     pub DuplicateDevicePath: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
+    /// Create a new path by appending the second device path to the first.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `Src1` | Points to the first device path. |
+    /// | **IN** `Src2` | Points to the second device path. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a new device path by appending a copy of the second device path to a
+    /// copy of the first device path in a newly allocated buffer. Only the end-of-device-path device
+    /// node from the second device path is retained. If `Src1` is `NULL` and `Src2` is non-`NULL` ,
+    /// then a duplicate of `Src2` is returned. If `Src1` is non-`NULL` and `Src2` is `NULL`, then a
+    /// duplicate of `Src1` is returned. If `Src1` and `Src2` are both `NULL`, then a copy of an
+    /// end-of-device-path is returned.
+    ///
+    /// The memory is allocated from EFI boot services memory. It is the responsibility of the caller
+    /// to free the memory allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the newly created device path or `NULL` if memory could not
+    /// be allocated.
+    pub AppendDevicePath: unsafe extern "efiapi" fn(
+        Src1: *const EFI_DEVICE_PATH_PROTOCOL,
+        Src2: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
 }
