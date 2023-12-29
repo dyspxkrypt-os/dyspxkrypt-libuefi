@@ -17,7 +17,7 @@
  */
 
 use crate::tables::runtime::EFI_TIME;
-use crate::types::{BOOLEAN, CHAR16, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
+use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_FILE_PROTOCOL_REVISION: UINT64 = 0x00010000;
 pub const EFI_FILE_PROTOCOL_REVISION2: UINT64 = 0x00020000;
@@ -436,7 +436,61 @@ pub struct EFI_FILE_PROTOCOL {
     /// | `EFI_VOLUME_FULL` | The volume is full. |
     pub Flush: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
-    )
+    ) -> EFI_STATUS,
+    /// Opens a new file relative to the source directory’s location.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to the source location. This would typically be an open handle to a directory. |
+    /// | **OUT** `NewHandle` | A pointer to the location to return the opened handle for the new file. |
+    /// | **IN** `FileName` | The null-terminated string of the name of the file to be opened. The file name may contain the following path modifiers: "", ".", and "..". |
+    /// | **IN** `OpenMode` | The mode to open the file. The only valid combinations that the file may be opened with are: Read, Read/Write, or Create/Read/Write. |
+    /// | **IN** `Attributes` | Only valid for EFI_FILE_MODE_CREATE, in which case these are the attribute bits for the newly created file. |
+    /// | **IN OUT** `Token` | A pointer to the token associated with the transaction. |
+    ///
+    /// ## Description
+    ///
+    /// The `OpenEx()` function opens the file or directory referred to by `FileName` relative to the location of `This`
+    /// and returns a `NewHandle`. The `FileName` may include the path modifiers described previously in `Open()`.
+    ///
+    /// If `EFI_FILE_MODE_CREATE` is set, then the file is created in the directory. If the final location of `FileName`
+    /// does not refer to a directory, then the operation fails. If the file does not exist in the directory, then a new
+    /// file is created. If the file already exists in the directory, then the existing file is opened.
+    ///
+    /// If the medium of the device changes, all accesses (including the File handle) will result in `EFI_MEDIA_CHANGED`.
+    /// To access the new medium, the volume must be reopened.
+    ///
+    /// If an error is returned from the call to `OpenEx()` and non-blocking I/O is being requested, the `Event` associated
+    /// with this request will not be signaled. If the call to `OpenEx()` succeeds then the Event will be signaled upon
+    /// completion of the open or if an error occurs during the processing of the request. The status of the read request
+    /// can be determined from the `Status` field of the `Token` once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Returned from the call `OpenEx()`: If `Event` is `NULL` (blocking I/O): The file was opened successfully. If Event is not `NULL` (asynchronous I/O): The request was successfully queued for processing. `Event` will be signaled upon completion. Returned in the token after signaling `Event`. The file was opened successfully. |
+    /// | `EFI_NOT_FOUND` | The specified file could not be found on the device. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_MEDIA_CHANGED` | The device has a different medium in it or the medium is no longer supported. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | An attempt was made to create a file, or open a file for write when the media is write-protected. |
+    /// | `EFI_ACCESS_DENIED` | The service denied access to the file. |
+    /// | `EFI_OUT_OF_RESOURCES` | Not enough resources were available to open the file. |
+    /// | `EFI_VOLUME_FULL` | The volume is full. |
+    #[cfg(feature = "media-file-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
+    pub OpenEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        NewHandle: *mut *mut EFI_FILE_PROTOCOL,
+        FileName: *mut CHAR16,
+        OpenMode: UINT64,
+        Attributes: UINT64,
+        Token: *mut EFI_FILE_IO_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 /// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
@@ -500,4 +554,25 @@ pub struct EFI_FILE_SYSTEM_INFO<const N: UINTN = 0> {
 pub struct EFI_FILE_SYSTEM_VOLUME_LABEL<const N: UINTN = 0> {
     /// The null-terminated string that is the volume’s label.
     pub VolumeLabel: [CHAR16; N],
+}
+
+#[repr(C)]
+pub struct EFI_FILE_IO_TOKEN {
+    /// If `Event` is `NULL`, then blocking I/O is performed. If `Event` is not `NULL` and non-blocking I/O is supported,
+    /// then non-blocking I/O is performed, and `Event` will be signaled when the read request is completed. The caller
+    /// must be prepared to handle the case where the callback associated with Event occurs before the original asynchronous
+    /// I/O request call returns.
+    pub Event: EFI_EVENT,
+    /// Defines whether or not the signaled event encountered an error.
+    pub Status: EFI_STATUS,
+    /// For `OpenEx()`: Not used, ignored.
+    /// For `ReadEx()`:On input, the size of the `Buffer`. On output, the amount of data returned in `Buffer`. In both cases, the size is measured in bytes.
+    /// For `WriteEx()`: On input, the size of the `Buffer`. On output, the amount of data actually written. In both cases, the size is measured in bytes.
+    /// For `FlushEx()`: Not used, ignored.
+    pub BufferSize: UINTN,
+    /// For `OpenEx()`: Not used, ignored.
+    /// For `ReadEx()`: The buffer into which the data is read.
+    /// For `WriteEx()`: The buffer of data to write.
+    /// For `FlushEx()`: Not Used, ignored.
+    pub Buffer: *mut VOID,
 }
