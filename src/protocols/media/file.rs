@@ -212,4 +212,41 @@ pub struct EFI_FILE_PROTOCOL {
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Writes data to a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to write data to. |
+    /// | **IN OUT** `BufferSize` | On input, the size of the `Buffer`. On output, the amount of data actually written. In both cases, the size is measured in bytes. |
+    /// | **OUT** `Buffer` | The buffer of data to write. |
+    ///
+    /// ## Description
+    ///
+    /// The `Write()` function writes the specified number of bytes to the file at the current file position. The current
+    /// file position is advanced the actual number of bytes written, which is returned in `BufferSize`. Partial writes
+    /// only occur when there has been a data error during the write attempt (such as "file space full"). The file is
+    /// automatically grown to hold the data if required.
+    ///
+    /// Direct writes to opened directories are not supported.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was written. |
+    /// | `EFI_UNSUPPORTED` | Writes to open directory files are not supported. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_DEVICE_ERROR` | An attempt was made to write to a deleted file. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | The `BufferSize` is too small to read the current directory entry. `BufferSize` has been updated with the size needed to complete the request. |
+    /// | `EFI_ACCESS_DENIED` | The file system structures are corrupted. |
+    /// | `EFI_VOLUME_FULL` | The file system structures are corrupted. |
+    pub Write: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
 }
