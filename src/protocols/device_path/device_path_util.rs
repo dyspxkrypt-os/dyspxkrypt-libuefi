@@ -17,7 +17,7 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{EFI_GUID, UINTN};
+use crate::types::{EFI_GUID, UINT16, UINT8, UINTN};
 
 pub const EFI_DEVICE_PATH_UTILITIES_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -183,5 +183,31 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     pub GetNextDevicePathInstance: unsafe extern "efiapi" fn(
         DevicePathInstance: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
         DevicePathInstanceSize: *mut UINTN,
+    ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
+    /// Creates a device node.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `NodeType` | `NodeType` is the device node type (`EFI_DEVICE_PATH_PROTOCOL.Type`) for the new device node. |
+    /// | **IN** `NodeSubType` | `NodeSubType` is the device node sub-type (`EFI_DEVICE_PATH_PROTOCOL.SubType`) for the new device node. |
+    /// | **IN** `NodeLength` | `NodeLength` is the length of the device node (`EFI_DEVICE_PATH_PROTOCOL.Length`) for the new device node. |
+    ///
+    /// ## Description
+    ///
+    /// This function creates a new device node in a newly allocated buffer.
+    ///
+    /// The memory is allocated from EFI boot services memory. It is the responsibility of the caller
+    /// to free the memory allocated.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns a pointer to the created device node or `NULL` if `NodeLength` is less
+    /// than the size of the header or there was insufficient memory.
+    pub CreateDeviceNode: unsafe extern "efiapi" fn(
+        NodeType: UINT8,
+        NodeSubType: UINT8,
+        NodeLength: UINT16,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
 }
