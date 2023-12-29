@@ -149,4 +149,26 @@ pub struct EFI_FILE_PROTOCOL {
     pub Close: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
     ) -> EFI_STATUS,
+    /// Closes and deletes a file.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the handle to the file to delete. |
+    ///
+    /// ## Description
+    ///
+    /// The `Delete()` function closes and deletes a file. In all cases the file handle is closed. If the file cannot be
+    /// deleted, the warning code `EFI_WARN_DELETE_FAILURE` is returned, but the handle is still closed.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The file was closed and deleted, and the handle was closed. |
+    /// | `EFI_WARN_DELETE_FAILURE` | The handle was closed, but the file was not deleted. |
+    pub Delete: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+    ) -> EFI_STATUS,
 }
