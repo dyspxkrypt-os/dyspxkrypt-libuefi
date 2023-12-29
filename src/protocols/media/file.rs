@@ -586,6 +586,42 @@ pub struct EFI_FILE_PROTOCOL {
         This: *mut EFI_FILE_PROTOCOL,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
+    /// Flushes all modified data associated with a file to a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to flush. |
+    /// | **IN OUT** `Token` | A pointer to the token associated with the transaction. |
+    ///
+    /// ## Description
+    ///
+    /// The `FlushEx()` function flushes all modified data associated with a file to a device.
+    ///
+    /// For non-blocking I/O all writes submitted before the flush request will be flushed.
+    ///
+    /// If an error is returned from the call to `FlushEx()` and non-blocking I/O is being requested, the `Event`
+    /// associated with this request will not be signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Returned from the call `FlushEx()`: If `Event` is `NULL` (blocking I/O): The data was flushed successfully. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. Event will be signaled upon completion. Returned in the token after signaling `Event`. The data was flushed successfully. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | The file or medium is write-protected. |
+    /// | `EFI_ACCESS_DENIED` | The file was opened read-only. |
+    /// | `EFI_VOLUME_FULL` | The volume is full. |
+    #[cfg(feature = "media-file-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
+    pub FlushEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+        Token: *mut EFI_FILE_IO_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 /// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
