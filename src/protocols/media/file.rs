@@ -411,6 +411,32 @@ pub struct EFI_FILE_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Flushes all modified data associated with a file to a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_FILE_PROTOCOL` instance that is the file handle to flush. |
+    ///
+    /// ## Description
+    ///
+    /// The `Flush()` function flushes all modified data associated with a file to a device.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was flushed. |
+    /// | `EFI_NO_MEDIA` | The device has no medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error. |
+    /// | `EFI_VOLUME_CORRUPTED` | The file system structures are corrupted. |
+    /// | `EFI_WRITE_PROTECTED` | The file or medium is write-protected. |
+    /// | `EFI_ACCESS_DENIED` | The file was opened read-only. |
+    /// | `EFI_VOLUME_FULL` | The volume is full. |
+    pub Flush: unsafe extern "efiapi" fn(
+        This: *mut EFI_FILE_PROTOCOL,
+    )
 }
 
 /// The `EFI_FILE_INFO` data structure supports `EFI_FILE_PROTOCOL.GetInfo()` and `EFI_FILE_PROTOCOL.SetInfo()` requests.
