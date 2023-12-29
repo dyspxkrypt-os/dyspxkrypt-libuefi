@@ -17,7 +17,7 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{EFI_GUID, UINT16, UINT8, UINTN};
+use crate::types::{BOOLEAN, EFI_GUID, UINT16, UINT8, UINTN};
 
 pub const EFI_DEVICE_PATH_UTILITIES_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -210,4 +210,23 @@ pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
         NodeSubType: UINT8,
         NodeLength: UINT16,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
+    /// Returns whether a device path is multi-instance.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `DevicePath` | Points to the device path. If `NULL`, then ignored. |
+    ///
+    /// ## Description
+    ///
+    /// This function returns whether the specified device path has multiple path instances.
+    ///
+    /// ## Returns
+    ///
+    /// This function returns `TRUE` if the device path has more than one instance or `FALSE` if it
+    /// is empty or contains only a single instance.
+    pub IsDevicePathMultiInstance: unsafe extern "efiapi" fn(
+        DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
+    ) -> BOOLEAN,
 }
