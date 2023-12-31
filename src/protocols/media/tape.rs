@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::EFI_GUID;
+use crate::types::{EFI_GUID, EFI_STATUS, UINTN, VOID};
 
 pub const EFI_TAPE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -27,5 +27,12 @@ pub const EFI_TAPE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
+/// The EFI Tape IO protocol provides services to control and access a tape device.
 #[repr(C)]
-pub struct EFI_TAPE_IO_PROTOCOL;
+pub struct EFI_TAPE_IO_PROTOCOL {
+    pub TapeRead: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+}
