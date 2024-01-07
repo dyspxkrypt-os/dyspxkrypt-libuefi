@@ -88,4 +88,18 @@ pub struct EFI_TAPE_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Writes to the tape.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
+    /// | **IN** `BufferSize` | Size of the buffer in bytes pointed to by `Buffer`. |
+    /// | **IN** `Buffer` | Pointer to the buffer for data to be written from. |
+    pub TapeWrite: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
 }
