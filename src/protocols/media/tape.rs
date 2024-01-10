@@ -146,4 +146,31 @@ pub struct EFI_TAPE_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Rewinds the tape.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
+    ///
+    /// ## Description
+    ///
+    /// This function will rewind the media using an implementation-specific timeout. The function will check if the
+    /// media was changed since the last access and reinstall the `EFI_TAPE_IO_PROTOCOL` interface for the device
+    /// handle if needed.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The media was successfully repositioned. |
+    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
+    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
+    /// | `EFI_NOT_READY` | Repositioning the media failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
+    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
+    /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
+    pub TapeRewind: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+    ) -> EFI_STATUS,
 }
