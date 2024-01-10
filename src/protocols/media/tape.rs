@@ -97,6 +97,50 @@ pub struct EFI_TAPE_IO_PROTOCOL {
     /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
     /// | **IN** `BufferSize` | Size of the buffer in bytes pointed to by `Buffer`. |
     /// | **IN** `Buffer` | Pointer to the buffer for data to be written from. |
+    ///
+    /// ## Description
+    ///
+    /// This function will write `BufferSize` bytes from the buffer pointed to by `Buffer` to media using an
+    /// implementation-specific timeout.
+    ///
+    /// Each write operation for a device that operates in variable block size mode writes one media data block of
+    /// `BufferSize` bytes.
+    ///
+    /// Each write operation for a device that operates in fixed block size mode writes one or more media data blocks
+    /// of the device’s fixed block size. `BufferSize` must be evenly divisible by the device’s fixed block size.
+    ///
+    /// Although sequential devices in variable block size mode support a wide variety of block sizes, many issues may
+    /// be avoided in I/O software, adapters, hardware and firmware if common block sizes are used such as: `32768`,
+    /// `16384`, `8192`, `4096`, `2048`, `1024`, `512`, and `80`.
+    ///
+    /// `BufferSize` will be updated with the number of bytes transferred.
+    ///
+    /// When a write operation occurs beyond the logical end of media an `EFI_END_OF_MEDIA` error condition will occur.
+    /// Normally data will be successfully written and BufferSize will be updated with the number of bytes transferred.
+    /// Additional write operations will continue to fail in the same manner. Excessive writing beyond the logical end
+    /// of media should be avoided since the physical end of media may be reached.
+    ///
+    /// Specifying a `BufferSize` of `0` is valid but requests the function to provide write-related status information
+    /// instead of actual media data transfer. No data will be attempted to be written to the device however this
+    /// operation is classified as an access for status handling. The status code returned may be used to determine if
+    /// media is loaded, writable and if the logical end of media point has been reached. A `NULL` value for `Buffer` is
+    /// valid when `BufferSize` is zero.
+    ///
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Data was successfully transferred to the media. |
+    /// | `EFI_END_OF_FILE` | The logical end of media has been reached. Data may have been successfully transferred to the media. |
+    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. The transfer was aborted since the current position of the media may be incorrect. |
+    /// | `EFI_WRITE_PROTECTED` | The media in the device is write-protected. The transfer was aborted since a write cannot be completed. |
+    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to transfer data from the media. |
+    /// | `EFI_INVALID_PARAMETER` | A `NULL` `Buffer` was specified with a non-zero `BufferSize` or the device is operating in fixed block size mode and the `BufferSize` was not a multiple of device’s fixed block size. |
+    /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
+    /// | `EFI_UNSUPPORTED` | The device does not support this type of transfer. |
+    /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
     pub TapeWrite: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         BufferSize: UINTN,
