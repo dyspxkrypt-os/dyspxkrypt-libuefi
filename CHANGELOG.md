@@ -2,6 +2,8 @@
 
 ## Added
 
+- EFI tape I/O protocol and its associating constants and structures (`EFI_TAPE_IO_PROTOCOL`) (behind `media-tapeio` or `media-full` feature flags)
+
 ## Changed
 
 ## Fixed
