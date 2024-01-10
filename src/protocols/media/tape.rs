@@ -225,4 +225,35 @@ pub struct EFI_TAPE_IO_PROTOCOL {
         Direction: INTN,
         Type: UINTN,
     ) -> EFI_STATUS,
+    /// Writes file marks to the media.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
+    /// | **IN** `Count` | Number of file marks to write to the media. |
+    ///
+    /// ## Description
+    ///
+    /// This function will write file marks to the tape using an implementation-specific timeout.
+    ///
+    /// Writing file marks beyond logical end of tape does not result in an error condition unless physical end of
+    /// media is reached.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | Data was successfully transferred from the media. |
+    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. Repositioning the media was aborted since the current position of the media may be incorrect. |
+    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
+    /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
+    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
+    /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
+    pub TapeWriteFM: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+        Count: UINTN,
+    ) -> EFI_STATUS,
 }
