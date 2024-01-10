@@ -1,6 +1,6 @@
 /*
  * Dyspxkrypt LibUEFI: Raw bindings of UEFI that conforms to the definitions of the UEFI Specification.
- * Copyright (C) 2023 HTGAzureX1212.
+ * Copyright (C) 2023-2024 HTGAzureX1212.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -170,9 +170,7 @@ pub struct EFI_TAPE_IO_PROTOCOL {
     /// | `EFI_NOT_READY` | Repositioning the media failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
     /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
     /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
-    pub TapeRewind: unsafe extern "efiapi" fn(
-        This: *mut EFI_TAPE_IO_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub TapeRewind: unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL) -> EFI_STATUS,
     /// Positions the tape.
     ///
     /// ## Parameters
@@ -252,10 +250,8 @@ pub struct EFI_TAPE_IO_PROTOCOL {
     /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
     /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
     /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
-    pub TapeWriteFM: unsafe extern "efiapi" fn(
-        This: *mut EFI_TAPE_IO_PROTOCOL,
-        Count: UINTN,
-    ) -> EFI_STATUS,
+    pub TapeWriteFM:
+        unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL, Count: UINTN) -> EFI_STATUS,
     /// Resets the tape device.
     ///
     /// ## Parameters

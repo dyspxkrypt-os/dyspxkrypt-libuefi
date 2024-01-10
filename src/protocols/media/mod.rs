@@ -1,6 +1,6 @@
 /*
  * Dyspxkrypt LibUEFI: Raw bindings of UEFI that conforms to the definitions of the UEFI Specification.
- * Copyright (C) 2023 HTGAzureX1212.
+ * Copyright (C) 2023-2024 HTGAzureX1212.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by
@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "media-disk")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
+pub mod disk;
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]

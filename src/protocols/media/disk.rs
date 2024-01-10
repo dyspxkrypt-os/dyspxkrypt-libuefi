@@ -16,21 +16,13 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::media::EFI_LOAD_FILE_PROTOCOL;
 use crate::types::EFI_GUID;
 
-pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_DISK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
-        0x4006C0C1,
-        0xFCB3,
-        0x403E,
-        [0x99, 0x6D, 0x4A, 0x6C, 0x87, 0x24, 0xE0, 0x6D],
+        0xCE345171,
+        0xBA0B,
+        0x11D2,
+        [0x8E, 0x4F, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
     )
 };
-
-/// This protocol is used to obtain files from arbitrary devices but are not used as boot options.
-///
-/// The `EFI_LOAD_FILE2_PROTOCOL` is a simple protocol used to obtain files from arbitrary devices
-/// that are not boot options. It is used by `LoadImage()` when its `BootOption` parameter is `FALSE`
-/// and the `FilePath` does not have an instance of the `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`.
-pub type EFI_LOAD_FILE2_PROTOCOL = EFI_LOAD_FILE_PROTOCOL;
