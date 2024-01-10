@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, INTN, UINTN, VOID};
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, INTN, UINTN, VOID};
 
 pub const EFI_TAPE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -255,5 +255,35 @@ pub struct EFI_TAPE_IO_PROTOCOL {
     pub TapeWriteFM: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         Count: UINTN,
+    ) -> EFI_STATUS,
+    /// Resets the tape device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
+    /// | **IN** `ExtendedVerification` | Indicates whether the parent bus should also be reset. |
+    ///
+    /// ## Description
+    ///
+    /// This function will reset the tape device. If `ExtendedVerification` is set to `TRUE`, the function will reset\
+    /// the parent bus (e.g., SCSI bus). The function will check if the media was changed since the last access and
+    /// reinstall the `EFI_TAPE_IO_PROTOCOL` interface for the device handle if needed. Note media needs to be loaded
+    /// and device online for the reset, otherwise, `EFI_DEVICE_ERROR` is returned.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The bus and/or device were successfully reset. |
+    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
+    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reset the bus and/or device. |
+    /// | `EFI_NOT_READY` | The reset failed since the device and/or bus was not ready. The reset may be retried at a later time. |
+    /// | `EFI_UNSUPPORTED` | The device does not support this type of reset. |
+    /// | `EFI_TIMEOUT` | The reset did not complete within the timeout allowed. |
+    pub TapeReset: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
 }
