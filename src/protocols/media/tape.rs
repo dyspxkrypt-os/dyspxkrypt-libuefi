@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, UINTN, VOID};
+use crate::types::{EFI_GUID, EFI_STATUS, INTN, UINTN, VOID};
 
 pub const EFI_TAPE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -172,5 +172,57 @@ pub struct EFI_TAPE_IO_PROTOCOL {
     /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
     pub TapeRewind: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
+    ) -> EFI_STATUS,
+    /// Positions the tape.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
+    /// | **IN** `Direction` | Direction and number of data blocks or file marks to space over on media. |
+    /// | **IN** `Type` | Type of mark to space over on media. |
+    ///
+    /// ## Description
+    ///
+    /// This function will position the media using an implementation-specific timeout.
+    ///
+    /// A positive `Direction` value will indicate the number of data blocks or file marks to forward space the media.
+    /// A negative `Direction` value will indicate the number of data blocks or file marks to reverse space the media.
+    ///
+    /// The following `Type` marks are mandatory:
+    ///
+    /// | Type of Tape | Mark Type |
+    /// | ------------ | --------- |
+    /// | `BLOCK`      | `0`         |
+    /// | `FILEMARK` | `1` |
+    ///
+    /// Space operations position the media past the data block or filemark. Forward space operations leave media
+    /// positioned with the tape device head after the data block or filemark. Reverse space operations leave the media
+    /// positioned with the tape device head before the data block or filemark.
+    ///
+    /// If beginning of media is reached before a reverse space operation passes the requested number of data blocks or
+    /// file marks an `EFI_END_OF_MEDIA` error condition will occur. If end of recorded data or end of physical media
+    /// is reached before a forward space operation passes the requested number of data blocks or file marks an
+    /// `EFI_END_OF_MEDIA` error condition will occur. An `EFI_END_OF_MEDIA` error condition will not occur due to
+    /// spacing over data blocks or file marks past the logical end of media point used to indicate when write
+    /// operations should be limited.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The media was successfully repositioned. |
+    /// | `EFI_END_OF_MEDIA` | Beginning or end of media was reached before the indicated number of data blocks or file marks were found. |
+    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. Repositioning the media was aborted since the current position of the media may be incorrect. |
+    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
+    /// | `EFI_NOT_READY` | Repositioning the media failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
+    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
+    /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
+    pub TapeSpace: unsafe extern "efiapi" fn(
+        This: *mut EFI_TAPE_IO_PROTOCOL,
+        Direction: INTN,
+        Type: UINTN,
     ) -> EFI_STATUS,
 }
