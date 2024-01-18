@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, UINT64};
+use crate::types::{EFI_GUID, EFI_STATUS, UINT64};
 
 pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -52,4 +52,28 @@ pub const EFI_DISK_IO2_PROTOCOL_REVISION: UINT64 = 0x00020000;
 pub struct EFI_DISK_IO2_PROTOCOL {
     /// The revision to which the disk I/O interface adheres.
     pub Revision: UINT64,
+    /// Terminate outstanding asynchronous requests to a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    ///
+    /// ## Description
+    ///
+    /// The `Cancel()` function will terminate any in-flight non-blocking I/O requests by signaling
+    /// the `EFI_DISK_IO2_TOKEN` event and with `TransactionStatus` set to `EFI_ABORTED`. After the
+    /// `Cancel()` function returns it is safe to free any Token or Buffer data structures that were
+    /// allocated as part of the non-blocking I/O operation.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | All outstanding requests were successfully terminated. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the cancel operation. |
+    pub Cancel: unsafe extern "efiapi" fn(
+        This: *mut EFI_DISK_IO2_PROTOCOL,
+    ) -> EFI_STATUS;
 }
