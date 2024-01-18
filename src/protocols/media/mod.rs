@@ -20,6 +20,10 @@
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 pub mod disk;
+#[cfg(feature = "media-disk-v2")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+pub mod disk_2;
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
@@ -45,6 +49,10 @@ pub mod tape;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 pub use disk::EFI_DISK_IO_PROTOCOL;
+#[cfg(feature = "media-disk-v2")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+pub use disk_2::EFI_DISK_IO2_PROTOCOL;
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
