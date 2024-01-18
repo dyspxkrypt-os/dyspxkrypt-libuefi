@@ -75,5 +75,5 @@ pub struct EFI_DISK_IO2_PROTOCOL {
     /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the cancel operation. |
     pub Cancel: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
-    ) -> EFI_STATUS;
+    ) -> EFI_STATUS,
 }
