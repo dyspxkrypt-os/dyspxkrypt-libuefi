@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, UINT64};
+use crate::types::{EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -76,4 +76,59 @@ pub struct EFI_DISK_IO2_PROTOCOL {
     pub Cancel: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
     ) -> EFI_STATUS,
+    /// Reads a specified number of bytes from a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `MediaId` | ID of the medium to be read. |
+    /// | **IN** `Offset` | The starting byte offset on the logical block I/O device to read from. |
+    /// | **IN OUT** `Token` | A pointer to the token associated with the transaction. If this is `NULL`, synchronous/blocking IO is performed. |
+    /// | **IN** `BufferSize` | The size in bytes of `Buffer`. The number of bytes to read from the device. |
+    /// | **OUT** `Buffer` | A pointer to the destination buffer for the data. The caller is responsible for either having implicit or explicit ownership of the buffer. |
+    ///
+    /// ## Description
+    ///
+    /// The `ReadDiskEx()` function reads the number of bytes specified by `BufferSize` from the device.
+    /// All the bytes are read, or an error is returned. If there is no medium in the device, the
+    /// function returns `EFI_NO_MEDIA`. If the `MediaId` is not the ID of the medium currently in
+    /// the device, the function returns `EFI_MEDIA_CHANGED`.
+    ///
+    /// If an error is returned from the call to `ReadDiskEx()` and non-blocking I/O is being requested,
+    /// the `Event` associated with this request will not be signaled. If the call to `ReadDiskEx()`
+    /// succeeds then the `Event` will be signaled upon completion of the read or if an error occurs
+    /// during the processing of the request. The status of the read request can be determined from
+    /// the `Status` field of the `Token` once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | If `Event` is `NULL` (blocking I/O): The data was read correctly from the device. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. `Event` will be signaled upon completion. Returned in the token after signaling `Event`. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the read operation. |
+    /// | `EFI_NO_MEDIA` | There is no medium in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current medium. |
+    /// | `EFI_INVALID_PARAMETER` | The read request contains device addresses that are not valid for the device. |
+    /// | `EFI_OUT_OF_RESOURCES` | The request could not be completed due to a lack of resources |
+    pub ReadDiskEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_DISK_IO2_PROTOCOL,
+        MediaId: UINT32,
+        Offset: UINT64,
+        Token: *mut EFI_DISK_IO2_TOKEN,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+}
+
+#[repr(C)]
+pub struct EFI_DISK_IO2_TOKEN {
+    /// If `Event` is `NULL`, then blocking I/O is performed. If `Event` is not `NULL` and non-blocking
+    /// I/O is supported, then non-blocking I/O is performed, and Event will be signaled when the I/O
+    /// request is completed. The caller must be prepared to handle the case where the callback
+    /// associated with `Event` occurs before the original asynchronous I/O request call returns.
+    pub Event: EFI_EVENT,
+    /// Defines whether or not the signaled event encountered an error.
+    pub TransactionStatus: EFI_STATUS,
 }
