@@ -49,4 +49,7 @@ pub const EFI_DISK_IO2_PROTOCOL_REVISION: UINT64 = 0x00020000;
 /// and completed before the blocking function is executed so that operation are carried out in the
 /// order they were requested.
 #[repr(C)]
-pub struct EFI_DISK_IO2_PROTOCOL;
+pub struct EFI_DISK_IO2_PROTOCOL {
+    /// The revision to which the disk I/O interface adheres.
+    pub Revision: UINT64,
+}
