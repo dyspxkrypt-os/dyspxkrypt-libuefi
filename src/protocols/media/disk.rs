@@ -84,4 +84,39 @@ pub struct EFI_DISK_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Writes a specified number of bytes to a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `MediaId` | ID of the medium to be written. |
+    /// | **IN** `Offset` | The starting byte offset on the logical block I/O device to write. |
+    /// | **IN** `BufferSize` | The size in bytes of Buffer. The number of bytes to write to the device. |
+    /// | **IN** `Buffer` | A pointer to the buffer containing the data to be written. |
+    ///
+    /// ## Description
+    ///
+    /// The `WriteDisk()` function writes the number of bytes specified by BufferSize to the device. All bytes are
+    /// written, or an error is returned. If there is no medium in the device, the function returns `EFI_NO_MEDIA`. If
+    /// the `MediaId` is not the ID of the medium currently in the device, the function returns `EFI_MEDIA_CHANGED`.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was written correctly to the device. |
+    /// | `EFI_WRITE_PROTECTED` | The device cannot be written to. |
+    /// | `EFI_NO_MEDIA` | There is no medium in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current medium. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the write operation. |
+    /// | `EFI_INVALID_PARAMETER` | The write request contains device addresses that are not valid for the device. |
+    pub WriteDisk: unsafe extern "efiapi" fn(
+        This: *mut EFI_DISK_IO_PROTOCOL,
+        MediaId: UINT32,
+        Offset: UINT64,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
 }
