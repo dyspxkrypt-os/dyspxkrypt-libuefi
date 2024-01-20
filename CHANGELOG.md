@@ -2,7 +2,9 @@
 
 ## Added
 
-- EFI tape I/O protocol and its associating constants and structures (`EFI_TAPE_IO_PROTOCOL`) (behind `media-tapeio` or `media-full` feature flags)
+- EFI tape I/O protocol and its associating constants and structures (`EFI_TAPE_IO_PROTOCOL`) (behind `media-tape` or `media-full` feature flags)
+- EFI disk I/O protocol and its associating constants and structures (`EFI_DISK_IO_PROTOCOL`) (behind `media-disk` or `media-full` feature flags)
+- EFI disk I/O v2 protocol and its associating constants and structures (`EFI_DISK_IO_2_PROTOCOL`) (behind `media-disk-v2` or `media-full` feature flags)
 
 ## Changed
 
