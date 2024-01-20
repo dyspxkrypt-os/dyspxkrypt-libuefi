@@ -111,8 +111,51 @@ pub struct EFI_DISK_IO2_PROTOCOL {
     /// | `EFI_NO_MEDIA` | There is no medium in the device. |
     /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current medium. |
     /// | `EFI_INVALID_PARAMETER` | The read request contains device addresses that are not valid for the device. |
-    /// | `EFI_OUT_OF_RESOURCES` | The request could not be completed due to a lack of resources |
+    /// | `EFI_OUT_OF_RESOURCES` | The request could not be completed due to a lack of resources. |
     pub ReadDiskEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_DISK_IO2_PROTOCOL,
+        MediaId: UINT32,
+        Offset: UINT64,
+        Token: *mut EFI_DISK_IO2_TOKEN,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    /// Writes a specified number of bytes to a device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `MediaId` | ID of the medium to be written. |
+    /// | **IN** `Offset` | The starting byte offset on the logical block I/O device to write to. |
+    /// | **IN** `Token` | A pointer to the token associated with the transaction. If this is `NULL`, synchronous/blocking IO is performed. |
+    /// | **IN** `BufferSize` | The size in bytes of `Buffer`. The number of bytes to write to the device. |
+    /// | **IN** `Buffer` | A pointer to the destination buffer for the data. The caller is responsible for either having implicit or explicit ownership of the buffer. |
+    ///
+    /// ## Description
+    ///
+    /// The `WriteDiskEx()` function writes the number of bytes specified by `BufferSize` to the device. All bytes are
+    /// written, or an error is returned. If there is no medium in the device, the function returns `EFI_NO_MEDIA`. If
+    /// the `MediaId` is not the ID of the medium currently in the device, the function returns `EFI_MEDIA_CHANGED`.
+    ///
+    /// If an error is returned from the call to `WriteDiskEx()` and non-blocking I/O is being requested, the `Event`
+    /// associated with this request will not be signaled. If the call to `WriteDiskEx()` succeeds then the `Event` will
+    /// be signaled upon completion of the write or if an error occurs during the processing of the request. The status
+    /// of the write request can be determined from the `Status` field of the `Token` once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | If `Event` is `NULL` (blocking I/O): The data was written correctly to the device. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. `Event` will be signaled upon completion. Returned in the token after signaling `Event`. |
+    /// | `EFI_WRITE_PROTECTED` | The device cannot be written to. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the write operation. |
+    /// | `EFI_NO_MEDIA` | There is no medium in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current medium. |
+    /// | `EFI_INVALID_PARAMETER` | The write request contains device addresses that are not valid for the device. |
+    /// | `EFI_OUT_OF_RESOURCES` | The request could not be completed due to a lack of resources. |
+    pub WriteDiskEx: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
         MediaId: UINT32,
         Offset: UINT64,
