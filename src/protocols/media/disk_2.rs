@@ -163,6 +163,38 @@ pub struct EFI_DISK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Flushes all modified data to the physical device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `Token` | A pointer to the token associated with the transaction. If this is `NULL`, synchronous/blocking IO is performed. |
+    ///
+    /// ## Description
+    ///
+    /// The `FlushDiskEx()` function flushes all modified data to the physical device. If an error is returned from the
+    /// call to `FlushDiskEx()` and non-blocking I/O is being requested, the `Event` associated with this request will
+    /// not be signaled. If the call to `FlushDiskEx()` succeeds then the Event will be signaled upon completion of the
+    /// flush or if an error occurs during the processing of the request. The status of the flush request can be
+    /// determined from the `Status` field of the `Token` once the event is signaled.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | If `Event` is `NULL` (blocking I/O): The data was flushed successfully to the device. If `Event` is not `NULL` (asynchronous I/O): The request was successfully queued for processing. `Event` will be signaled upon completion. Returned in the token after signaling `Event`. |
+    /// | `EFI_WRITE_PROTECTED` | The device cannot be written to. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the flush operation. |
+    /// | `EFI_NO_MEDIA` | There is no medium in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The medium in the device has changed since the last access. |
+    /// | `EFI_INVALID_PARAMETER` | `Token` is `NULL` |
+    /// | `EFI_OUT_OF_RESOURCES` | The request could not be completed due to a lack of resources. |
+    pub FlushDiskEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_DISK_IO2_PROTOCOL,
+        Token: *mut EFI_DISK_IO2_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
