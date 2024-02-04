@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, UINT64};
+use crate::types::{BOOLEAN, EFI_GUID, UINT32, UINT64};
 
 pub const EFI_BLOCK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -46,4 +46,65 @@ pub const EFI_BLOCK_IO_PROTOCOL_REVISION3: UINT64 = (2 << 16) | 31;
 pub struct EFI_BLOCK_IO_PROTOCOL {
     /// The revision to which the block IO interface adheres.
     pub Revision: UINT64,
+    /// A pointer to the EFI_BLOCK_IO_MEDIA data for this device.
+    pub Media: *mut EFI_BLOCK_IO_MEDIA,
 }
+
+#[repr(C)]
+pub struct EFI_BLOCK_IO_MEDIA {
+    /// The current media ID. If the media changes, this value is changed.
+    pub MediaId: UINT32,
+    /// `TRUE` if the media is removable; otherwise, `FALSE`.
+    pub RemovableMedia: BOOLEAN,
+    /// `TRUE` if there is a media currently present in the device; otherwise, `FALSE`. This field shows the media
+    /// present status as of the most recent `EFI_BLOCK_IO_PROTOCOL.ReadBlocks()` or `WriteBlocks()` call.
+    pub MediaPresent: BOOLEAN,
+    /// `TRUE` if the `EFI_BLOCK_IO_PROTOCOL` was produced to abstract partition structures on the disk. `FALSE` if the
+    /// `EFI_BLOCK_IO_PROTOCOL` was produced to abstract the logical blocks on a hardware device.
+    pub LogicalPartition: BOOLEAN,
+    /// `TRUE` if the media is marked read-only; otherwise, `FALSE`. This field shows the read-only status as of the
+    /// most recent `EFI_BLOCK_IO_PROTOCOL.WriteBlocks()` call.
+    pub ReadOnly: BOOLEAN,
+    /// `TRUE` if the `WriteBlocks()` function caches write data.
+    pub WriteCaching: BOOLEAN,
+    /// The intrinsic block size of the device. If the media changes, then this field is updated. Returns the number of
+    /// bytes per logical block. For ATA devices, this is reported in IDENTIFY DEVICE data words 117-118 (i.e., Words per
+    /// Logical Sector) (see ATA8-ACS). For SCSI devices, this is reported in the READ CAPACITY (16) parameter data
+    /// Logical Block Length In Bytes field (see SBC-3).
+    pub BlockSize: UINT32,
+    /// Supplies the alignment requirement for any buffer used in a data transfer. `IoAlign` values of 0 and 1 mean that
+    /// the buffer can be placed anywhere in memory. Otherwise, `IoAlign` must be a power of 2, and the requirement is
+    /// that the start address of a buffer must be evenly divisible by `IoAlign` with no remainder.
+    pub IoAlign: UINT32,
+    /// The last LBA on the device. If the media changes, then this field is updated. For ATA devices, this is reported
+    /// in IDENTIFY DEVICE data words 60-61 (i.e., Total number of user addressable logical sectors) (see ATA8-ACS) minus
+    /// one. For SCSI devices, this is reported in the READ CAPACITY (16) parameter data Returned Logical Block Address
+    /// field (see SBC-3) minus one.
+    pub LastBlock: EFI_LBA,
+    #[cfg(feature = "media-block-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-block-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-block-v2")))]
+    /// Only present if `EFI_BLOCK_IO_PROTOCOL.Revision` is greater than or equal to `EFI_BLOCK_IO_PROTOCOL_REVISION2`.
+    /// Returns the first LBA that is aligned to a physical block boundary (See GPT overview). Note that this field
+    /// follows the SCSI definition, not the ATA definition. If `LogicalPartition` is `TRUE` this value will be zero.
+    pub LowestAlignedLba: EFI_LBA,
+    #[cfg(feature = "media-block-v2")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-block-v2")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-block-v2")))]
+    /// Only present if `EFI_BLOCK_IO_PROTOCOL.Revision` is greater than or equal to `EFI_BLOCK_IO_PROTOCOL_REVISION2`.
+    /// Returns the number of logical blocks per physical block (See GPT overview) . Unlike the ATA and SCSI fields that
+    /// provide the information for this field, this field does not contain an exponential value. A value of 0 means
+    /// there is either one logical block per physical block, or there are more than one physical block per logical
+    /// block. If `LogicalPartition` is TRUE this value will be zero.
+    pub LogicalBlocksPerPhysicalBlock: UINT32,
+    #[cfg(feature = "media-block-v3")]
+    #[cfg_attr(doc, doc(cfg(feature = "media-block-v3")))]
+    #[cfg_attr(docsrs, doc(cfg(feature = "media-block-v3")))]
+    /// Only present if `EFI_BLOCK_IO_PROTOCOL.Revision` is greater than or equal to `EFI_BLOCK_IO_PROTOCOL_REVISION3`.
+    /// Returns the optimal transfer length granularity as a number of logical blocks (See GPT overview). A value of 0
+    /// means there is no reported optimal transfer length granularity. If `LogicalPartition` is `TRUE` this value will
+    /// be zero.
+    pub OptimalTransferLengthGranularity: UINT32,
+}
+
+pub type EFI_LBA = UINT64;
