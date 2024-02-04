@@ -25,6 +25,23 @@ pub const EFI_BLOCK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
+pub const EFI_BLOCK_IO_PROTOCOL_REVISION: UINT64 = 0x00010000;
+#[cfg(feature = "media-block-v2")]
+#[cfg_attr(doc, doc(cfg(feature = "media-block-v2")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "media-block-v2")))]
+pub const EFI_BLOCK_IO_PROTOCOL_REVISION2: UINT64 = 0x00020000;
+#[cfg(feature = "media-block-v3")]
+#[cfg_attr(doc, doc(cfg(feature = "media-block-v3")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "media-block-v3")))]
+pub const EFI_BLOCK_IO_PROTOCOL_REVISION3: UINT64 = (2 << 16) | 31;
+
+/// This protocol provides control over block devices.
+///
+/// This section defines the Block I/O protocol. This protocol is used to abstract mass storage
+/// devices to allow code running in the EFI boot services environment to access them without
+/// specific knowledge of the type of device or controller that manages the device. Functions are
+/// defined to read and write data at a block level from mass storage devices as well as to manage
+/// such devices in the EFI boot services environment.
 #[repr(C)]
 pub struct EFI_BLOCK_IO_PROTOCOL {
     /// The revision to which the block IO interface adheres.
