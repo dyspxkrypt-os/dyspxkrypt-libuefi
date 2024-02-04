@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "media-block")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
+pub mod block_io;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
