@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{BOOLEAN, EFI_GUID, UINT32, UINT64};
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT64};
 
 pub const EFI_BLOCK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -48,6 +48,37 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
     pub Revision: UINT64,
     /// A pointer to the EFI_BLOCK_IO_MEDIA data for this device.
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
+    /// Resets the block device hardware.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `ExtendedVerification` | Indicates that the driver may perform a more exhaustive verification operation of the device during reset. |
+    ///
+    /// ## Description
+    ///
+    /// The `Reset()` function resets the block device hardware.
+    ///
+    /// As part of the initialization process, the firmware/device will make a quick but reasonable
+    /// attempt to verify that the device is functioning. If the `ExtendedVerification` flag is
+    /// `TRUE` the firmware may take an extended amount of time to verify the device is operating
+    /// on reset. Otherwise the reset operation is to occur as quickly as possible.
+    ///
+    /// The hardware verification process is not defined by this specification and is left up to
+    /// the platform firmware or driver to implement.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The block device was reset. |
+    /// | `EFI_DEVICE_ERROR` | The block device is not functioning correctly and could not be reset. |
+    pub Reset: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
