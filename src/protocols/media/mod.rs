@@ -19,16 +19,23 @@
 #[cfg(feature = "media-block")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
-pub mod block_io;
+pub mod block;
+#[cfg(feature = "media-block-2")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-block-2", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-block-2", feature = "media-full")))
+)]
+pub mod block_2;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 pub mod disk;
-#[cfg(feature = "media-disk-v2")]
-#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+#[cfg(feature = "media-disk-2")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-2", feature = "media-full"))))]
 #[cfg_attr(
     docsrs,
-    doc(cfg(any(feature = "media-disk-v2", feature = "media-full")))
+    doc(cfg(any(feature = "media-disk-2", feature = "media-full")))
 )]
 pub mod disk_2;
 #[cfg(feature = "media-file")]
@@ -55,7 +62,7 @@ pub mod tape;
 #[cfg(feature = "media-block")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
-pub use block_io::EFI_BLOCK_IO_PROTOCOL;
+pub use block::EFI_BLOCK_IO_PROTOCOL;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]

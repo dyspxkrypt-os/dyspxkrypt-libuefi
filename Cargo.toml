@@ -31,9 +31,11 @@ image-dev-path = []
 
 media-full = [
     "media-ata",
+    "media-block-2",
     "media-block-v3",
     "media-crypt",
-    "media-disk-v2",
+    "media-disk",
+    "media-disk-2",
     "media-file-v2",
     "media-fs",
     "media-nvdimm",
@@ -47,11 +49,12 @@ media-full = [
 ]
 media-ata = []
 media-block = []
+media-block-2 = []
 media-block-v2 = ["media-block"]
 media-block-v3 = ["media-block-v2"]
 media-crypt = []
 media-disk = []
-media-disk-v2 = ["media-disk"]
+media-disk-2 = []
 media-file = []
 media-file-v2 = ["media-file"]
 media-fs = ["media-file-v2"]
