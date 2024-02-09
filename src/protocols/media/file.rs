@@ -16,6 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use alloc::boxed::Box;
+
 use crate::tables::runtime::EFI_TIME;
 use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
@@ -145,7 +147,7 @@ pub struct EFI_FILE_PROTOCOL {
 }
 
 #[repr(C)]
-pub struct EFI_FILE_INFO<const N: UINTN = 0> {
+pub struct EFI_FILE_INFO {
     pub Size: UINT64,
     pub FileSize: UINT64,
     pub PhysicalSize: UINT64,
@@ -153,22 +155,22 @@ pub struct EFI_FILE_INFO<const N: UINTN = 0> {
     pub LastAccessTime: EFI_TIME,
     pub ModificationTime: EFI_TIME,
     pub Attribute: UINT64,
-    pub FileName: [CHAR16; N],
+    pub FileName: Box<[CHAR16]>,
 }
 
 #[repr(C)]
-pub struct EFI_FILE_SYSTEM_INFO<const N: UINTN = 0> {
+pub struct EFI_FILE_SYSTEM_INFO {
     pub Size: UINT64,
     pub ReadOnly: BOOLEAN,
     pub VolumeSize: UINT64,
     pub FreeSpace: UINT64,
     pub BlockSize: UINT32,
-    pub VolumeLabel: [CHAR16; N],
+    pub VolumeLabel: Box<[CHAR16]>,
 }
 
 #[repr(C)]
-pub struct EFI_FILE_SYSTEM_VOLUME_LABEL<const N: UINTN = 0> {
-    pub VolumeLabel: [CHAR16; N],
+pub struct EFI_FILE_SYSTEM_VOLUME_LABEL {
+    pub VolumeLabel: Box<[CHAR16]>,
 }
 
 #[repr(C)]

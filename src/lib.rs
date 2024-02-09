@@ -54,6 +54,8 @@
 #![cfg_attr(doc, feature(doc_cfg))]
 #![feature(extended_varargs_abi_support)]
 
+extern crate alloc;
+
 pub mod protocols;
 pub mod tables;
 pub mod types;

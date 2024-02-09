@@ -16,8 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::media::block::EFI_BLOCK_IO_MEDIA;
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT64};
+use alloc::boxed::Box;
+
+use crate::protocols::media::block::{EFI_BLOCK_IO_MEDIA, EFI_LBA};
+use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, VOID};
 
 pub mod capabilities;
 
@@ -30,6 +32,8 @@ pub const EFI_BLOCK_IO_CRYPTO_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
+pub const EFI_BLOCK_IO_CRYPTO_INDEX_ANY: UINT64 = 0xFFFFFFFFFFFFFFFF;
+
 #[repr(C)]
 pub struct EFI_BLOCK_IO_CRYPTO_PROTOCOL {
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
@@ -37,6 +41,55 @@ pub struct EFI_BLOCK_IO_CRYPTO_PROTOCOL {
         This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
+    pub GetCapabilities: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        Capabilities: *mut EFI_BLOCK_IO_CRYPTO_CAPABILITIES,
+    ) -> EFI_STATUS,
+    pub SetConfiguration: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        ConfigurationCount: UINT64,
+        ConfigurationTable: *mut EFI_BLOCK_IO_CRYPTO_CONFIGURATION_TABLE_ENTRY,
+        ResultingTable: *mut EFI_BLOCK_IO_CRYPTO_CONFIGURATION_TABLE_ENTRY,
+    ) -> EFI_STATUS,
+    pub GetConfiguration: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        StartIndex: UINT64,
+        ConfigurationCount: UINT64,
+        KeyOwnerGuid: *mut EFI_GUID,
+        ConfigurationTable: *mut EFI_BLOCK_IO_CRYPTO_CONFIGURATION_TABLE_ENTRY,
+    ) -> EFI_STATUS,
+    pub ReadExtended: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        Token: *mut EFI_BLOCK_IO_CRYPTO_TOKEN,
+        BufferSize: UINT64,
+        Buffer: *mut VOID,
+        Index: *mut UINT64,
+        CryptoIvInput: *mut VOID,
+    ) -> EFI_STATUS,
+    pub WriteExtended: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        Token: *mut EFI_BLOCK_IO_CRYPTO_TOKEN,
+        BufferSize: UINT64,
+        Buffer: *mut VOID,
+        Index: *mut UINT64,
+        CryptoIvInput: *mut VOID,
+    ) -> EFI_STATUS,
+    pub FlushBlocks: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        Token: *mut EFI_BLOCK_IO_CRYPTO_TOKEN,
+    ) -> EFI_STATUS,
+}
+
+#[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_CAPABILITIES {
+    pub Supported: BOOLEAN,
+    pub KeyCount: UINT64,
+    pub CapabilityCount: UINT64,
+    pub Capabilities: Box<[EFI_BLOCK_IO_CRYPTO_CAPABILITY]>,
 }
 
 #[repr(C)]
@@ -47,6 +100,20 @@ pub struct EFI_BLOCK_IO_CRYPTO_CAPABILITY {
 }
 
 #[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_CONFIGURATION_TABLE_ENTRY {
+    pub Index: UINT64,
+    pub KeyOwnerGuid: EFI_GUID,
+    pub Capability: EFI_BLOCK_IO_CRYPTO_CAPABILITY,
+    pub CryptoKey: *mut VOID,
+}
+
+#[repr(C)]
 pub struct EFI_BLOCK_IO_CRYPTO_IV_INPUT {
     pub InputSize: UINT64,
+}
+
+#[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_TOKEN {
+    pub Event: EFI_EVENT,
+    pub TransactionStatus: EFI_STATUS,
 }
