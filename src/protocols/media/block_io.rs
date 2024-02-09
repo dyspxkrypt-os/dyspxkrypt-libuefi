@@ -160,6 +160,31 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
+    /// Flushes all modified data to a physical block device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    ///
+    /// ## Description
+    ///
+    /// The `FlushBlocks()` function flushes all modified data to the physical block device.
+    ///
+    /// All data written to the device prior to the flush must be physically written before returning
+    /// `EFI_SUCCESS` from this function. This would include any cached data the driver may have
+    /// cached, and cached data the device may have cached. A flush may cause a read request following
+    /// the flush to force a device access.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | All outstanding data were written correctly to the device. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while attempting to write data. |
+    /// | `EFI_NO_MEDIA` | There is no media in the device. |
+    pub FlushBlocks: unsafe extern "efiapi" fn(This: *mut EFI_BLOCK_IO_PROTOCOL) -> EFI_STATUS,
 }
 
 #[repr(C)]
