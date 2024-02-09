@@ -66,6 +66,13 @@ pub mod load_file_2;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 pub mod simple_filesystem;
+#[cfg(feature = "media-storesec")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-storesec", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-storesec", feature = "media-full")))
+)]
+pub mod storesec;
 #[cfg(feature = "media-tape")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
@@ -121,6 +128,13 @@ pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 pub use simple_filesystem::EFI_SIMPLE_FILE_SYSTEM_PROTOCOL;
+#[cfg(feature = "media-storesec")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-storesec", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-storesec", feature = "media-full")))
+)]
+pub use storesec::EFI_STORAGE_SECURITY_COMMAND_PROTOCOL;
 #[cfg(feature = "media-tape")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
