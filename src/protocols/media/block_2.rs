@@ -45,6 +45,20 @@ pub struct EFI_BLOCK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ),
+
+    pub WriteBlocksEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO2_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        Token: *mut EFI_BLOCK_IO2_TOKEN,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ),
+
+    pub FlushBlocksEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO2_PROTOCOL,
+        Token: *mut EFI_BLOCK_IO2_TOKEN,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
