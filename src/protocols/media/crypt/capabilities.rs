@@ -16,7 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::EFI_GUID;
+use crate::protocols::media::crypt::EFI_BLOCK_IO_CRYPTO_IV_INPUT;
+use crate::types::{EFI_GUID, UINT64};
+
+#[cfg(feature = "media-crypt-aes-cbc")]
+pub const EFI_BLOCK_IO_CRYPTO_ALGO_GUID_AES_CBC_MICROSOFT_BITLOCKER: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x689E4C62,
+        0x70BF,
+        0x4CF3,
+        [0x88, 0xBB, 0x33, 0xB3, 0x18, 0x26, 0x86, 0x70],
+    )
+};
 
 #[cfg(feature = "media-crypt-aes-xts")]
 pub const EFI_BLOCK_IO_CRYPTO_ALGO_GUID_AES_XTS: EFI_GUID = unsafe {
@@ -27,3 +38,19 @@ pub const EFI_BLOCK_IO_CRYPTO_ALGO_GUID_AES_XTS: EFI_GUID = unsafe {
         [0xA7, 0x80, 0xF3, 0xBF, 0x78, 0xA9, 0x7B, 0xEC],
     )
 };
+
+#[cfg(feature = "media-crypt-aes-cbc")]
+#[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_IV_INPUT_AES_CBC_MICROSOFT_BITLOCKER {
+    pub Header: EFI_BLOCK_IO_CRYPTO_IV_INPUT,
+    pub CryptoBlockByteOffset: UINT64,
+    pub CryptoBlockByteSize: UINT64,
+}
+
+#[cfg(feature = "media-crypt-aes-xts")]
+#[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_IV_INPUT_AES_XTS {
+    pub Header: EFI_BLOCK_IO_CRYPTO_IV_INPUT,
+    pub CryptoBlockNumber: UINT64,
+    pub CryptoBlockByteSize: UINT64,
+}

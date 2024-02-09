@@ -41,3 +41,8 @@ pub struct EFI_BLOCK_IO_CRYPTO_CAPABILITY {
     pub KeySize: UINT64,
     pub CryptoBlockSizeBitMask: UINT64,
 }
+
+#[repr(C)]
+pub struct EFI_BLOCK_IO_CRYPTO_IV_INPUT {
+    pub InputSize: UINT64,
+}
