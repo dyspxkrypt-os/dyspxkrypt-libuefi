@@ -15,3 +15,15 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+use crate::types::EFI_GUID;
+
+#[cfg(feature = "media-crypt-aes-xts")]
+pub const EFI_BLOCK_IO_CRYPTO_ALGO_GUID_AES_XTS: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x2F87BA6A,
+        0x5C04,
+        0x4385,
+        [0xA7, 0x80, 0xF3, 0xBF, 0x78, 0xA9, 0x7B, 0xEC],
+    )
+};

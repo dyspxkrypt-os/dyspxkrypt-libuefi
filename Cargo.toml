@@ -35,6 +35,8 @@ media-full = [
     "media-block-2",
     "media-block-v3",
     "media-crypt",
+    "media-crypt-aes-cbc",
+    "media-crypt-aes-xts",
     "media-disk",
     "media-disk-2",
     "media-file-v2",
@@ -54,6 +56,8 @@ media-block-2 = ["media-block"]
 media-block-v2 = ["media-block"]
 media-block-v3 = ["media-block-v2"]
 media-crypt = ["media-block"]
+media-crypt-aes-cbc = []
+media-crypt-aes-xts =[]
 media-disk = []
 media-disk-2 = []
 media-file = []
