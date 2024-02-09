@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT64};
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BLOCK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -78,6 +78,45 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
     pub Reset: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO_PROTOCOL,
         ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
+    /// Reads the requested number of blocks from the device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `MediaId` | The media ID that the read request is for. |
+    /// | **IN** `LBA` | The starting logical block address to read from on the device. |
+    /// | **IN** `BufferSize` | The size of the Buffer in bytes. This must be a multiple of the intrinsic block size of the device. |
+    /// | **OUT** `Buffer` | A pointer to the destination buffer for the data. The caller is responsible for either having implicit or explicit ownership of the buffer. |
+    ///
+    /// ## Description
+    ///
+    /// The `ReadBlocks()` function reads the requested number of blocks from the device. All the
+    /// blocks are read, or an error is returned.
+    ///
+    /// If there is no media in the device, the function returns `EFI_NO_MEDIA`. If the `MediaId` is
+    /// not the ID for the current media in the device, the function returns `EFI_MEDIA_CHANGED`. The
+    /// function must return `EFI_NO_MEDIA` or `EFI_MEDIA_CHANGED` even if `LBA`, `BufferSize`, or
+    /// `Buffer` are invalid so the caller can probe for changes in media state.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data was read correctly from the device. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while attempting to perform the read operation. |
+    /// | `EFI_NO_MEDIA` | There is no media in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current media. |
+    /// | `EFI_BAD_BUFFER_SIZE` | The `BufferSize` parameter is not a multiple of the intrinsic block size of the device. |
+    /// | `EFI_INVALID_PARAMETER` | The read request contains LBAs that are not valid, or the buffer is not on proper alignment. |
+    pub ReadBlocks: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
     ) -> EFI_STATUS,
 }
 

@@ -49,6 +49,10 @@ pub mod simple_filesystem;
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 pub mod tape;
 
+#[cfg(feature = "media-block")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
+pub use block_io::EFI_BLOCK_IO_PROTOCOL;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
