@@ -22,7 +22,7 @@ pub mod simple_text_output;
 pub use simple_text_input::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
 pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
 
-#[cfg(any(feature = "console-pointer"))]
+#[cfg(any(feature = "console-pointer", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
@@ -32,14 +32,14 @@ pub use simple_text_output::EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL;
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
 )]
 pub mod absolute_pointer;
-#[cfg(any(feature = "console-gop"))]
+#[cfg(any(feature = "console-gop", feature = "console-full"))]
 #[cfg_attr(doc, doc(cfg(any(feature = "console-gop", feature = "console-full"))))]
 #[cfg_attr(
     docsrs,
     doc(cfg(any(feature = "console-gop", feature = "console-full")))
 )]
 pub mod graphics_output;
-#[cfg(any(feature = "console-serial"))]
+#[cfg(any(feature = "console-serial", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-serial", feature = "console-full")))
@@ -49,7 +49,7 @@ pub mod graphics_output;
     doc(cfg(any(feature = "console-serial", feature = "console-full")))
 )]
 pub mod serial_io;
-#[cfg(any(feature = "console-pointer"))]
+#[cfg(any(feature = "console-pointer", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
@@ -59,12 +59,12 @@ pub mod serial_io;
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
 )]
 pub mod simple_pointer;
-#[cfg(any(feature = "console"))]
+#[cfg(any(feature = "console", feature = "console-full"))]
 #[cfg_attr(doc, doc(cfg(any(feature = "console", feature = "console-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "console", feature = "console-full"))))]
 pub mod simple_text_input_ex;
 
-#[cfg(any(feature = "console-pointer"))]
+#[cfg(any(feature = "console-pointer", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
@@ -74,14 +74,14 @@ pub mod simple_text_input_ex;
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
 )]
 pub use absolute_pointer::EFI_ABSOLUTE_POINTER_PROTOCOL;
-#[cfg(any(feature = "console-gop"))]
+#[cfg(any(feature = "console-gop", feature = "console-full"))]
 #[cfg_attr(doc, doc(cfg(any(feature = "console-gop", feature = "console-full"))))]
 #[cfg_attr(
     docsrs,
     doc(cfg(any(feature = "console-gop", feature = "console-full")))
 )]
 pub use graphics_output::EFI_GRAPHICS_OUTPUT_PROTOCOL;
-#[cfg(any(feature = "console-serial"))]
+#[cfg(any(feature = "console-serial", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-serial", feature = "console-full")))
@@ -91,7 +91,7 @@ pub use graphics_output::EFI_GRAPHICS_OUTPUT_PROTOCOL;
     doc(cfg(any(feature = "console-serial", feature = "console-full")))
 )]
 pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
-#[cfg(any(feature = "console-pointer"))]
+#[cfg(any(feature = "console-pointer", feature = "console-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
@@ -101,7 +101,7 @@ pub use serial_io::EFI_SERIAL_IO_PROTOCOL;
     doc(cfg(any(feature = "console-pointer", feature = "console-full")))
 )]
 pub use simple_pointer::EFI_SIMPLE_POINTER_PROTOCOL;
-#[cfg(any(feature = "console"))]
+#[cfg(any(feature = "console", feature = "console-full"))]
 #[cfg_attr(doc, doc(cfg(any(feature = "console", feature = "console-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "console", feature = "console-full"))))]
 pub use simple_text_input_ex::EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL;

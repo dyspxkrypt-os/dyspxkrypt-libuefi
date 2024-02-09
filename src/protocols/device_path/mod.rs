@@ -16,12 +16,12 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#[cfg(any(feature = "dev-path-full"))]
+#[cfg(feature = "dev-path-full")]
 #[cfg_attr(doc, doc(cfg(feature = "dev-path-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "dev-path-full")))]
 pub mod device_path_util;
 
-#[cfg(any(feature = "dev-path-full"))]
+#[cfg(feature = "dev-path-full")]
 #[cfg_attr(doc, doc(cfg(feature = "dev-path-full")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "dev-path-full")))]
 pub use device_path_util::EFI_DEVICE_PATH_UTILITIES_PROTOCOL;
