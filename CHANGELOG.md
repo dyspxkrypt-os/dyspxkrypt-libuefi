@@ -2,6 +2,16 @@
 
 ## Added
 
+## Changed
+
+## Fixed
+
+## Removed
+
+# Dyspxkrypt LibUEFI 0.3.1 (09-02-2024)
+
+## Added
+
 - EFI block I/O 2 protocol and its associating constants and structures (`EFI_BLOCK_IO2_PROTOCOL`) (behind `media-block-2` or `media-full` feature flags)
 - EFI inline cryptographic interface protocol and its associating constants and structures (`EFI_BLOCK_IO_CRYPTO_PROTOCOL`) (behind `media-crypt` or `media-full` feature flags)
 - EFI erase blocks protocol and its associating constants and structures (`EFI_ERASE_BLOCKS_PROTOCOL`) (behind `media-erase` or `media-full` feature flags)
