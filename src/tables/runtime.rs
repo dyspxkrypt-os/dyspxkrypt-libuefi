@@ -56,33 +56,26 @@ pub enum EFI_RESET_TYPE {
 #[repr(C)]
 pub struct EFI_RUNTIME_SERVICES {
     pub Hdr: EFI_TABLE_HEADER,
-
     pub GetTime: unsafe extern "efiapi" fn(
         Time: *mut EFI_TIME,
         Capabilities: *mut EFI_TIME_CAPABILITIES,
     ) -> EFI_STATUS,
-
     pub SetTime: unsafe extern "efiapi" fn(Time: *mut EFI_TIME) -> EFI_STATUS,
-
     pub GetWakeupTime: unsafe extern "efiapi" fn(
         Enabled: *mut BOOLEAN,
         Pending: *mut BOOLEAN,
         Time: *mut EFI_TIME,
     ) -> EFI_STATUS,
-
     pub SetWakeupTime:
         unsafe extern "efiapi" fn(Enable: BOOLEAN, Time: *mut EFI_TIME) -> EFI_STATUS,
-
     pub SetVirtualAddressMap: unsafe extern "efiapi" fn(
         MemoryMapSize: UINTN,
         DescriptorSize: UINTN,
         DescriptorVersion: UINT32,
         VirtualMap: *mut EFI_MEMORY_DESCRIPTOR,
     ) -> EFI_STATUS,
-
     pub ConvertPointer:
         unsafe extern "efiapi" fn(DebugDisposition: UINTN, Address: *mut *mut VOID) -> EFI_STATUS,
-
     pub GetVariable: unsafe extern "efiapi" fn(
         VariableName: *mut CHAR16,
         VendorGuid: *mut EFI_GUID,
@@ -90,13 +83,11 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: *mut UINTN,
         Data: *mut VOID,
     ) -> EFI_STATUS,
-
     pub GetNextVariableName: unsafe extern "efiapi" fn(
         VariableNameSize: *mut UINTN,
         VariableName: *mut CHAR16,
         VendorGuid: *mut EFI_GUID,
     ) -> EFI_STATUS,
-
     pub SetVariable: unsafe extern "efiapi" fn(
         VariableName: *mut CHAR16,
         VendorGuid: *mut EFI_GUID,
@@ -104,29 +95,24 @@ pub struct EFI_RUNTIME_SERVICES {
         DataSize: UINTN,
         Data: *mut VOID,
     ) -> EFI_STATUS,
-
     pub GetNextHighMonotonicCount: unsafe extern "efiapi" fn(HighCount: *mut UINT32) -> EFI_STATUS,
-
     pub ResetSystem: unsafe extern "efiapi" fn(
         ResetType: EFI_RESET_TYPE,
         ResetStatus: EFI_STATUS,
         DataSize: UINTN,
         ResetData: *mut VOID,
     ) -> VOID,
-
     pub UpdateCapsule: unsafe extern "efiapi" fn(
         CapsuleHeaderArray: *mut *mut EFI_CAPSULE_HEADER,
         CapsuleCount: UINTN,
         ScatterGatherList: EFI_PHYSICAL_ADDRESS,
     ) -> EFI_STATUS,
-
     pub QueryCapsuleCapabilities: unsafe extern "efiapi" fn(
         CapsuleHeaderArray: *mut *mut EFI_CAPSULE_HEADER,
         CapsuleCount: UINTN,
         MaximumCapsuleSize: *mut UINT64,
         ResetType: *mut EFI_RESET_TYPE,
     ) -> EFI_STATUS,
-
     pub QueryVariableInfo: unsafe extern "efiapi" fn(
         Attributes: UINT32,
         MaximumVariableStorageSize: *mut UINT64,
@@ -138,39 +124,30 @@ pub struct EFI_RUNTIME_SERVICES {
 #[repr(C)]
 pub struct EFI_TIME {
     pub Year: UINT16,
-
     pub Month: UINT8,
-
     pub Day: UINT8,
-
     pub Hour: UINT8,
-
     pub Minute: UINT8,
-
     pub Second: UINT8,
+    #[doc(hidden)]
     Pad1: UINT8,
-
     pub Nanosecond: UINT32,
-
     pub TimeZone: INT16,
-
     pub Daylight: UINT8,
+    #[doc(hidden)]
     Pad2: UINT8,
 }
 
 #[repr(C)]
 pub struct EFI_TIME_CAPABILITIES {
     pub Resolution: UINT32,
-
     pub Accuracy: UINT32,
-
     pub SetsToZero: BOOLEAN,
 }
 
 #[repr(C)]
 pub struct EFI_VARIABLE_AUTHENTICATION_3_CERT_ID {
     pub Type: UINT8,
-
     pub IdSize: UINT32,
 }
 
@@ -183,17 +160,13 @@ pub struct EFI_CAPSULE_BLOCK_DESCRIPTOR {
 #[repr(C)]
 pub struct EFI_CAPSULE_HEADER {
     pub CapsuleGuid: EFI_GUID,
-
     pub HeaderSize: UINT32,
-
     pub Flags: UINT32,
-
     pub CapsuleImageSize: UINT32,
 }
 
 #[repr(C)]
 pub union __ {
     pub DataBlock: EFI_PHYSICAL_ADDRESS,
-
     pub ContinuationPointer: EFI_PHYSICAL_ADDRESS,
 }

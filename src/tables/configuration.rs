@@ -21,6 +21,5 @@ use crate::types::{EFI_GUID, VOID};
 #[repr(C)]
 pub struct EFI_CONFIGURATION_TABLE {
     pub VendorGuid: EFI_GUID,
-
     pub VendorTable: *mut VOID,
 }

@@ -174,21 +174,16 @@ pub enum EFI_LOCATE_SEARCH_TYPE {
 #[repr(C)]
 pub struct EFI_BOOT_SERVICES {
     pub Hdr: EFI_TABLE_HEADER,
-
     pub RaiseTPL: unsafe extern "efiapi" fn(NewTPL: EFI_TPL) -> EFI_TPL,
-
     pub RestoreTPL: unsafe extern "efiapi" fn(OldTPL: EFI_TPL) -> VOID,
-
     pub AllocatePages: unsafe extern "efiapi" fn(
         Type: EFI_ALLOCATE_TYPE,
         MemoryType: EFI_MEMORY_TYPE,
         Pages: UINTN,
         Memory: *mut EFI_PHYSICAL_ADDRESS,
     ) -> EFI_STATUS,
-
     pub FreePages:
         unsafe extern "efiapi" fn(Memory: EFI_PHYSICAL_ADDRESS, Pages: UINTN) -> EFI_STATUS,
-
     pub GetMemoryMap: unsafe extern "efiapi" fn(
         MemoryMapSize: *mut UINTN,
         MemoryMap: *mut EFI_MEMORY_DESCRIPTOR,
@@ -196,15 +191,12 @@ pub struct EFI_BOOT_SERVICES {
         DescriptorSize: *mut UINTN,
         DescriptorVersion: *mut UINT32,
     ) -> EFI_STATUS,
-
     pub AllocatePool: unsafe extern "efiapi" fn(
         PoolType: EFI_MEMORY_TYPE,
         Size: UINTN,
         Buffer: *mut *mut VOID,
     ) -> EFI_STATUS,
-
     pub FreePool: unsafe extern "efiapi" fn(Buffer: *mut VOID) -> EFI_STATUS,
-
     pub CreateEvent: unsafe extern "efiapi" fn(
         Type: UINT32,
         NotifyTPL: EFI_TPL,
@@ -212,45 +204,36 @@ pub struct EFI_BOOT_SERVICES {
         NotifyContext: *mut VOID,
         Event: *mut EFI_EVENT,
     ) -> EFI_STATUS,
-
     pub SetTimer: unsafe extern "efiapi" fn(
         Event: EFI_EVENT,
         Type: EFI_TIMER_DELAY,
         TriggerTime: UINT64,
     ) -> EFI_STATUS,
-
     pub WaitForEvent: unsafe extern "efiapi" fn(
         NumberOfEvents: UINTN,
         Event: *mut EFI_EVENT,
         Index: *mut UINTN,
     ) -> EFI_STATUS,
-
     pub SignalEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
-
     pub CloseEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
-
     pub CheckEvent: unsafe extern "efiapi" fn(Event: EFI_EVENT) -> EFI_STATUS,
-
     pub InstallProtocolInterface: unsafe extern "efiapi" fn(
         Handle: *mut EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         InterfaceType: EFI_INTERFACE_TYPE,
         Interface: *mut VOID,
     ) -> EFI_STATUS,
-
     pub ReinstallProtocolInterface: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         OldInterface: *mut VOID,
         NewInterface: *mut VOID,
     ) -> EFI_STATUS,
-
     pub UninstallProtocolInterface: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         Interface: *mut VOID,
     ) -> EFI_STATUS,
-
     #[deprecated(since = "0.1.0", note = "use the OpenProtocol() function instead")]
     pub HandleProtocol: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
@@ -259,13 +242,11 @@ pub struct EFI_BOOT_SERVICES {
     ) -> EFI_STATUS,
     #[doc(hidden)]
     pub Reserved: *mut VOID,
-
     pub RegisterProtocolNotify: unsafe extern "efiapi" fn(
         Protocol: *mut EFI_GUID,
         Event: EFI_EVENT,
         Registration: *mut *mut VOID,
     ) -> EFI_STATUS,
-
     pub LocateHandle: unsafe extern "efiapi" fn(
         SearchType: EFI_LOCATE_SEARCH_TYPE,
         Protocol: *mut EFI_GUID,
@@ -273,16 +254,13 @@ pub struct EFI_BOOT_SERVICES {
         BufferSize: UINTN,
         Buffer: *mut EFI_HANDLE,
     ) -> EFI_STATUS,
-
     pub LocateDevicePath: unsafe extern "efiapi" fn(
         Protocol: *mut EFI_GUID,
         DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
         Device: *mut EFI_HANDLE,
     ) -> EFI_STATUS,
-
     pub InstallConfigurationTable:
         unsafe extern "efiapi" fn(Guid: *mut EFI_GUID, Table: *mut VOID) -> EFI_STATUS,
-
     pub LoadImage: unsafe extern "efiapi" fn(
         BootPolicy: BOOLEAN,
         ParentImageHandle: EFI_HANDLE,
@@ -291,49 +269,39 @@ pub struct EFI_BOOT_SERVICES {
         SourceSize: UINTN,
         ImageHandle: *mut EFI_HANDLE,
     ) -> EFI_STATUS,
-
     pub StartImage: unsafe extern "efiapi" fn(
         ImageHandle: EFI_HANDLE,
         ExitDataSize: *mut UINTN,
         ExitData: *mut *mut CHAR16,
     ) -> EFI_STATUS,
-
     pub Exit: unsafe extern "efiapi" fn(
         ImageHandle: EFI_HANDLE,
         ExitStatus: EFI_STATUS,
         ExitDataSize: UINTN,
         ExitData: *mut CHAR16,
     ) -> EFI_STATUS,
-
     pub UnloadImage: unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE) -> EFI_STATUS,
-
     pub ExitBootServices:
         unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE, MapKey: UINTN) -> EFI_STATUS,
-
     pub GetNextMonotonicCount: unsafe extern "efiapi" fn(Count: *mut UINT64) -> EFI_STATUS,
-
     pub Stall: unsafe extern "efiapi" fn(Microseconds: UINTN) -> EFI_STATUS,
-
     pub SetWatchdogTimer: unsafe extern "efiapi" fn(
         Timeout: UINTN,
         WatchdogCode: UINT64,
         DataSize: UINTN,
         WatchdogData: *mut CHAR16,
     ) -> EFI_STATUS,
-
     pub ConnectController: unsafe extern "efiapi" fn(
         ControllerHandle: EFI_HANDLE,
         DriverImageHandle: *mut EFI_HANDLE,
         RemainingDevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
         Recursive: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub DisconnectController: unsafe extern "efiapi" fn(
         ControllerHandle: EFI_HANDLE,
         DriverImageHandle: EFI_HANDLE,
         ChildHandle: EFI_HANDLE,
     ) -> EFI_STATUS,
-
     pub OpenProtocol: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
@@ -342,27 +310,23 @@ pub struct EFI_BOOT_SERVICES {
         ControllerHandle: EFI_HANDLE,
         Attributes: UINT32,
     ) -> EFI_STATUS,
-
     pub CloseProtocol: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         AgentHandle: EFI_HANDLE,
         ControllerHandle: EFI_HANDLE,
     ) -> EFI_STATUS,
-
     pub OpenProtocolInformation: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         Protocol: *mut EFI_GUID,
         EntryBuffer: *mut *mut EFI_OPEN_PROTOCOL_INFORMATION_ENTRY,
         EntryCount: *mut UINTN,
     ) -> EFI_STATUS,
-
     pub ProtocolsPerHandle: unsafe extern "efiapi" fn(
         Handle: EFI_HANDLE,
         ProtocolBuffer: *mut *mut *mut EFI_GUID,
         ProtocolBufferCount: *mut UINTN,
     ) -> EFI_STATUS,
-
     pub LocateHandleBuffer: unsafe extern "efiapi" fn(
         SearchType: EFI_LOCATE_SEARCH_TYPE,
         Protocol: *mut EFI_GUID,
@@ -370,31 +334,23 @@ pub struct EFI_BOOT_SERVICES {
         NoHandles: *mut UINTN,
         Buffer: *mut *mut EFI_HANDLE,
     ) -> EFI_STATUS,
-
-    //
     pub LocateProtocol: unsafe extern "efiapi" fn(
         Protocol: *mut EFI_GUID,
         Registration: *mut VOID,
         Interface: *mut *mut VOID,
     ) -> EFI_STATUS,
-
     pub InstallMultipleProtocolInterfaces:
         unsafe extern "efiapi" fn(Handle: *mut EFI_HANDLE, ...) -> EFI_STATUS,
-
     pub UninstallMultipleProtocolInterfaces:
         unsafe extern "efiapi" fn(Handle: *mut EFI_HANDLE, ...) -> EFI_STATUS,
-
     pub CalculateCrc32: unsafe extern "efiapi" fn(
         Data: *mut VOID,
         DataSize: UINTN,
         Crc32: *mut UINT32,
     ) -> EFI_STATUS,
-
     pub CopyMem:
         unsafe extern "efiapi" fn(Destination: *mut VOID, Source: *mut VOID, Length: UINTN) -> VOID,
-
     pub SetMem: unsafe extern "efiapi" fn(Buffer: *mut VOID, Size: UINTN, Value: UINT8) -> VOID,
-
     pub CreateEventEx: unsafe extern "efiapi" fn(
         Type: UINT32,
         NotifyTPL: EFI_TPL,
@@ -408,13 +364,9 @@ pub struct EFI_BOOT_SERVICES {
 #[repr(C)]
 pub struct EFI_MEMORY_DESCRIPTOR {
     pub Type: UINT32,
-
     pub PhysicalStart: EFI_PHYSICAL_ADDRESS,
-
     pub VirtualStart: EFI_VIRTUAL_ADDRESS,
-
     pub NumberOfPages: UINT64,
-
     pub Attribute: UINT64,
 }
 

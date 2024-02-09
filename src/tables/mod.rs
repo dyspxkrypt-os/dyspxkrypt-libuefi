@@ -26,11 +26,8 @@ pub mod system;
 #[repr(C)]
 pub struct EFI_TABLE_HEADER {
     pub Signature: UINT64,
-
     pub Revision: UINT32,
-
     pub HeaderSize: UINT32,
-
     pub CRC32: UINT32,
     #[doc(hidden)]
     pub Reserved: UINT32,
