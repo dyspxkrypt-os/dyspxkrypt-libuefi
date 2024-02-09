@@ -18,12 +18,6 @@
 - EFI ATA pass thru protocol and its associating constants and structures (`EFI_ATA_PASS_THRU_PROTOCOL`) (behind `media-ata` or `media-full` feature flags)
 - EFI storage security command protocol and its associating constants and structures (`EFI_`) (behind `media-storesec` or `media-full` feature flags)
 
-## Changed
-
-## Fixed
-
-## Removed
-
 # Dyspxkrypt LibUEFI 0.3.0 (09-02-2024)
 
 ## Added
