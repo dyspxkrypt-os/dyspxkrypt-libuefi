@@ -20,8 +20,10 @@ use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_BLOCK_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
-        0x964E5B21,0x6459,0x11D2,
-        [0x8E,0x39,0x00,0xA0,0xC9,0x69,0x72,0x3B]
+        0x964E5B21,
+        0x6459,
+        0x11D2,
+        [0x8E, 0x39, 0x00, 0xA0, 0xC9, 0x69, 0x72, 0x3B],
     )
 };
 
@@ -112,6 +114,46 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
     /// | `EFI_BAD_BUFFER_SIZE` | The `BufferSize` parameter is not a multiple of the intrinsic block size of the device. |
     /// | `EFI_INVALID_PARAMETER` | The read request contains LBAs that are not valid, or the buffer is not on proper alignment. |
     pub ReadBlocks: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    /// Writes a specified number of blocks to the device.
+    ///
+    /// ## Parameters
+    ///
+    /// | Parameter                     | Description                                                                                                |
+    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
+    /// | **IN** `This` | Indicates a pointer to the calling context. |
+    /// | **IN** `MediaId` | The media ID that the write request is for. |
+    /// | **IN** `LBA` | The starting logical block address to be written. The caller is responsible for writing to only legitimate locations. |
+    /// | **IN** `BufferSize` | The size in bytes of `Buffer`. This must be a multiple of the intrinsic block size of the device. |
+    /// | **IN** `Buffer` | A pointer to the source buffer for the data. |
+    ///
+    /// ## Description
+    ///
+    /// The `WriteBlocks()` function writes the requested number of blocks to the device. All blocks
+    /// are written, or an error is returned.
+    ///
+    /// If there is no media in the device, the function returns `EFI_NO_MEDIA`. If the `MediaId` is
+    /// not the ID for the current media in the device, the function returns `EFI_MEDIA_CHANGED`.
+    /// The function must return `EFI_NO_MEDIA` or `EFI_MEDIA_CHANGED` even if `LBA`, `BufferSize`,
+    /// or `Buffer` are invalid so the caller can probe for changes in media state.
+    ///
+    /// ## Status Codes Returned
+    ///
+    /// | Status Code        | Description                                                     |
+    /// | ------------------ | --------------------------------------------------------------- |
+    /// | `EFI_SUCCESS` | The data were written correctly to the device. |
+    /// | `EFI_WRITE_PROTECTED` | The device cannot be written to. |
+    /// | `EFI_NO_MEDIA` | There is no media in the device. |
+    /// | `EFI_MEDIA_CHANGED` | The `MediaId` is not for the current media. |
+    /// | `EFI_DEVICE_ERROR` | The device reported an error while attempting to perform the write operation. |
+    /// | `EFI_BAD_BUFFER_SIZE` | The `BufferSize` parameter is not a multiple of the intrinsic block size of the device. |
+    /// | `EFI_INVALID_PARAMETER` | The write request contains LBAs that are not valid, or the buffer is not on proper alignment. |
+    pub WriteBlocks: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO_PROTOCOL,
         MediaId: UINT32,
         LBA: EFI_LBA,

@@ -73,9 +73,7 @@ pub struct EFI_DISK_IO2_PROTOCOL {
     /// | ------------------ | --------------------------------------------------------------- |
     /// | `EFI_SUCCESS` | All outstanding requests were successfully terminated. |
     /// | `EFI_DEVICE_ERROR` | The device reported an error while performing the cancel operation. |
-    pub Cancel: unsafe extern "efiapi" fn(
-        This: *mut EFI_DISK_IO2_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub Cancel: unsafe extern "efiapi" fn(This: *mut EFI_DISK_IO2_PROTOCOL) -> EFI_STATUS,
     /// Reads a specified number of bytes from a device.
     ///
     /// ## Parameters
