@@ -2,7 +2,7 @@
 name = "dyspxkrypt-libuefi"
 description = "Raw bindings of UEFI that conforms to the definitions of the UEFI Specification."
 categories = ["external-ffi-bindings", "no-std"]
-keywords = ["uefi"]
+keywords = ["efi", "uefi"]
 version = "0.3.0"
 edition = "2021"
 authors = ["HTGAzureX1212."]
