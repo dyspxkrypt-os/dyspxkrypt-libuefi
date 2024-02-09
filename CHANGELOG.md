@@ -2,15 +2,20 @@
 
 ## Added
 
-- EFI tape I/O protocol and its associating constants and structures (`EFI_TAPE_IO_PROTOCOL`) (behind `media-tape` or `media-full` feature flags)
-- EFI disk I/O protocol and its associating constants and structures (`EFI_DISK_IO_PROTOCOL`) (behind `media-disk` or `media-full` feature flags)
-- EFI disk I/O v2 protocol and its associating constants and structures (`EFI_DISK_IO_2_PROTOCOL`) (behind `media-disk-v2` or `media-full` feature flags)
-
 ## Changed
 
 ## Fixed
 
 ## Removed
+
+# Dyspxkrypt LibUEFI 0.3.0 (09-02-2024)
+
+## Added
+
+- EFI tape I/O protocol and its associating constants and structures (`EFI_TAPE_IO_PROTOCOL`) (behind `media-tape` or `media-full` feature flags)
+- EFI disk I/O protocol and its associating constants and structures (`EFI_DISK_IO_PROTOCOL`) (behind `media-disk` or `media-full` feature flags)
+- EFI disk I/O v2 protocol and its associating constants and structures (`EFI_DISK_IO_2_PROTOCOL`) (behind `media-disk-v2` or `media-full` feature flags)
+- EFI block I/O protocol and its associating constants and structures (`EFI_BLOCK_IO_PROTOCOL`) (behind `media-block` or `media-full` feature flags)
 
 # Dyspxkrypt LibUEFI 0.2.0 (29-12-2023)
 
