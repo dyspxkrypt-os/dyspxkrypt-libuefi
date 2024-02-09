@@ -39,6 +39,7 @@ media-full = [
     "media-crypt-aes-xts",
     "media-disk",
     "media-disk-2",
+    "media-erase",
     "media-file-v2",
     "media-fs",
     "media-nvdimm",
@@ -60,6 +61,7 @@ media-crypt-aes-cbc = []
 media-crypt-aes-xts =[]
 media-disk = []
 media-disk-2 = []
+media-erase = []
 media-file = []
 media-file-v2 = ["media-file"]
 media-fs = ["media-file-v2"]

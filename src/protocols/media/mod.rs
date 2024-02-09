@@ -42,6 +42,10 @@ pub mod disk;
     doc(cfg(any(feature = "media-disk-2", feature = "media-full")))
 )]
 pub mod disk_2;
+#[cfg(feature = "media-erase")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-erase", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-erase", feature = "media-full"))))]
+pub mod erase;
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
@@ -74,15 +78,19 @@ pub use block::EFI_BLOCK_IO_PROTOCOL;
     doc(cfg(any(feature = "media-block-2", feature = "media-full")))
 )]
 pub use block_2::EFI_BLOCK_IO2_PROTOCOL;
+#[cfg(feature = "media-crypt")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-crypt", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-crypt", feature = "media-full"))))]
+pub use crypt::EFI_BLOCK_IO_CRYPTO_PROTOCOL;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
 pub use disk::EFI_DISK_IO_PROTOCOL;
-#[cfg(feature = "media-disk-v2")]
-#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-v2", feature = "media-full"))))]
+#[cfg(feature = "media-disk-2")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-disk-2", feature = "media-full"))))]
 #[cfg_attr(
     docsrs,
-    doc(cfg(any(feature = "media-disk-v2", feature = "media-full")))
+    doc(cfg(any(feature = "media-disk-2", feature = "media-full")))
 )]
 pub use disk_2::EFI_DISK_IO2_PROTOCOL;
 #[cfg(feature = "media-file")]
