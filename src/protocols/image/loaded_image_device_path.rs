@@ -28,6 +28,4 @@ pub const EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-/// When installed, the Loaded Image Device Path Protocol specifies the device path that was used when a PE/COFF image
-/// was loaded through the EFI Boot Service `LoadImage()`.
 pub type EFI_LOADED_IMAGE_DEVICE_PATH_PROTOCOL = EFI_DEVICE_PATH_PROTOCOL;

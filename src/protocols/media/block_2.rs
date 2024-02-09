@@ -16,8 +16,8 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::media::block::EFI_BLOCK_IO_MEDIA;
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS};
+use crate::protocols::media::block::{EFI_BLOCK_IO_MEDIA, EFI_LBA};
+use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINTN, VOID};
 
 pub const EFI_BLOCK_IO2_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -28,49 +28,28 @@ pub const EFI_BLOCK_IO2_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-/// This protocol provides control over block devices.
-///
-/// The Block I/O 2 protocol defines an extension to the Block I/O protocol which enables the
-/// ability to read and write data at a block level in a non-blocking manner.
 #[repr(C)]
 pub struct EFI_BLOCK_IO2_PROTOCOL {
-    /// A pointer to the `EFI_BLOCK_IO_MEDIA` data for this device.
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
-    /// Resets the block device hardware.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | Indicates a pointer to the calling context. |
-    /// | **IN** `ExtendedVerification` | Indicates that the driver may perform a more exhaustive verification operation of the device during reset. |
-    ///
-    /// ## Description
-    ///
-    /// The `Reset()` function resets the block device hardware.
-    ///
-    /// As part of the initialization process, the firmware/device will make a quick but reasonable
-    /// attempt to verify that the device is functioning. If the `ExtendedVerification` flag is `TRUE`
-    /// the firmware may take an extended amount of time to verify the device is operating on reset.
-    /// Otherwise the reset operation is to occur as quickly as possible.
-    ///
-    /// The hardware verification process is not defined by this specification and is left up to the
-    /// platform firmware or driver to implement.
-    ///
-    /// The `Reset()` function will terminate any in-flight non-blocking I/O requests by signaling
-    /// an `EFI_ABORTED` in the `TransactionStatus` member of the `EFI_BLOCK_IO2_TOKEN` for the
-    /// non-blocking I/O. After the `Reset()` function returns it is safe to free any `Token` or
-    /// `Buffer` data structures that were allocated to initiate the non-blocking I/O requests that
-    /// were in-flight for this device.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The block device was reset. |
-    /// | `EFI_DEVICE_ERROR` | The block device is not functioning correctly and could not be reset. |
+
     pub Reset: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO2_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
+
+    pub ReadBlocksEx: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO2_PROTOCOL,
+        MediaId: UINT32,
+        LBA: EFI_LBA,
+        Token: *mut EFI_BLOCK_IO2_TOKEN,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ),
+}
+
+#[repr(C)]
+pub struct EFI_BLOCK_IO2_TOKEN {
+    pub Event: EFI_EVENT,
+
+    pub TransactionStatus: EFI_STATUS,
 }

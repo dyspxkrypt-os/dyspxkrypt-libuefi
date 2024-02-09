@@ -32,54 +32,31 @@ pub const EFI_LOADED_IMAGE_PROTOCOL_GUID: EFI_GUID = unsafe {
 
 pub const EFI_LOADED_IMAGE_PROTOCOL_REVISION: UINT32 = 0x1000;
 
-/// Protocol for obtaining information about a loaded image.
 #[repr(C)]
 pub struct EFI_LOADED_IMAGE_PROTOCOL {
-    /// Defines the revision of the `EFI_LOADED_IMAGE_PROTOCOL` structure. All future revisions will
-    /// be backward compatible to the current revision.
     pub Revision: UINT32,
-    /// Parent image’s image handle. `NULL` if the image is loaded directly from the firmware’s boot
-    /// manager.
+
     pub ParentHandle: EFI_HANDLE,
-    /// The image’s EFI system table pointer.
+
     pub SystemTable: *mut EFI_SYSTEM_TABLE,
-    /// The device handle that the EFI Image was loaded from.
+
     pub DeviceHandle: EFI_HANDLE,
-    /// A pointer to the file path portion specific to DeviceHandle that the EFI Image was loaded
-    /// from.
+
     pub FilePath: *mut EFI_DEVICE_PATH_PROTOCOL,
     #[doc(hidden)]
     Reserved: *mut VOID,
-    /// The size in bytes of `LoadOptions`.
+
     pub LoadOptionsSize: UINT32,
-    /// A pointer to the image’s binary load options.
+
     pub LoadOptions: *mut VOID,
-    /// The base address at which the image was loaded.
+
     pub ImageBase: *mut VOID,
-    /// The size in bytes of the loaded image.
+
     pub ImageSize: UINTN,
-    /// The memory type that the code sections were loaded as.
+
     pub ImageCodeType: EFI_MEMORY_TYPE,
-    /// The memory type that the data sections were loaded as.
+
     pub ImageDataType: EFI_MEMORY_TYPE,
-    /// Unloads an image from memory.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `ImageHandle`          | The handle to the image to unload.                                                                         |
-    ///
-    /// ## Description
-    ///
-    /// The `Unload()` function is a callback that a driver registers to do cleanup when the
-    /// `UnloadImage()` boot service function is called.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS`      | The image was unloaded.                                          |
-    /// | `EFI_INVALID_PARAMETER` | The `ImageHandle` was not valid. |
+
     pub Unload: unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE) -> EFI_STATUS,
 }

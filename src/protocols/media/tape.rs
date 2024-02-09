@@ -27,257 +27,31 @@ pub const EFI_TAPE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-/// The EFI Tape IO protocol provides services to control and access a tape device.
 #[repr(C)]
 pub struct EFI_TAPE_IO_PROTOCOL {
-    /// Reads from the tape.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    /// | **IN OUT** `BufferSize` | Size of the buffer in bytes pointed to by `Buffer`. |
-    /// | **OUT** `Buffer` | Pointer to the buffer for data to be read into. |
-    ///
-    /// ## Description
-    ///
-    /// This function will read up to BufferSize bytes from media into the buffer pointed to by `Buffer` using an
-    /// implementation-specific timeout. `BufferSize` will be updated with the number of bytes transferred.
-    ///
-    /// Each read operation for a device that operates in variable block size mode reads one media data block. Unread
-    /// bytes which do not fit in the buffer will be skipped by the next read operation. The number of bytes transferred
-    /// will be limited by the actual media block size. Best practice is for the buffer size to match the media data
-    /// block size. When a file mark is encountered in variable block size mode the read operation will indicate that
-    /// 0 bytes were transferred and the function will return an `EFI_END_OF_FILE` error condition.
-    ///
-    /// In fixed block mode the buffer is expected to be a multiple of the data block size. Each read operation for a
-    /// device that operates in fixed block size mode may read multiple media data blocks. The number of bytes
-    /// transferred will be limited to an integral number of complete media data blocks. BufferSize should be evenly
-    /// divisible by the device’s fixed block size. When a file mark is encountered in fixed block size mode the read
-    /// operation will indicate that the number of bytes transferred is less than the number of blocks that would fit
-    /// in the provided buffer (possibly 0 bytes transferred) and the function will return an `EFI_END_OF_FILE` error
-    /// condition.
-    ///
-    /// Two consecutive file marks are normally used to indicate the end of the last file on the media.
-    ///
-    /// The value specified for `BufferSize` should correspond to the actual block size used on the media. If necessary,
-    /// the value for BufferSize may be larger than the actual media block size.
-    ///
-    /// Specifying a `BufferSize` of 0 is valid but requests the function to provide read-related status information
-    /// instead of actual media data transfer. No data will be attempted to be read from the device however this
-    /// operation is classified as an access for status handling. The status code returned may be used to determine if
-    /// a file mark has been encountered by the last read request with a non-zero size, and to determine if media is
-    /// loaded and the device is ready for reading. A `NULL` value for `Buffer` is valid when `BufferSize` is zero.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | Data was successfully transferred from the media. |
-    /// | `EFI_END_OF_FILE` | A file mark was encountered which limited the data transferred by the read operation or the head is positioned just after a file mark. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. The transfer was aborted since the current position of the media may be incorrect. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to transfer data from the media. |
-    /// | `EFI_INVALID_PARAMETER` | A `NULL` `Buffer` was specified with a non-zero `BufferSize` or the device is operating in fixed block size mode and the `BufferSize` was not a multiple of device’s fixed block size. |
-    /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of transfer. |
-    /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
     pub TapeRead: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-    /// Writes to the tape.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    /// | **IN** `BufferSize` | Size of the buffer in bytes pointed to by `Buffer`. |
-    /// | **IN** `Buffer` | Pointer to the buffer for data to be written from. |
-    ///
-    /// ## Description
-    ///
-    /// This function will write `BufferSize` bytes from the buffer pointed to by `Buffer` to media using an
-    /// implementation-specific timeout.
-    ///
-    /// Each write operation for a device that operates in variable block size mode writes one media data block of
-    /// `BufferSize` bytes.
-    ///
-    /// Each write operation for a device that operates in fixed block size mode writes one or more media data blocks
-    /// of the device’s fixed block size. `BufferSize` must be evenly divisible by the device’s fixed block size.
-    ///
-    /// Although sequential devices in variable block size mode support a wide variety of block sizes, many issues may
-    /// be avoided in I/O software, adapters, hardware and firmware if common block sizes are used such as: `32768`,
-    /// `16384`, `8192`, `4096`, `2048`, `1024`, `512`, and `80`.
-    ///
-    /// `BufferSize` will be updated with the number of bytes transferred.
-    ///
-    /// When a write operation occurs beyond the logical end of media an `EFI_END_OF_MEDIA` error condition will occur.
-    /// Normally data will be successfully written and BufferSize will be updated with the number of bytes transferred.
-    /// Additional write operations will continue to fail in the same manner. Excessive writing beyond the logical end
-    /// of media should be avoided since the physical end of media may be reached.
-    ///
-    /// Specifying a `BufferSize` of `0` is valid but requests the function to provide write-related status information
-    /// instead of actual media data transfer. No data will be attempted to be written to the device however this
-    /// operation is classified as an access for status handling. The status code returned may be used to determine if
-    /// media is loaded, writable and if the logical end of media point has been reached. A `NULL` value for `Buffer` is
-    /// valid when `BufferSize` is zero.
-    ///
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | Data was successfully transferred to the media. |
-    /// | `EFI_END_OF_FILE` | The logical end of media has been reached. Data may have been successfully transferred to the media. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. The transfer was aborted since the current position of the media may be incorrect. |
-    /// | `EFI_WRITE_PROTECTED` | The media in the device is write-protected. The transfer was aborted since a write cannot be completed. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to transfer data from the media. |
-    /// | `EFI_INVALID_PARAMETER` | A `NULL` `Buffer` was specified with a non-zero `BufferSize` or the device is operating in fixed block size mode and the `BufferSize` was not a multiple of device’s fixed block size. |
-    /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of transfer. |
-    /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
+
     pub TapeWrite: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-    /// Rewinds the tape.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    ///
-    /// ## Description
-    ///
-    /// This function will rewind the media using an implementation-specific timeout. The function will check if the
-    /// media was changed since the last access and reinstall the `EFI_TAPE_IO_PROTOCOL` interface for the device
-    /// handle if needed.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The media was successfully repositioned. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
-    /// | `EFI_NOT_READY` | Repositioning the media failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
-    /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
+
     pub TapeRewind: unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL) -> EFI_STATUS,
-    /// Positions the tape.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    /// | **IN** `Direction` | Direction and number of data blocks or file marks to space over on media. |
-    /// | **IN** `Type` | Type of mark to space over on media. |
-    ///
-    /// ## Description
-    ///
-    /// This function will position the media using an implementation-specific timeout.
-    ///
-    /// A positive `Direction` value will indicate the number of data blocks or file marks to forward space the media.
-    /// A negative `Direction` value will indicate the number of data blocks or file marks to reverse space the media.
-    ///
-    /// The following `Type` marks are mandatory:
-    ///
-    /// | Type of Tape | Mark Type |
-    /// | ------------ | --------- |
-    /// | `BLOCK`      | `0`         |
-    /// | `FILEMARK` | `1` |
-    ///
-    /// Space operations position the media past the data block or filemark. Forward space operations leave media
-    /// positioned with the tape device head after the data block or filemark. Reverse space operations leave the media
-    /// positioned with the tape device head before the data block or filemark.
-    ///
-    /// If beginning of media is reached before a reverse space operation passes the requested number of data blocks or
-    /// file marks an `EFI_END_OF_MEDIA` error condition will occur. If end of recorded data or end of physical media
-    /// is reached before a forward space operation passes the requested number of data blocks or file marks an
-    /// `EFI_END_OF_MEDIA` error condition will occur. An `EFI_END_OF_MEDIA` error condition will not occur due to
-    /// spacing over data blocks or file marks past the logical end of media point used to indicate when write
-    /// operations should be limited.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The media was successfully repositioned. |
-    /// | `EFI_END_OF_MEDIA` | Beginning or end of media was reached before the indicated number of data blocks or file marks were found. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. Repositioning the media was aborted since the current position of the media may be incorrect. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
-    /// | `EFI_NOT_READY` | Repositioning the media failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
-    /// | `EFI_TIMEOUT` | Repositioning of the media did not complete within the timeout specified. |
+
     pub TapeSpace: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         Direction: INTN,
         Type: UINTN,
     ) -> EFI_STATUS,
-    /// Writes file marks to the media.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    /// | **IN** `Count` | Number of file marks to write to the media. |
-    ///
-    /// ## Description
-    ///
-    /// This function will write file marks to the tape using an implementation-specific timeout.
-    ///
-    /// Writing file marks beyond logical end of tape does not result in an error condition unless physical end of
-    /// media is reached.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | Data was successfully transferred from the media. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_MEDIA_CHANGED` | The media in the device was changed since the last access. Repositioning the media was aborted since the current position of the media may be incorrect. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reposition the media. |
-    /// | `EFI_NOT_READY` | The transfer failed since the device was not ready (e.g. not online). The transfer may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of media repositioning. |
-    /// | `EFI_TIMEOUT` | The transfer failed to complete within the timeout specified. |
+
     pub TapeWriteFM:
         unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL, Count: UINTN) -> EFI_STATUS,
-    /// Resets the tape device.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_TAPE_IO_PROTOCOL` instance. |
-    /// | **IN** `ExtendedVerification` | Indicates whether the parent bus should also be reset. |
-    ///
-    /// ## Description
-    ///
-    /// This function will reset the tape device. If `ExtendedVerification` is set to `TRUE`, the function will reset\
-    /// the parent bus (e.g., SCSI bus). The function will check if the media was changed since the last access and
-    /// reinstall the `EFI_TAPE_IO_PROTOCOL` interface for the device handle if needed. Note media needs to be loaded
-    /// and device online for the reset, otherwise, `EFI_DEVICE_ERROR` is returned.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The bus and/or device were successfully reset. |
-    /// | `EFI_NO_MEDIA` | No media is loaded in the device. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to reset the bus and/or device. |
-    /// | `EFI_NOT_READY` | The reset failed since the device and/or bus was not ready. The reset may be retried at a later time. |
-    /// | `EFI_UNSUPPORTED` | The device does not support this type of reset. |
-    /// | `EFI_TIMEOUT` | The reset did not complete within the timeout allowed. |
+
     pub TapeReset: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         ExtendedVerification: BOOLEAN,

@@ -27,75 +27,20 @@ pub const EFI_SIMPLE_POINTER_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-/// This protocol provides services that allow information about a pointer device to be retrieved.
-///
-/// The `EFI_SIMPLE_POINTER_PROTOCOL` provides a set of services for a pointer device that can use used as an input
-/// device from an application written to this specification. The services include the ability to reset the pointer
-/// device, retrieve get the state of the pointer device, and retrieve the capabilities of the pointer device.
 #[repr(C)]
 pub struct EFI_SIMPLE_POINTER_PROTOCOL {
-    /// Resets the pointer device hardware.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_SIMPLE_POINTER_PROTOCOL` instance. |
-    /// | **IN** `ExtendedVerification` | Indicates that the driver may perform a more exhaustive verification operation of the device during reset. |
-    ///
-    /// ## Description
-    ///
-    /// This `Reset()` function resets the pointer device hardware. As part of initialization process,
-    /// the firmware/device will make a quick but reasonable attempt to verify that the device is functioning.
-    /// If the `ExtendedVerification` flag is `TRUE` the firmware may take an extended amount of time
-    /// to verify the device is operating on reset. Otherwise the reset operation is to occur as
-    /// quickly as possible. The hardware verification process is not defined by this specification
-    /// and is left up to the platform firmware or driver to implement.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The device was reset. |
-    /// | `EFI_DEVICE_ERROR` | The device is not functioning correctly and could not be reset. |
     pub Reset: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_POINTER_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-    /// Retrieves the current state of a pointer device.
-    ///
-    /// ## Parameters
-    ///
-    /// | Parameter                     | Description                                                                                                |
-    /// | ----------------------------- | ---------------------------------------------------------------------------------------------------------- |
-    /// | **IN** `This` | A pointer to the `EFI_SIMPLE_POINTER_PROTOCOL` instance. |
-    /// | **IN** `State` | A pointer to the state information on the pointer device.  |
-    ///
-    /// ## Description
-    ///
-    /// The `GetState()` function retrieves the current state of a pointer device. This includes
-    /// information on the buttons associated with the pointer device and the distance that each of
-    /// the axes associated with the pointer device has been moved. If the state of the pointer device
-    /// has not changed since the last call to `GetState()`, then `EFI_NOT_READY` is returned. If
-    /// the state of the pointer device has changed since the last call to `GetState()`, then the
-    /// state information is placed in State, and `EFI_SUCCESS` is returned. If a device error occurs
-    /// while attempting to retrieve the state information, then `EFI_DEVICE_ERROR` is returned.
-    ///
-    /// ## Status Codes Returned
-    ///
-    /// | Status Code        | Description                                                     |
-    /// | ------------------ | --------------------------------------------------------------- |
-    /// | `EFI_SUCCESS` | The state of the pointer device was returned in `State`. |
-    /// | `EFI_NOT_READY` | The state of the pointer device has not changed since the last call to `GetState()`. |
-    /// | `EFI_DEVICE_ERROR` | A device error occurred while attempting to retrieve the pointer device’s current state. |
+
     pub GetState: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_POINTER_PROTOCOL,
         State: *mut EFI_SIMPLE_POINTER_STATE,
     ) -> EFI_STATUS,
-    /// Event to use with `EFI_BOOT_SERVICES.WaitForEvent()` to wait for input from the pointer
-    /// device.
+
     pub WaitForInput: EFI_EVENT,
-    /// Pointer to `EFI_SIMPLE_POINTER_MODE` data.
+
     pub Mode: *mut EFI_SIMPLE_INPUT_MODE,
 }
 

@@ -28,9 +28,4 @@ pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-/// This protocol is used to obtain files from arbitrary devices but are not used as boot options.
-///
-/// The `EFI_LOAD_FILE2_PROTOCOL` is a simple protocol used to obtain files from arbitrary devices
-/// that are not boot options. It is used by `LoadImage()` when its `BootOption` parameter is `FALSE`
-/// and the `FilePath` does not have an instance of the `EFI_SIMPLE_FILE_SYSTEM_PROTOCOL`.
 pub type EFI_LOAD_FILE2_PROTOCOL = EFI_LOAD_FILE_PROTOCOL;
