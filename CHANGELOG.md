@@ -2,6 +2,9 @@
 
 ## Added
 
+- EFI block I/O 2 protocol and its associating constants and structures (`EFI_BLOCK_IO2_PROTOCOL`) (behind `media-block-2` or `media-full` feature flags)
+- EFI inline cryptographic interface protocol and its associating constants and structures (`EFI_BLOCK_IO_CRYPTO_PROTOCOL`) (behind `media-crypt` or `media-full` feature flags)
+
 ## Changed
 
 ## Fixed

@@ -17,7 +17,7 @@
  */
 
 use crate::protocols::media::block::EFI_BLOCK_IO_MEDIA;
-use crate::types::{EFI_GUID, UINT64};
+use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINT64};
 
 pub mod capabilities;
 
@@ -33,6 +33,10 @@ pub const EFI_BLOCK_IO_CRYPTO_PROTOCOL_GUID: EFI_GUID = unsafe {
 #[repr(C)]
 pub struct EFI_BLOCK_IO_CRYPTO_PROTOCOL {
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
+    pub Reset: unsafe extern "efiapi" fn(
+        This: *mut EFI_BLOCK_IO_CRYPTO_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
