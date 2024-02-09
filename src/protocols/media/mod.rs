@@ -93,6 +93,10 @@ pub use disk::EFI_DISK_IO_PROTOCOL;
     doc(cfg(any(feature = "media-disk-2", feature = "media-full")))
 )]
 pub use disk_2::EFI_DISK_IO2_PROTOCOL;
+#[cfg(feature = "media-erase")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-erase", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-erase", feature = "media-full"))))]
+pub use erase::EFI_ERASE_BLOCK_PROTOCOL;
 #[cfg(feature = "media-file")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
