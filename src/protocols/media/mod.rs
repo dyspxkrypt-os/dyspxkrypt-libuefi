@@ -27,7 +27,9 @@ pub mod block;
     doc(cfg(any(feature = "media-block-2", feature = "media-full")))
 )]
 pub mod block_2;
-
+#[cfg(feature = "media-crypt")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-crypt", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-crypt", feature = "media-full"))))]
 pub mod crypt;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
@@ -67,7 +69,10 @@ pub mod tape;
 pub use block::EFI_BLOCK_IO_PROTOCOL;
 #[cfg(feature = "media-block-2")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-block-2", feature = "media-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "media-block-2", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-block-2", feature = "media-full")))
+)]
 pub use block_2::EFI_BLOCK_IO2_PROTOCOL;
 #[cfg(feature = "media-disk")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-disk", feature = "media-full"))))]
