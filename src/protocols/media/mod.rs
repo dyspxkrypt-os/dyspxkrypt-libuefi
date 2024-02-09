@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "media-ata")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-ata", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-ata", feature = "media-full"))))]
+pub mod ata;
 #[cfg(feature = "media-block")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
@@ -67,6 +71,10 @@ pub mod simple_filesystem;
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 pub mod tape;
 
+#[cfg(feature = "media-ata")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-ata", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-ata", feature = "media-full"))))]
+pub use ata::EFI_ATA_PASS_THRU_PROTOCOL;
 #[cfg(feature = "media-block")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-block", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-block", feature = "media-full"))))]

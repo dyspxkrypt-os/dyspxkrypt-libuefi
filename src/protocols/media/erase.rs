@@ -28,7 +28,7 @@ pub const EFI_ERASE_BLOCK_PROTOCOL_GUID: EFI_GUID = unsafe {
     )
 };
 
-pub const EFI_ERASE_BLOCK_PROTOCOL_REVISION: UINT64 = (2<<16) | 60;
+pub const EFI_ERASE_BLOCK_PROTOCOL_REVISION: UINT64 = (2 << 16) | 60;
 
 #[repr(C)]
 pub struct EFI_ERASE_BLOCK_PROTOCOL {
