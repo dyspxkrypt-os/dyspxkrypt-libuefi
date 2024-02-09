@@ -32,9 +32,7 @@ pub const EFI_DISK_IO2_PROTOCOL_REVISION: UINT64 = 0x00020000;
 #[repr(C)]
 pub struct EFI_DISK_IO2_PROTOCOL {
     pub Revision: UINT64,
-
     pub Cancel: unsafe extern "efiapi" fn(This: *mut EFI_DISK_IO2_PROTOCOL) -> EFI_STATUS,
-
     pub ReadDiskEx: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
         MediaId: UINT32,
@@ -43,7 +41,6 @@ pub struct EFI_DISK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub WriteDiskEx: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
         MediaId: UINT32,
@@ -52,7 +49,6 @@ pub struct EFI_DISK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub FlushDiskEx: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO2_PROTOCOL,
         Token: *mut EFI_DISK_IO2_TOKEN,
@@ -62,6 +58,5 @@ pub struct EFI_DISK_IO2_PROTOCOL {
 #[repr(C)]
 pub struct EFI_DISK_IO2_TOKEN {
     pub Event: EFI_EVENT,
-
     pub TransactionStatus: EFI_STATUS,
 }

@@ -32,38 +32,31 @@ pub const EFI_DEVICE_PATH_UTILITIES_PROTOCOL_GUID: EFI_GUID = unsafe {
 pub struct EFI_DEVICE_PATH_UTILITIES_PROTOCOL {
     pub GetDevicePathSize:
         unsafe extern "efiapi" fn(DevicePath: *const EFI_DEVICE_PATH_PROTOCOL) -> UINTN,
-
     pub DuplicateDevicePath: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
     )
         -> *mut EFI_DEVICE_PATH_UTILITIES_PROTOCOL,
-
     pub AppendDevicePath: unsafe extern "efiapi" fn(
         Src1: *const EFI_DEVICE_PATH_PROTOCOL,
         Src2: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-
     pub AppendDeviceNode: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
         DeviceNode: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-
     pub AppendDevicePathInstance: unsafe extern "efiapi" fn(
         DevicePath: *const EFI_DEVICE_PATH_PROTOCOL,
         DevicePathInstance: *const EFI_DEVICE_PATH_PROTOCOL,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-
     pub GetNextDevicePathInstance: unsafe extern "efiapi" fn(
         DevicePathInstance: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
         DevicePathInstanceSize: *mut UINTN,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-
     pub CreateDeviceNode: unsafe extern "efiapi" fn(
         NodeType: UINT8,
         NodeSubType: UINT8,
         NodeLength: UINT16,
     ) -> *mut EFI_DEVICE_PATH_PROTOCOL,
-
     pub IsDevicePathMultiInstance:
         unsafe extern "efiapi" fn(DevicePath: *const EFI_DEVICE_PATH_PROTOCOL) -> BOOLEAN,
 }

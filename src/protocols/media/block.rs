@@ -40,14 +40,11 @@ pub const EFI_BLOCK_IO_PROTOCOL_REVISION3: UINT64 = (2 << 16) | 31;
 #[repr(C)]
 pub struct EFI_BLOCK_IO_PROTOCOL {
     pub Revision: UINT64,
-
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
-
     pub Reset: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub ReadBlocks: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO_PROTOCOL,
         MediaId: UINT32,
@@ -55,7 +52,6 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub WriteBlocks: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO_PROTOCOL,
         MediaId: UINT32,
@@ -63,28 +59,19 @@ pub struct EFI_BLOCK_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub FlushBlocks: unsafe extern "efiapi" fn(This: *mut EFI_BLOCK_IO_PROTOCOL) -> EFI_STATUS,
 }
 
 #[repr(C)]
 pub struct EFI_BLOCK_IO_MEDIA {
     pub MediaId: UINT32,
-
     pub RemovableMedia: BOOLEAN,
-
     pub MediaPresent: BOOLEAN,
-
     pub LogicalPartition: BOOLEAN,
-
     pub ReadOnly: BOOLEAN,
-
     pub WriteCaching: BOOLEAN,
-
     pub BlockSize: UINT32,
-
     pub IoAlign: UINT32,
-
     pub LastBlock: EFI_LBA,
     #[cfg(feature = "media-block-v2")]
     #[cfg_attr(doc, doc(cfg(feature = "media-block-v2")))]

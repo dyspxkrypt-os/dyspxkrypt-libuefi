@@ -35,28 +35,17 @@ pub const EFI_LOADED_IMAGE_PROTOCOL_REVISION: UINT32 = 0x1000;
 #[repr(C)]
 pub struct EFI_LOADED_IMAGE_PROTOCOL {
     pub Revision: UINT32,
-
     pub ParentHandle: EFI_HANDLE,
-
     pub SystemTable: *mut EFI_SYSTEM_TABLE,
-
     pub DeviceHandle: EFI_HANDLE,
-
     pub FilePath: *mut EFI_DEVICE_PATH_PROTOCOL,
     #[doc(hidden)]
     Reserved: *mut VOID,
-
     pub LoadOptionsSize: UINT32,
-
     pub LoadOptions: *mut VOID,
-
     pub ImageBase: *mut VOID,
-
     pub ImageSize: UINTN,
-
     pub ImageCodeType: EFI_MEMORY_TYPE,
-
     pub ImageDataType: EFI_MEMORY_TYPE,
-
     pub Unload: unsafe extern "efiapi" fn(ImageHandle: EFI_HANDLE) -> EFI_STATUS,
 }

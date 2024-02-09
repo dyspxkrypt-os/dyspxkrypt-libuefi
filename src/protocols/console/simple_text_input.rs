@@ -33,18 +33,15 @@ pub struct EFI_SIMPLE_TEXT_INPUT_PROTOCOL {
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub ReadKeyStroke: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         Key: *mut EFI_INPUT_KEY,
     ),
-
     pub WaitForKey: EFI_EVENT,
 }
 
 #[repr(C)]
 pub struct EFI_INPUT_KEY {
     pub ScanCode: UINT16,
-
     pub UnicodeChar: CHAR16,
 }

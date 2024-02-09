@@ -33,7 +33,6 @@ pub const EFI_SIMPLE_FILE_SYSTEM_PROTOCOL_REVISION: UINT64 = 0x00010000;
 #[repr(C)]
 pub struct EFI_SIMPLE_FILE_SYSTEM_PROTOCOL {
     pub Revision: UINT64,
-
     pub OpenVolume: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_FILE_SYSTEM_PROTOCOL,
         Root: *mut *mut EFI_FILE_PROTOCOL,

@@ -34,24 +34,19 @@ pub struct EFI_TAPE_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub TapeWrite: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub TapeRewind: unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL) -> EFI_STATUS,
-
     pub TapeSpace: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         Direction: INTN,
         Type: UINTN,
     ) -> EFI_STATUS,
-
     pub TapeWriteFM:
         unsafe extern "efiapi" fn(This: *mut EFI_TAPE_IO_PROTOCOL, Count: UINTN) -> EFI_STATUS,
-
     pub TapeReset: unsafe extern "efiapi" fn(
         This: *mut EFI_TAPE_IO_PROTOCOL,
         ExtendedVerification: BOOLEAN,

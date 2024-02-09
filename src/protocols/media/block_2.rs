@@ -31,12 +31,10 @@ pub const EFI_BLOCK_IO2_PROTOCOL_GUID: EFI_GUID = unsafe {
 #[repr(C)]
 pub struct EFI_BLOCK_IO2_PROTOCOL {
     pub Media: *mut EFI_BLOCK_IO_MEDIA,
-
     pub Reset: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO2_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub ReadBlocksEx: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO2_PROTOCOL,
         MediaId: UINT32,
@@ -45,7 +43,6 @@ pub struct EFI_BLOCK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ),
-
     pub WriteBlocksEx: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO2_PROTOCOL,
         MediaId: UINT32,
@@ -54,7 +51,6 @@ pub struct EFI_BLOCK_IO2_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ),
-
     pub FlushBlocksEx: unsafe extern "efiapi" fn(
         This: *mut EFI_BLOCK_IO2_PROTOCOL,
         Token: *mut EFI_BLOCK_IO2_TOKEN,
@@ -64,6 +60,5 @@ pub struct EFI_BLOCK_IO2_PROTOCOL {
 #[repr(C)]
 pub struct EFI_BLOCK_IO2_TOKEN {
     pub Event: EFI_EVENT,
-
     pub TransactionStatus: EFI_STATUS,
 }

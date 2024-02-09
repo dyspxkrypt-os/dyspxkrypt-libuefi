@@ -72,7 +72,6 @@ pub const EFI_FILE_SYSTEM_VOLUME_LABEL_ID: EFI_GUID = unsafe {
 #[repr(C)]
 pub struct EFI_FILE_PROTOCOL {
     pub Revision: UINT64,
-
     pub Open: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         NewHandle: *mut *mut EFI_FILE_PROTOCOL,
@@ -80,47 +79,37 @@ pub struct EFI_FILE_PROTOCOL {
         OpenMode: UINT64,
         Attributes: UINT64,
     ) -> EFI_STATUS,
-
     pub Close: unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL) -> EFI_STATUS,
-
     pub Delete: unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL) -> EFI_STATUS,
-
     pub Read: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub Write: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub GetPosition: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         Position: *mut UINT64,
     ) -> EFI_STATUS,
-
     pub SetPosition:
         unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL, Position: UINT64) -> EFI_STATUS,
-
     pub GetInfo: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         InformationType: *mut EFI_GUID,
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub SetInfo: unsafe extern "efiapi" fn(
         This: *mut EFI_FILE_PROTOCOL,
         InformationType: *mut EFI_GUID,
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub Flush: unsafe extern "efiapi" fn(This: *mut EFI_FILE_PROTOCOL) -> EFI_STATUS,
-
     #[cfg(feature = "media-file-v2")]
     #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
@@ -132,7 +121,6 @@ pub struct EFI_FILE_PROTOCOL {
         Attributes: UINT64,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
-
     #[cfg(feature = "media-file-v2")]
     #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
@@ -140,7 +128,6 @@ pub struct EFI_FILE_PROTOCOL {
         This: *mut EFI_FILE_PROTOCOL,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
-
     #[cfg(feature = "media-file-v2")]
     #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
@@ -148,7 +135,6 @@ pub struct EFI_FILE_PROTOCOL {
         This: *mut EFI_FILE_PROTOCOL,
         Token: *mut EFI_FILE_IO_TOKEN,
     ) -> EFI_STATUS,
-
     #[cfg(feature = "media-file-v2")]
     #[cfg_attr(doc, doc(cfg(feature = "media-file-v2")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "media-file-v2")))]
@@ -161,34 +147,22 @@ pub struct EFI_FILE_PROTOCOL {
 #[repr(C)]
 pub struct EFI_FILE_INFO<const N: UINTN = 0> {
     pub Size: UINT64,
-
     pub FileSize: UINT64,
-
     pub PhysicalSize: UINT64,
-
     pub CreateTime: EFI_TIME,
-
     pub LastAccessTime: EFI_TIME,
-
     pub ModificationTime: EFI_TIME,
-
     pub Attribute: UINT64,
-
     pub FileName: [CHAR16; N],
 }
 
 #[repr(C)]
 pub struct EFI_FILE_SYSTEM_INFO<const N: UINTN = 0> {
     pub Size: UINT64,
-
     pub ReadOnly: BOOLEAN,
-
     pub VolumeSize: UINT64,
-
     pub FreeSpace: UINT64,
-
     pub BlockSize: UINT32,
-
     pub VolumeLabel: [CHAR16; N],
 }
 
@@ -200,10 +174,7 @@ pub struct EFI_FILE_SYSTEM_VOLUME_LABEL<const N: UINTN = 0> {
 #[repr(C)]
 pub struct EFI_FILE_IO_TOKEN {
     pub Event: EFI_EVENT,
-
     pub Status: EFI_STATUS,
-
     pub BufferSize: UINTN,
-
     pub Buffer: *mut VOID,
 }

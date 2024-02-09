@@ -120,60 +120,46 @@ pub struct EFI_SIMPLE_TEXT_OUTPUT_PROTOCOL {
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub OutputString: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         String: *mut CHAR16,
     ) -> EFI_STATUS,
-
     pub TestString: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         String: *mut CHAR16,
     ) -> EFI_STATUS,
-
     pub QueryMode: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         ModeNumber: UINTN,
         Columns: *mut UINTN,
         Rows: *mut UINTN,
     ) -> EFI_STATUS,
-
     pub SetMode: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         ModeNumber: UINTN,
     ) -> EFI_STATUS,
-
     pub SetAttribute: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         Attribute: UINTN,
     ) -> EFI_STATUS,
-
     pub ClearScreen:
         unsafe extern "efiapi" fn(This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL) -> EFI_STATUS,
-
     pub SetCursorPosition: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL,
         Column: UINTN,
         Row: UINTN,
     ),
-
     pub EnableCursor:
         unsafe extern "efiapi" fn(This: *mut EFI_SIMPLE_TEXT_INPUT_PROTOCOL, Visible: BOOLEAN),
-
     pub Mode: *mut SIMPLE_TEXT_OUTPUT_MODE,
 }
 
 #[repr(C)]
 pub struct SIMPLE_TEXT_OUTPUT_MODE {
     pub MaxMode: INT32,
-
     pub Mode: INT32,
-
     pub Attribute: INT32,
-
     pub CursorColumn: INT32,
-
     pub CursorRow: INT32,
-
     pub CursorVisible: INT32,
 }

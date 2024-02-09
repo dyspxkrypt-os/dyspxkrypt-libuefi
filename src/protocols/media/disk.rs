@@ -32,7 +32,6 @@ pub const EFI_DISK_IO_PROTOCOL_REVISION: UINT64 = 0x00010000;
 #[repr(C)]
 pub struct EFI_DISK_IO_PROTOCOL {
     pub Revision: UINT64,
-
     pub ReadDisk: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO_PROTOCOL,
         MediaId: UINT32,
@@ -40,7 +39,6 @@ pub struct EFI_DISK_IO_PROTOCOL {
         BufferSize: UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub WriteDisk: unsafe extern "efiapi" fn(
         This: *mut EFI_DISK_IO_PROTOCOL,
         MediaId: UINT32,

@@ -33,14 +33,11 @@ pub struct EFI_SIMPLE_POINTER_PROTOCOL {
         This: *mut EFI_SIMPLE_POINTER_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub GetState: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_POINTER_PROTOCOL,
         State: *mut EFI_SIMPLE_POINTER_STATE,
     ) -> EFI_STATUS,
-
     pub WaitForInput: EFI_EVENT,
-
     pub Mode: *mut EFI_SIMPLE_INPUT_MODE,
 }
 

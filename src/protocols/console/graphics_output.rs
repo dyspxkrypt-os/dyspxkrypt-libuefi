@@ -31,24 +31,17 @@ pub const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
 #[repr(C)]
 pub enum EFI_GRAPHICS_PIXEL_FORMAT {
     PixelRedGreenBlueReserved8BitPerColor,
-
     PixelBlueGreenRedReserved8BitPerColor,
-
     PixelBitMask,
-
     PixelBltOnly,
-
     PixelFormatMax,
 }
 
 #[repr(C)]
 pub enum EFI_GRAPHICS_OUTPUT_BLT_OPERATION {
     EfiBltVideoFill,
-
     EfiBltVideoToBltBuffer,
-
     EfiBltBufferToVideo,
-
     EfiBltVideoToVideo,
     EfiGraphicsOutputBltOperationMax,
 }
@@ -61,12 +54,10 @@ pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
         SizeOfInfo: *mut UINTN,
         Info: *mut *mut EFI_GRAPHICS_OUTPUT_MODE_INFORMATION,
     ) -> EFI_STATUS,
-
     pub SetMode: unsafe extern "efiapi" fn(
         This: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL,
         ModeNumber: UINT32,
     ) -> EFI_STATUS,
-
     pub Blt: unsafe extern "efiapi" fn(
         This: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL,
         BltBuffer: *mut EFI_GRAPHICS_OUTPUT_BLT_PIXEL,
@@ -79,37 +70,26 @@ pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL {
         Height: UINTN,
         Delta: UINTN,
     ) -> EFI_STATUS,
-
     pub Mode: *mut EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE,
 }
 
 #[repr(C)]
 pub struct EFI_GRAPHICS_OUTPUT_PROTOCOL_MODE {
     pub MaxMode: UINT32,
-
     pub Mode: UINT32,
-
     pub Info: *mut EFI_GRAPHICS_OUTPUT_MODE_INFORMATION,
-
     pub SizeOfInfo: UINTN,
-
     pub FrameBufferBase: EFI_PHYSICAL_ADDRESS,
-
     pub FrameBufferSize: UINTN,
 }
 
 #[repr(C)]
 pub struct EFI_GRAPHICS_OUTPUT_MODE_INFORMATION {
     pub Version: UINT32,
-
     pub HorizontalResolution: UINT32,
-
     pub VerticalResolution: UINT32,
-
     pub PixelFormat: EFI_GRAPHICS_PIXEL_FORMAT,
-
     pub PixelInformation: EFI_PIXEL_BITMASK,
-
     pub PixelsPerScanLine: UINT32,
 }
 

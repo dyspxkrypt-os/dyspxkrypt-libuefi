@@ -52,24 +52,20 @@ pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         ExtendedVerification: BOOLEAN,
     ) -> EFI_STATUS,
-
     pub ReadKeyStrokeEx: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         KeyData: *mut EFI_KEY_DATA,
     ),
-
     pub SetState: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         KeyToggleState: *mut EFI_KEY_TOGGLE_STATE,
     ) -> EFI_STATUS,
-
     pub RegisterKeyNotify: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         KeyData: *mut EFI_KEY_DATA,
         KeyNotificationFunction: EFI_KEY_NOTIFY_FUNCTION,
         NotifyHandle: *mut *mut VOID,
     ) -> EFI_STATUS,
-
     pub UnregisterKeyNotify: unsafe extern "efiapi" fn(
         This: *mut EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL,
         NotificationHandle: *mut VOID,
@@ -79,14 +75,12 @@ pub struct EFI_SIMPLE_TEXT_INPUT_EX_PROTOCOL {
 #[repr(C)]
 pub struct EFI_KEY_DATA {
     pub Key: EFI_INPUT_KEY,
-
     pub KeyState: EFI_KEY_STATE,
 }
 
 #[repr(C)]
 pub struct EFI_KEY_STATE {
     pub KeyShiftState: UINT32,
-
     pub KeyToggleState: EFI_KEY_TOGGLE_STATE,
 }
 

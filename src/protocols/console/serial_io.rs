@@ -66,9 +66,7 @@ pub enum EFI_STOP_BITS_TYPE {
 #[repr(C)]
 pub struct EFI_SERIAL_IO_PROTOCOL {
     pub Revision: UINT32,
-
     pub Reset: unsafe extern "efiapi" fn(This: *mut EFI_SERIAL_IO_PROTOCOL) -> EFI_STATUS,
-
     pub SetAttributes: unsafe extern "efiapi" fn(
         This: *mut EFI_SERIAL_IO_PROTOCOL,
         BaudRate: UINT64,
@@ -78,29 +76,23 @@ pub struct EFI_SERIAL_IO_PROTOCOL {
         DataBits: UINT8,
         StopBits: EFI_STOP_BITS_TYPE,
     ) -> EFI_STATUS,
-
     pub SetControl:
         unsafe extern "efiapi" fn(This: *mut EFI_SERIAL_IO_PROTOCOL, Control: UINT32) -> EFI_STATUS,
-
     pub GetControl: unsafe extern "efiapi" fn(
         This: *mut EFI_SERIAL_IO_PROTOCOL,
         Control: *mut UINT32,
     ) -> EFI_STATUS,
-
     pub Write: unsafe extern "efiapi" fn(
         This: *mut EFI_SERIAL_IO_PROTOCOL,
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub Read: unsafe extern "efiapi" fn(
         This: *mut EFI_SERIAL_IO_PROTOCOL,
         BufferSize: *mut UINTN,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-
     pub Mode: *mut SERIAL_IO_MODE,
-
     #[cfg(feature = "console-serial-v1p1")]
     #[cfg_attr(doc, doc(cfg(feature = "console-serial-v1p1")))]
     #[cfg_attr(docsrs, doc(cfg(feature = "console-serial-v1p1")))]
