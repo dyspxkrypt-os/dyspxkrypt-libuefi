@@ -2,6 +2,16 @@
 
 ## Added
 
+## Changed
+
+## Fixed
+
+## Removed
+
+# Dyspxkrypt LibUEFI 0.4.0 (12-02-2024)
+
+## Added
+
 - custom prelude
 - EFI NVME pass thru protocol and its associating constants and structures (`EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL`) (behind `media-nvme` or `media-full` feature flags)
 - EFI SD MMC pass thru protocol and its associating constants and structures (`EFI_SD_MMC_PASS_THRU_PROTOCOL`) (behind `media-sd-mmc` or `media-full` feature flags)
@@ -10,12 +20,6 @@
 - EFI NVDIMM protocol and its associating constants and structures (`EFI_NVDIMM_LABEL_PROTOCOL`) (behind `media-nvdimm` or `media-full` feature flags)
 - EFI UFS device config protocol and its associating constants and structures (`EFI_UFS_DEVICE_CONFIG_PROTOCOL`) (behind `media-ufs` or `media-full` feature flags)
 - EFI partition infos (behind `partition` feature flag)
-
-## Changed
-
-## Fixed
-
-## Removed
 
 # Dyspxkrypt LibUEFI 0.3.1 (09-02-2024)
 
