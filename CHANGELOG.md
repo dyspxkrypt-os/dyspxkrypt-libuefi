@@ -2,6 +2,8 @@
 
 ## Added
 
+- EFI NVME pass thru protocol and its associating constants and structures (`EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL`) (behind `nvme` or `media-full` feature flags)
+
 ## Changed
 
 ## Fixed
@@ -16,7 +18,7 @@
 - EFI inline cryptographic interface protocol and its associating constants and structures (`EFI_BLOCK_IO_CRYPTO_PROTOCOL`) (behind `media-crypt` or `media-full` feature flags)
 - EFI erase blocks protocol and its associating constants and structures (`EFI_ERASE_BLOCKS_PROTOCOL`) (behind `media-erase` or `media-full` feature flags)
 - EFI ATA pass thru protocol and its associating constants and structures (`EFI_ATA_PASS_THRU_PROTOCOL`) (behind `media-ata` or `media-full` feature flags)
-- EFI storage security command protocol and its associating constants and structures (`EFI_`) (behind `media-storesec` or `media-full` feature flags)
+- EFI storage security command protocol and its associating constants and structures (`EFI_STORAGE_SECURITY_COMMAND_PROTOCOL`) (behind `media-storesec` or `media-full` feature flags)
 
 # Dyspxkrypt LibUEFI 0.3.0 (09-02-2024)
 
