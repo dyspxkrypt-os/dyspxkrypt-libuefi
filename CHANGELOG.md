@@ -8,6 +8,10 @@
 
 ## Removed
 
+# Dyspxkrypt LibUEFI 0.4.1 (12-02-2024)
+
+- derived `Clone` and `Copy` traits to fix docs.rs errors
+
 # Dyspxkrypt LibUEFI 0.4.0 (12-02-2024)
 
 ## Added

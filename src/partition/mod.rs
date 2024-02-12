@@ -18,6 +18,7 @@
 
 use crate::protocols::media::block::EFI_LBA;
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_PARTITION_ENTRY {
     pub PartitionTypeGUID: EFI_GUID,
@@ -28,6 +29,7 @@ pub struct EFI_PARTITION_ENTRY {
     pub PartitionName: [CHAR16; 36],
 }
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct MBR_PARTITION_RECORD {
     pub BootIndicator: UINT8,

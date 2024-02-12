@@ -53,7 +53,7 @@ pub type CHAR16 = u16;
 
 pub type VOID = c_void;
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_GUID {
     pub Data1: UINT32,
@@ -88,19 +88,19 @@ pub type EFI_LBA = UINT64;
 
 pub type EFI_TPL = UINTN;
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_MAC_ADDRESS(pub [UINT8; 32]);
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_IPv4_ADDRESS(pub [UINT8; 4]);
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_IPv6_ADDRESS(pub [UINT8; 16]);
 
-#[derive(Copy, Clone)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub union EFI_IP_ADDRESS {
     __: [UINT32; 4],
