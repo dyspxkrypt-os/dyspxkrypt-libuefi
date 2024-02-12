@@ -17,7 +17,6 @@
  */
 
 use crate::tables::boot::EFI_PHYSICAL_ADDRESS;
-use crate::types::{EFI_GUID, EFI_STATUS, UINT32, UINT8, UINTN};
 
 pub const EFI_GRAPHICS_OUTPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

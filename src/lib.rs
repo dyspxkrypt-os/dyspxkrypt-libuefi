@@ -48,13 +48,18 @@
 
 #![no_std]
 #![allow(clippy::missing_safety_doc)]
+#![allow(internal_features)]
 #![allow(non_camel_case_types)]
 #![allow(non_snake_case)]
 #![allow(non_upper_case_globals)]
 #![cfg_attr(doc, feature(doc_cfg))]
 #![feature(extended_varargs_abi_support)]
+#![feature(prelude_2024)]
+#![feature(prelude_import)]
 
 extern crate alloc;
+
+pub mod prelude;
 
 #[cfg(feature = "partition")]
 #[cfg_attr(doc, doc(cfg(feature = "partition")))]
@@ -63,3 +68,6 @@ pub mod partition;
 pub mod protocols;
 pub mod tables;
 pub mod types;
+
+#[prelude_import]
+pub(crate) use prelude::*;

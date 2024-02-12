@@ -112,6 +112,10 @@ pub mod storesec;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-tape", feature = "media-full"))))]
 pub mod tape;
+#[cfg(feature = "media-ufs")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-ufs", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-ufs", feature = "media-full"))))]
+pub mod ufs;
 
 #[cfg(feature = "media-ata")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-ata", feature = "media-full"))))]
@@ -163,6 +167,23 @@ pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
 pub use nvme::EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL;
+#[cfg(feature = "media-partition")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "media-partition", feature = "media-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-partition", feature = "media-full")))
+)]
+pub use partition::EFI_PARTITION_INFO_PROTOCOL;
+#[cfg(feature = "media-ramdisk")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-ramdisk", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-ramdisk", feature = "media-full")))
+)]
+pub use ramdisk::EFI_RAM_DISK_PROTOCOL;
 #[cfg(feature = "media-sd-mmc")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-sd-mmc", feature = "media-full"))))]
 #[cfg_attr(

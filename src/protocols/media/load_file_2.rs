@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::media::EFI_LOAD_FILE_PROTOCOL;
-use crate::types::EFI_GUID;
 
 pub const EFI_LOAD_FILE2_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

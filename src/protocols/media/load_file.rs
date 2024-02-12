@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{BOOLEAN, EFI_GUID, EFI_STATUS, UINTN, VOID};
 
 pub const EFI_LOAD_FILE_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

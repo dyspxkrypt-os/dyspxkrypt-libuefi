@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_STATUS, INT32};
-
 pub const EFI_SIMPLE_POINTER_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0x31878C87,

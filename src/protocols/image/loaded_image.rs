@@ -19,7 +19,6 @@
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
 use crate::tables::boot::EFI_MEMORY_TYPE;
 use crate::tables::system::EFI_SYSTEM_TABLE;
-use crate::types::{EFI_GUID, EFI_HANDLE, EFI_STATUS, UINT32, UINTN, VOID};
 
 pub const EFI_LOADED_IMAGE_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

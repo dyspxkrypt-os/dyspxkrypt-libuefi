@@ -19,7 +19,6 @@
 use alloc::boxed::Box;
 
 use crate::protocols::media::block::{EFI_BLOCK_IO_MEDIA, EFI_LBA};
-use crate::types::{BOOLEAN, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, VOID};
 
 pub mod capabilities;
 

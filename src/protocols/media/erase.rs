@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::media::block::EFI_LBA;
-use crate::types::{EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN};
 
 pub const EFI_ERASE_BLOCK_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

@@ -16,32 +16,39 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const EFI_NVDIMM_LABEL_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_UFS_DEVICE_CONFIG_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
-        0xD40B6B80,
-        0x97D5,
-        0x4282,
-        [0xBB, 0x1D, 0x22, 0x3A, 0x16, 0x91, 0x80, 0x58],
+        0xB81BFAB0,
+        0x0EB3,
+        0x4CF9,
+        [0x84, 0x65, 0x7F, 0xA9, 0x86, 0x36, 0x16, 0x64],
     )
 };
 
 #[repr(C)]
-pub struct EFI_NVDIMM_LABEL_PROTOCOL {
-    pub LabelStorageInformation: unsafe extern "efiapi" fn(
-        This: *mut EFI_NVDIMM_LABEL_PROTOCOL,
-        SizeOfLabelStorageArea: *mut UINT32,
-        MaxTransferLength: *mut UINT32,
+pub struct EFI_UFS_DEVICE_CONFIG_PROTOCOL {
+    pub RwUfsDescriptor: unsafe extern "efiapi" fn(
+        This: *mut EFI_UFS_DEVICE_CONFIG_PROTOCOL,
+        Read: BOOLEAN,
+        DescId: UINT8,
+        Index: UINT8,
+        Selector: UINT8,
+        Descriptor: UINT8,
+        DescSize: *mut UINT32,
     ) -> EFI_STATUS,
-    pub LabelStorageRead: unsafe extern "efiapi" fn(
-        This: *const EFI_NVDIMM_LABEL_PROTOCOL,
-        Offset: UINT32,
-        TransferLength: UINT32,
-        LabelData: *mut UINT8,
+    pub RwUfsFlag: unsafe extern "efiapi" fn(
+        This: *mut EFI_UFS_DEVICE_CONFIG_PROTOCOL,
+        Read: BOOLEAN,
+        FlagId: UINT8,
+        Flag: *mut UINT8,
     ) -> EFI_STATUS,
-    pub LabelStorageWrite: unsafe extern "efiapi" fn(
-        This: *const EFI_NVDIMM_LABEL_PROTOCOL,
-        Offset: UINT32,
-        TransferLength: UINT32,
-        LabelData: *mut UINT8,
+    pub RwUfsAttribute: unsafe extern "efiapi" fn(
+        This: *mut EFI_UFS_DEVICE_CONFIG_PROTOCOL,
+        Read: BOOLEAN,
+        AttrId: UINT8,
+        Index: UINT8,
+        Selector: UINT8,
+        Attribute: *mut UINT8,
+        AttrSize: *mut UINT32,
     ) -> EFI_STATUS,
 }

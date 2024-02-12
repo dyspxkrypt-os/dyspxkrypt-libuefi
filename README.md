@@ -20,6 +20,11 @@ specification. An absolute minimal amount of wrappers around the types will be p
 The objective is to provide a bare-metal API empowering developers to have fine control over every aspect of whatever application
 they implement leveraging this library, including what to include from this library as well.
 
+## Minimum Supported Rust Version
+
+It is recommended to use the *latest* Nightly toolchain for this library as it requires several Nightly-only features that are
+essential.
+
 ## License
 
 The code in this repository is licensed under **Version 3 of the GNU General Public License**.

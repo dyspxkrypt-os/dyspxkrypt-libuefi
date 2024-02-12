@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::media::crypt::EFI_BLOCK_IO_CRYPTO_IV_INPUT;
-use crate::types::{EFI_GUID, UINT64};
 
 #[cfg(feature = "media-crypt-aes-cbc")]
 pub const EFI_BLOCK_IO_CRYPTO_ALGO_GUID_AES_CBC_MICROSOFT_BITLOCKER: EFI_GUID = unsafe {

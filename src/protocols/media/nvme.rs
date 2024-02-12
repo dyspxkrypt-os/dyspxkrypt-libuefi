@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::device_path::EFI_DEVICE_PATH_PROTOCOL;
-use crate::types::{EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINT8, VOID};
 
 pub const EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::console::EFI_SIMPLE_TEXT_INPUT_PROTOCOL;
-use crate::types::{BOOLEAN, CHAR16, EFI_GUID, EFI_STATUS, INT32, UINTN};
 
 pub const EFI_SIMPLE_TEXT_INPUT_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(

@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, EFI_STATUS, UINT16, UINT32, UINT64, UINT8, UINTN, VOID};
-
 pub const EFI_STORAGE_SECURITY_COMMAND_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0xc88B0B6D,

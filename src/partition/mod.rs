@@ -17,7 +17,6 @@
  */
 
 use crate::protocols::media::block::EFI_LBA;
-use crate::types::{CHAR16, EFI_GUID, UINT64, UINT8};
 
 #[repr(C)]
 pub struct EFI_PARTITION_ENTRY {

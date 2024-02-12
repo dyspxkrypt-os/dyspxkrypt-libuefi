@@ -17,7 +17,6 @@
  */
 
 use crate::partition::{EFI_PARTITION_ENTRY, MBR_PARTITION_RECORD};
-use crate::types::{EFI_GUID, UINT32, UINT8};
 
 pub const EFI_PARTITION_INFO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
