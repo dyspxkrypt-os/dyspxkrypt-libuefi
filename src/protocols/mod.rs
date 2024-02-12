@@ -104,3 +104,13 @@ pub mod image;
     )))
 )]
 pub mod media;
+#[cfg(any(feature = "pci-full", feature = "pci-io", feature = "pci-rbio"))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "pci-full", feature = "pci-io", feature = "pci-rbio")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "pci-full", feature = "pci-io", feature = "pci-rbio")))
+)]
+pub mod pci;
