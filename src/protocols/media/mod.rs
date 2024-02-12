@@ -62,6 +62,13 @@ pub mod load_file;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 pub mod load_file_2;
+#[cfg(feature = "media-nvdimm")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-nvdimm", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-nvdimm", feature = "media-full")))
+)]
+pub mod nvdimm;
 #[cfg(feature = "media-nvme")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
