@@ -128,6 +128,10 @@ pub use load_file::EFI_LOAD_FILE_PROTOCOL;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-file", feature = "media-full"))))]
 pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
+#[cfg(feature = "media-nvme")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
+pub use nvme::EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL;
 #[cfg(feature = "media-fs")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
