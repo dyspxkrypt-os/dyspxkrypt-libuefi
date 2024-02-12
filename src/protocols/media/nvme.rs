@@ -62,7 +62,7 @@ pub struct EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL {
     pub BuildDevicePath: unsafe extern "efiapi" fn(
         This: *mut EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL,
         NamespaceId: UINT32,
-        DevicePath: *mut EFI_DEVICE_PATH_PROTOCOL,
+        DevicePath: *mut *mut EFI_DEVICE_PATH_PROTOCOL,
     ) -> EFI_STATUS,
     pub GetNamespace: unsafe extern "efiapi" fn(
         This: *mut EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL,

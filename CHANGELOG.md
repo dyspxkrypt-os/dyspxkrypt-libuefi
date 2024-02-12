@@ -3,6 +3,7 @@
 ## Added
 
 - EFI NVME pass thru protocol and its associating constants and structures (`EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL`) (behind `nvme` or `media-full` feature flags)
+- EFI SD MMC pass thru protocol and its associating constants and structures (`EFI_SD_MMC_PASS_THRU_PROTOCOL`) (behind `sd-mmc` or `media-full` feature flags)
 
 ## Changed
 
