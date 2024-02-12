@@ -66,6 +66,13 @@ pub mod load_file_2;
 #[cfg_attr(doc, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "media-nvme", feature = "media-full"))))]
 pub mod nvme;
+#[cfg(feature = "media-ramdisk")]
+#[cfg_attr(doc, doc(cfg(any(feature = "media-ramdisk", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-ramdisk", feature = "media-full")))
+)]
+pub mod ramdisk;
 #[cfg(feature = "media-sd-mmc")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-sd-mmc", feature = "media-full"))))]
 #[cfg_attr(
@@ -141,7 +148,10 @@ pub use load_file_2::EFI_LOAD_FILE2_PROTOCOL;
 pub use nvme::EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL;
 #[cfg(feature = "media-sd-mmc")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-sd-mmc", feature = "media-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "media-sd-mmc", feature = "media-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "media-sd-mmc", feature = "media-full")))
+)]
 pub use sdmmc::EFI_SD_MMC_PASS_THRU_PROTOCOL;
 #[cfg(feature = "media-fs")]
 #[cfg_attr(doc, doc(cfg(any(feature = "media-fs", feature = "media-full"))))]
