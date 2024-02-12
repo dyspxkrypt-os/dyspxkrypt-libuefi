@@ -15,7 +15,7 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 
 [features]
 default = []
-full = ["console-full", "dev-path-full", "image-full", "media-full"]
+full = ["console-full", "dev-path-full", "image-full", "media-full", "partition"]
 
 console-full = ["console", "console-gop", "console-pointer", "console-serial-v1p1"]
 console = []
@@ -67,12 +67,13 @@ media-file-v2 = ["media-file"]
 media-fs = ["media-file-v2"]
 media-nvdimm = []
 media-nvme = []
-media-partition = []
+media-partition = ["partition"]
 media-ramdisk = []
 media-sd-mmc = []
 media-storesec = []
 media-tape = []
 media-ufs = []
+partition = ["media-block"]
 
 [package.metadata.docs.rs]
 all-features = true

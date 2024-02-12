@@ -5,6 +5,7 @@
 - EFI NVME pass thru protocol and its associating constants and structures (`EFI_NVM_EXPRESS_PASS_THRU_PROTOCOL`) (behind `media-nvme` or `media-full` feature flags)
 - EFI SD MMC pass thru protocol and its associating constants and structures (`EFI_SD_MMC_PASS_THRU_PROTOCOL`) (behind `media-sd-mmc` or `media-full` feature flags)
 - EFI ramdisk protocol and its associating constants and structures (`EFI_RAM_DISK_PROTOCOL`) (behind `media-ramdisk` or `media-full` feature flags)
+- EFI partition info protocol and its associating constants and structures (`EFI_PARTITION_INFO_PROTOCOL`) (behind `media-partition` or `media-full` feature flags)
 
 ## Changed
 

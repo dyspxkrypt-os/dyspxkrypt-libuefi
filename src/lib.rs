@@ -56,6 +56,10 @@
 
 extern crate alloc;
 
+#[cfg(feature = "partition")]
+#[cfg_attr(doc, doc(cfg(feature = "partition")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "partition")))]
+pub mod partition;
 pub mod protocols;
 pub mod tables;
 pub mod types;

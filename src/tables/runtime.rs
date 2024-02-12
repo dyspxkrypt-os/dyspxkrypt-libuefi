@@ -154,7 +154,7 @@ pub struct EFI_VARIABLE_AUTHENTICATION_3_CERT_ID {
 #[repr(C)]
 pub struct EFI_CAPSULE_BLOCK_DESCRIPTOR {
     pub Length: UINT64,
-    pub Union: __,
+    pub Union: EFI_CAPSULE_BLOCK_DESCRIPTOR_INNER,
 }
 
 #[repr(C)]
@@ -166,7 +166,7 @@ pub struct EFI_CAPSULE_HEADER {
 }
 
 #[repr(C)]
-pub union __ {
+pub union EFI_CAPSULE_BLOCK_DESCRIPTOR_INNER {
     pub DataBlock: EFI_PHYSICAL_ADDRESS,
     pub ContinuationPointer: EFI_PHYSICAL_ADDRESS,
 }
