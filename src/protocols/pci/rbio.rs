@@ -16,7 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#[cfg(feature = "pci-rbio")]
-#[cfg_attr(doc, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
-pub mod rbio;
+pub const EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x2F707EBB,
+        0x4A1A,
+        0x11D4,
+        [0x9A, 0x38, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D],
+    )
+};
+
+#[repr(C)]
+pub struct EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL {
+    pub ParentHandle: EFI_HANDLE,
+}
