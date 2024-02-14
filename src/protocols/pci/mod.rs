@@ -20,3 +20,8 @@
 #[cfg_attr(doc, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
 pub mod rbio;
+
+#[cfg(feature = "pci-rbio")]
+#[cfg_attr(doc, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
+pub use rbio::EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL;

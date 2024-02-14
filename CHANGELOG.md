@@ -2,6 +2,8 @@
 
 ## Added
 
+- EFI PCI root bridge I/O and its associating constants and structures (`EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL`) (behind `pci-rbio` or `pci-full` feature flags)
+- 
 ## Changed
 
 ## Fixed
