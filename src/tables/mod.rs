@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{UINT32, UINT64};
-
 pub mod boot;
 pub mod configuration;
 pub mod runtime;

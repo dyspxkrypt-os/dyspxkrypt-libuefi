@@ -19,7 +19,6 @@
 use alloc::boxed::Box;
 
 use crate::tables::runtime::EFI_TIME;
-use crate::types::{BOOLEAN, CHAR16, EFI_EVENT, EFI_GUID, EFI_STATUS, UINT32, UINT64, UINTN, VOID};
 
 pub const EFI_FILE_PROTOCOL_REVISION: UINT64 = 0x00010000;
 pub const EFI_FILE_PROTOCOL_REVISION2: UINT64 = 0x00020000;

@@ -21,7 +21,6 @@ use crate::tables::boot::EFI_BOOT_SERVICES;
 use crate::tables::configuration::EFI_CONFIGURATION_TABLE;
 use crate::tables::runtime::EFI_RUNTIME_SERVICES;
 use crate::tables::EFI_TABLE_HEADER;
-use crate::types::{CHAR16, EFI_HANDLE, UINT32, UINT64, UINTN};
 
 pub const EFI_SYSTEM_TABLE_SIGNATURE: UINT64 = 0x5453595320494249;
 

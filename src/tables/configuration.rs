@@ -16,8 +16,6 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::types::{EFI_GUID, VOID};
-
 #[repr(C)]
 pub struct EFI_CONFIGURATION_TABLE {
     pub VendorGuid: EFI_GUID,

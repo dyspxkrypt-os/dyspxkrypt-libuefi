@@ -26,8 +26,6 @@ pub mod device_path_util;
 #[cfg_attr(docsrs, doc(cfg(feature = "dev-path-full")))]
 pub use device_path_util::EFI_DEVICE_PATH_UTILITIES_PROTOCOL;
 
-use crate::types::{EFI_GUID, UINT8};
-
 pub const EFI_DEVICE_PATH_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0x09576E91,
