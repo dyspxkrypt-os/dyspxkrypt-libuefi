@@ -69,5 +69,6 @@ pub mod protocols;
 pub mod tables;
 pub mod types;
 
+#[allow(unused_imports)]
 #[prelude_import]
 pub(crate) use prelude::*;
