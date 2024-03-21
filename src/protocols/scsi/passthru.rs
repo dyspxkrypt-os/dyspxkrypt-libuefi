@@ -15,3 +15,12 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+pub const EFI_EXT_SCSI_PASS_THRU_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x143B7632,
+        0xB81B,
+        0x4CB7,
+        [0xAB, 0xD3, 0xB6, 0x25, 0xA5, 0xB9, 0xBF, 0xFE],
+    )
+};

@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const EFI_PCI_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_SCSI_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0x932F47E6,
         0x2362,
