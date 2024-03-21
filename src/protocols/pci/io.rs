@@ -64,4 +64,45 @@ pub struct EFI_PCI_IO_PROTOCOL {
         Delay: UINT64,
         Result: *mut UINT64,
     ) -> EFI_STATUS,
+    pub Mem: EFI_PCI_IO_PROTOCOL_ACCESS,
+    pub Io: EFI_PCI_IO_PROTOCOL_ACCESS,
+    pub Pci: EFI_PCI_IO_PROTOCOL_CONFIG_ACCESS,
+}
+
+#[repr(C)]
+pub struct EFI_PCI_IO_PROTOCOL_ACCESS {
+    pub Read: unsafe extern "efiapi" fn(
+        This: *mut EFI_PCI_IO_PROTOCOL,
+        Width: EFI_PCI_IO_PROTOCOL_WIDTH,
+        BarIndex: UINT8,
+        Offset: UINT64,
+        Count: UINT64,
+        Buffer: *mut UINT64,
+    ) -> EFI_STATUS,
+    pub Write: unsafe extern "efiapi" fn(
+        This: *mut EFI_PCI_IO_PROTOCOL,
+        Width: EFI_PCI_IO_PROTOCOL_WIDTH,
+        BarIndex: UINT8,
+        Offset: UINT64,
+        Count: UINT64,
+        Buffer: *mut UINT64,
+    ) -> EFI_STATUS,
+}
+
+#[repr(C)]
+pub struct EFI_PCI_IO_PROTOCOL_CONFIG_ACCESS {
+    pub Read: unsafe extern "efiapi" fn(
+        This: *mut EFI_PCI_IO_PROTOCOL,
+        Width: EFI_PCI_IO_PROTOCOL_WIDTH,
+        Offset: UINT64,
+        Count: UINT64,
+        Buffer: *mut UINT64,
+    ) -> EFI_STATUS,
+    pub Write: unsafe extern "efiapi" fn(
+        This: *mut EFI_PCI_IO_PROTOCOL,
+        Width: EFI_PCI_IO_PROTOCOL_WIDTH,
+        Offset: UINT64,
+        Count: UINT64,
+        Buffer: *mut UINT64,
+    ) -> EFI_STATUS,
 }
