@@ -114,3 +114,13 @@ pub mod media;
     doc(cfg(any(feature = "pci-full", feature = "pci-io", feature = "pci-rbio")))
 )]
 pub mod pci;
+#[cfg(any(feature = "scsi-full", feature = "scsi-io", feature = "scsi-passthru"))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "scsi-full", feature = "scsi-io", feature = "scsi-passthru")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "scsi-full", feature = "scsi-io", feature = "scsi-passthru")))
+)]
+pub mod scsi;
