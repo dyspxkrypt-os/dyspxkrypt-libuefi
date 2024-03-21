@@ -5,6 +5,7 @@
 - EFI PCI root bridge I/O and its associating constants and structures (`EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL`) (behind `pci-rbio` or `pci-full` feature flags)
 - EFI PCI I/O and its associating constants and structures (`EFI_PCI_IO_PROTOCOL`) (behind `pci-io` or `pci-full` feature flags)
 - EFI SCSI I/O and its associating constants and structures (`EFI_SCSI_IO_PROTOCOL`) (behind `scsi-io` or `scsi-full` feature flags)
+- EFI SCSI pass thru and its associating constants and structures (`EFI_EXT_SCSI_PASS_THRU_PROTOCOL`) (behind `scsi-passthru` or `scsi-full` feature flags)
 
 ## Changed
 
