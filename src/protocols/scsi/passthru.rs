@@ -15,17 +15,3 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
-
-#[cfg(feature = "scsi-io")]
-#[cfg_attr(doc, doc(cfg(any(feature = "scsi-io", feature = "scsi-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "scsi-io", feature = "scsi-full"))))]
-pub mod io;
-#[cfg(feature = "scsi-io")]
-#[cfg_attr(doc, doc(cfg(any(feature = "scsi-passthru", feature = "scsi-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "scsi-passthru", feature = "scsi-full"))))]
-pub mod passthru;
-
-#[cfg(feature = "scsi-io")]
-#[cfg_attr(doc, doc(cfg(any(feature = "scsi-io", feature = "scsi-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "scsi-io", feature = "scsi-full"))))]
-pub use io::EFI_SCSI_IO_PROTOCOL;
