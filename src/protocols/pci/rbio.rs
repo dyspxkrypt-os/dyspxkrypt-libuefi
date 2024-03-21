@@ -126,9 +126,7 @@ pub struct EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL {
         Pages: UINTN,
         HostAddress: *mut *mut VOID,
     ) -> EFI_STATUS,
-    pub Flush: unsafe extern "efiapi" fn(
-        This: *mut EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub Flush: unsafe extern "efiapi" fn(This: *mut EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL) -> EFI_STATUS,
     pub GetAttributes: unsafe extern "efiapi" fn(
         This: *mut EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL,
         Supports: *mut UINT64,
@@ -144,6 +142,7 @@ pub struct EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL {
         This: *mut EFI_PCI_ROOT_BRIDGE_IO_PROTOCOL,
         Resources: *mut *mut VOID,
     ) -> EFI_STATUS,
+    pub Segment: UINT32,
 }
 
 #[repr(C)]

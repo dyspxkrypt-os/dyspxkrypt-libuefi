@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "pci-io")]
+#[cfg_attr(doc, doc(cfg(any(feature = "pci-io", feature = "pci-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "pci-io", feature = "pci-full"))))]
+pub mod io;
 #[cfg(feature = "pci-rbio")]
 #[cfg_attr(doc, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "pci-rbio", feature = "pci-full"))))]
