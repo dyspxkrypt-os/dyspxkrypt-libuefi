@@ -15,7 +15,7 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 
 [features]
 default = []
-full = ["console-full", "dev-path-full", "image-full", "media-full", "partition", "pci-full"]
+full = ["console-full", "dev-path-full", "image-full", "media-full", "partition", "pci-full", "scsi-full"]
 
 console-full = ["console", "console-gop", "console-pointer", "console-serial-v1p1"]
 console = []
@@ -79,6 +79,10 @@ partition = ["media-block"]
 pci-full = ["pci-io", "pci-rbio"]
 pci-io = []
 pci-rbio = []
+
+scsi-full = ["scsi-io", "scsi-passthru"]
+scsi-io = []
+scsi-passthru = []
 
 [package.metadata.docs.rs]
 all-features = true
