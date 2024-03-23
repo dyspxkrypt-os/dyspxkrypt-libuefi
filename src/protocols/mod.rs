@@ -22,6 +22,10 @@ pub mod device_path;
 #[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "image", feature = "image-full"))))]
 pub mod image;
+#[cfg(feature = "iscsi")]
+#[cfg_attr(doc, doc(cfg(feature = "iscsi")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "iscsi")))]
+pub mod iscsi;
 #[cfg(any(
     feature = "media-ata",
     feature = "media-block",
