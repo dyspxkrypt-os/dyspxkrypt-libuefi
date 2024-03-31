@@ -96,9 +96,10 @@ scsi-full = ["scsi-io", "scsi-passthru"]
 scsi-io = []
 scsi-passthru = []
 
-usb-full = ["usb-controller", "usb-function"]
+usb-full = ["usb-controller", "usb-function", "usb-io"]
 usb-controller = []
 usb-function = []
+usb-io = []
 
 [package.metadata.docs.rs]
 all-features = true

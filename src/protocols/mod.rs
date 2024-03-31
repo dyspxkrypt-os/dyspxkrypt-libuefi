@@ -131,14 +131,16 @@ pub mod scsi;
 #[cfg(any(
     feature = "usb-full",
     feature = "usb-controller",
-    feature = "usb-function"
+    feature = "usb-function",
+    feature = "usb-io"
 ))]
 #[cfg_attr(
     doc,
     doc(cfg(any(
         feature = "usb-full",
         feature = "usb-controller",
-        feature = "usb-function"
+        feature = "usb-function",
+        feature = "usb-io"
     )))
 )]
 #[cfg_attr(
@@ -146,7 +148,8 @@ pub mod scsi;
     doc(cfg(any(
         feature = "usb-full",
         feature = "usb-controller",
-        feature = "usb-function"
+        feature = "usb-function",
+        feature = "usb-io"
     )))
 )]
 pub mod usb;
