@@ -128,3 +128,25 @@ pub mod pci;
     doc(cfg(any(feature = "scsi-full", feature = "scsi-io", feature = "scsi-passthru")))
 )]
 pub mod scsi;
+#[cfg(any(
+    feature = "usb-full",
+    feature = "usb-controller",
+    feature = "usb-function"
+))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(
+        feature = "usb-full",
+        feature = "usb-controller",
+        feature = "usb-function"
+    )))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "usb-full",
+        feature = "usb-controller",
+        feature = "usb-function"
+    )))
+)]
+pub mod usb;

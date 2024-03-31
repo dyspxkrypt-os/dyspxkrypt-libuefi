@@ -7,6 +7,7 @@
 - EFI SCSI I/O protocol and its associating constants and structures (`EFI_SCSI_IO_PROTOCOL`) (behind `scsi-io` or `scsi-full` feature flags)
 - EFI SCSI pass thru protocol and its associating constants and structures (`EFI_EXT_SCSI_PASS_THRU_PROTOCOL`) (behind `scsi-passthru` or `scsi-full` feature flags)
 - EFI ISCSI initiator name protocol and its associating constants and structures (`EFI_ISCSI_INITIATOR_NAME_PROTOCOL`) (behind `iscsi` feature flag)
+- EFI USB controller protocol and its associating constants and structures (`EFI_USB2_HC_PROTOCOL`) (behind `usb-controller` or `usb-full` feature flags)
 
 ## Changed
 
