@@ -83,6 +83,29 @@ pub struct EFI_USB_DEVICE_REQUEST {
 }
 
 #[repr(C)]
+pub struct EFI_USB_ENDPOINT_DESCRIPTOR {
+    pub Length: UINT8,
+    pub DescriptorType: UINT8,
+    pub EndpointAddress: UINT8,
+    pub Attributes: UINT8,
+    pub MaxPacketSize: UINT16,
+    pub Interval: UINT8,
+}
+
+#[repr(C)]
+pub struct EFI_USB_INTERFACE_DESCRIPTOR {
+    pub Length: UINT8,
+    pub DescriptorType: UINT8,
+    pub InterfaceNumber: UINT8,
+    pub AlternateSetting: UINT8,
+    pub NumEndpoints: UINT8,
+    pub InterfaceClass: UINT8,
+    pub InterfaceSubClass: UINT8,
+    pub InterfaceProtocol: UINT8,
+    pub Interface: UINT8,
+}
+
+#[repr(C)]
 pub struct EFI_USB_IO_PROTOCOL {
     pub UsbControlTransfer: unsafe extern "efiapi" fn(
         This: *mut EFI_USB_IO_PROTOCOL,
@@ -140,6 +163,29 @@ pub struct EFI_USB_IO_PROTOCOL {
     pub UsbGetConfigDescriptor: unsafe extern "efiapi" fn(
         This: *mut EFI_USB_IO_PROTOCOL,
         ConfigurationDescriptor: *mut EFI_USB_CONFIG_DESCRIPTOR,
+    ) -> EFI_STATUS,
+    pub UsbGetInterfaceDescriptor: unsafe extern "efiapi" fn(
+        This: *mut EFI_USB_IO_PROTOCOL,
+        InterfaceDescriptor: *mut EFI_USB_INTERFACE_DESCRIPTOR,
+    ) -> EFI_STATUS,
+    pub UsbGetEndpointDescriptor: unsafe extern "efiapi" fn(
+        This: *mut EFI_USB_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        EndpointDescriptor: *mut EFI_USB_ENDPOINT_DESCRIPTOR,
+    ) -> EFI_STATUS,
+    pub UsbGetStringDescriptor: unsafe extern "efiapi" fn(
+        This: *mut EFI_USB_IO_PROTOCOL,
+        LangID: UINT16,
+        StringID: UINT8,
+        String: *mut *mut CHAR16,
+    ) -> EFI_STATUS,
+    pub UsbGetSupportedLanguages: unsafe extern "efiapi" fn(
+        This: *mut EFI_USB_IO_PROTOCOL,
+        LangIDTable: *mut *mut UINT16,
+        TableSize: *mut UINT16,
+    ) -> EFI_STATUS,
+    pub UsbPortReset: unsafe extern "efiapi" fn(
+        This: *mut EFI_USB_IO_PROTOCOL,
     ) -> EFI_STATUS,
 }
 
