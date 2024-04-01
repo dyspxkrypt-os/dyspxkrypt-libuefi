@@ -23,6 +23,10 @@
     doc(cfg(any(feature = "usb-controller", feature = "usb-full")))
 )]
 pub mod controller;
+#[cfg(feature = "usb-function")]
+#[cfg_attr(doc, doc(cfg(any(feature = "usb-function", feature = "usb-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "usb-function", feature = "usb-full"))))]
+pub mod function;
 #[cfg(feature = "usb-io")]
 #[cfg_attr(doc, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]
@@ -35,6 +39,10 @@ pub mod io;
     doc(cfg(any(feature = "usb-controller", feature = "usb-full")))
 )]
 pub use controller::EFI_USB2_HC_PROTOCOL;
+#[cfg(feature = "usb-function")]
+#[cfg_attr(doc, doc(cfg(any(feature = "usb-function", feature = "usb-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "usb-function", feature = "usb-full"))))]
+pub use function::EFI_USBFN_IO_PROTOCOL;
 #[cfg(feature = "usb-io")]
 #[cfg_attr(doc, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]

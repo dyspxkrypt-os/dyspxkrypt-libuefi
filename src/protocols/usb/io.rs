@@ -184,9 +184,7 @@ pub struct EFI_USB_IO_PROTOCOL {
         LangIDTable: *mut *mut UINT16,
         TableSize: *mut UINT16,
     ) -> EFI_STATUS,
-    pub UsbPortReset: unsafe extern "efiapi" fn(
-        This: *mut EFI_USB_IO_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub UsbPortReset: unsafe extern "efiapi" fn(This: *mut EFI_USB_IO_PROTOCOL) -> EFI_STATUS,
 }
 
 pub type EFI_ASYNC_USB_TRANSFER_CALLBACK = unsafe extern "efiapi" fn(
