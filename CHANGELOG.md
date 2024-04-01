@@ -2,6 +2,9 @@
 
 ## Added
 
+- EFI USB I/O protocol and its associating constants and structures (`EFI_USB_IO_PROTOCOL`) (behind `usb-io` or `usb-full` feature flags)
+- EFI USB function protocol and its associating constants and structures (`EFI_USBFN_IO_PROTOCOL`) (behind `usb-function` or `usb-full` feature flags)
+
 ## Changed
 
 ## Fixed
