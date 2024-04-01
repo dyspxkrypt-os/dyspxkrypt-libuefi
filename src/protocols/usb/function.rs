@@ -30,6 +30,40 @@ pub const EFI_USBFN_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
 pub const EFI_USBFN_IO_PROTOCOL_REVISION: UINT32 = 0x00010001;
 
 #[repr(C)]
+pub enum EFI_USB_BUS_SPEED {
+    UsbBusSpeedUnknown,
+    UsbBusSpeedLow,
+    UsbBusSpeedFull,
+    UsbBusSpeedHigh,
+    UsbBusSpeedSuper,
+    UsbBusSpeedMaximum,
+}
+
+#[repr(C)]
+pub enum EFI_USB_ENDPOINT_TYPE {
+    UsbEndpointControl,
+    UsbEndpointIsochronous,
+    UsbEndpointBulk,
+    UsbEndpointInterrupt,
+}
+
+#[repr(C)]
+pub enum EFI_USBFN_DEVICE_INFO_ID {
+    EfiUsbDeviceInfoUnknown,
+    EfiUsbDeviceInfoSerialNumber,
+    EfiUsbDeviceInfoManufacturerName,
+    EfiUsbDeviceInfoProductName,
+}
+
+#[repr(C)]
+pub enum EFI_USBFN_ENDPOINT_DIRECTION {
+    EfiUsbEndpointDirectionHostOut  = 0,
+    EfiUsbEndpointDirectionHostIn,
+    EfiUsbEndpointDirectionDeviceTx,
+    EfiUsbEndpointDirectionDeviceRx,
+}
+
+#[repr(C)]
 pub enum EFI_USBFN_PORT_TYPE {
     EfiUsbUnknownPort,
     EfiUsbStandardDownstreamPort,
@@ -66,5 +100,39 @@ pub struct EFI_USBFN_IO_PROTOCOL {
     pub ConfigureEnableEndpoints: unsafe extern "efiapi" fn(
         This: *mut EFI_USBFN_IO_PROTOCOL,
         DeviceInfo: *mut EFI_USB_DEVICE_INFO,
+    ) -> EFI_STATUS,
+    pub GetEndpointMaxPacketSize: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointType: EFI_USB_ENDPOINT_TYPE,
+        BusSpeed: EFI_USB_BUS_SPEED,
+        MaxPacketSize: *mut UINT16,
+    ) -> EFI_STATUS,
+    pub GetDeviceInfo: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        Id: EFI_USBFN_DEVICE_INFO_ID,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    pub GetVendorIdProductId: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        Vid: *mut UINT64,
+        Pid: *mut UINT64,
+    ) -> EFI_STATUS,
+    pub AbortTransfer: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+    ) -> EFI_STATUS,
+    pub GetEndpointStallState: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+        State: *mut BOOLEAN,
+    ) -> EFI_STATUS,
+    pub SetEndpointStallState: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+        State: BOOLEAN,
     ) -> EFI_STATUS,
 }
