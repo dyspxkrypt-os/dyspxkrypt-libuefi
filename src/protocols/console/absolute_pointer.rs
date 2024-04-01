@@ -1,6 +1,6 @@
 /*
  * Dyspxkrypt LibUEFI: Raw bindings of UEFI that conforms to the definitions of the UEFI Specification.
- * Copyright (C) 2023 HTGAzureX1212.
+ * Copyright (C) 2023-2024 HTGAzureX1212.
  *
  * This program is free software: you can redistribute it and/or modify
  * it under the terms of the GNU General Public License as published by

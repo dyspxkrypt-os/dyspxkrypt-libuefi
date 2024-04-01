@@ -16,22 +16,11 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#[cfg(feature = "usb-controller")]
-#[cfg_attr(doc, doc(cfg(any(feature = "usb-controller", feature = "usb-full"))))]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "usb-controller", feature = "usb-full")))
-)]
-pub mod controller;
-#[cfg(feature = "usb-io")]
-#[cfg_attr(doc, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "usb-io", feature = "usb-full"))))]
-pub mod io;
-
-#[cfg(feature = "usb-controller")]
-#[cfg_attr(doc, doc(cfg(any(feature = "usb-controller", feature = "usb-full"))))]
-#[cfg_attr(
-    docsrs,
-    doc(cfg(any(feature = "usb-controller", feature = "usb-full")))
-)]
-pub use controller::EFI_USB2_HC_PROTOCOL;
+pub const EFI_USB_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0x2B2F68D6,
+        0x0CD2,
+        0x44CF,
+        [0x8E, 0x8B, 0xBB, 0xA2, 0x0B, 0x1B, 0x5B, 0x75],
+    )
+};
