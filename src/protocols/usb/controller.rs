@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+use crate::protocols::usb::io::{
+    EFI_ASYNC_USB_TRANSFER_CALLBACK, EFI_USB_DATA_DIRECTION, EFI_USB_DEVICE_REQUEST,
+};
+
 pub const EFI_USB2_HC_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0x3E745226,
@@ -57,13 +61,6 @@ pub const USB_PORT_STAT_C_OVERCURRENT: UINT16 = 0x0008;
 pub const USB_PORT_STAT_C_RESET: UINT16 = 0x0010;
 
 #[repr(C)]
-pub enum EFI_USB_DATA_DIRECTION {
-    EfiUsbDataIn,
-    EfiUsbDataOut,
-    EfiUsbNoData,
-}
-
-#[repr(C)]
 pub enum EFI_USB_HC_STATE {
     EfiUsbHcStateHalt,
     EfiUsbHcStateOperational,
@@ -82,15 +79,6 @@ pub enum EFI_USB_PORT_FEATURE {
     EfiUsbPortSuspendChange = 18,
     EfiUsbPortOverCurrentChange = 19,
     EfiUsbPortResetChange = 20,
-}
-
-#[repr(C)]
-pub struct EFI_USB_DEVICE_REQUEST {
-    pub RequestType: UINT8,
-    pub Request: UINT8,
-    pub Value: UINT16,
-    pub Index: UINT16,
-    pub Length: UINT16,
 }
 
 #[repr(C)]
@@ -218,10 +206,3 @@ pub struct EFI_USB2_HC_TRANSACTION_TRANSLATOR {
     pub TranslatorHubAddress: UINT8,
     pub TranslatorPortNumber: UINT8,
 }
-
-pub type EFI_ASYNC_USB_TRANSFER_CALLBACK = unsafe extern "efiapi" fn(
-    Data: *mut VOID,
-    DataLength: UINTN,
-    Context: *mut VOID,
-    Status: UINT32,
-) -> EFI_STATUS;
