@@ -20,8 +20,16 @@
 #[cfg_attr(doc, doc(cfg(any(feature = "debug-debug", feature = "debug-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "debug-debug", feature = "debug-full"))))]
 pub mod debug;
+#[cfg(feature = "debug-port")]
+#[cfg_attr(doc, doc(cfg(any(feature = "debug-port", feature = "debug-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "debug-port", feature = "debug-full"))))]
+pub mod port;
 
 #[cfg(feature = "debug-debug")]
 #[cfg_attr(doc, doc(cfg(any(feature = "debug-debug", feature = "debug-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "debug-debug", feature = "debug-full"))))]
 pub use debug::EFI_DEBUG_SUPPORT_PROTOCOL;
+#[cfg(feature = "debug-port")]
+#[cfg_attr(doc, doc(cfg(any(feature = "debug-port", feature = "debug-full"))))]
+#[cfg_attr(docsrs, doc(cfg(any(feature = "debug-port", feature = "debug-full"))))]
+pub use port::EFI_DEBUGPORT_PROTOCOL;
