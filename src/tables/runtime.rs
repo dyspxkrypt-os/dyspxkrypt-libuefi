@@ -98,7 +98,7 @@ pub struct EFI_RUNTIME_SERVICES {
         ResetStatus: EFI_STATUS,
         DataSize: UINTN,
         ResetData: *mut VOID,
-    ) -> VOID,
+    ),
     pub UpdateCapsule: unsafe extern "efiapi" fn(
         CapsuleHeaderArray: *mut *mut EFI_CAPSULE_HEADER,
         CapsuleCount: UINTN,

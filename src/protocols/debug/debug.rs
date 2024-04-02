@@ -47,4 +47,110 @@ pub struct EFI_DEBUG_SUPPORT_PROTOCOL {
         This: *mut EFI_DEBUG_SUPPORT_PROTOCOL,
         MaxProcessorIndex: *mut UINTN,
     ) -> EFI_STATUS,
+    pub RegisterPeriodicCallback: unsafe extern "efiapi" fn(
+        This: *mut EFI_DEBUG_SUPPORT_PROTOCOL,
+        ProcessorIndex: UINTN,
+        PeriodicCallback: EFI_PERIODIC_CALLBACK,
+    ) -> EFI_STATUS,
+}
+
+#[repr(C)]
+pub struct EFI_FX_SAVE_STATE_IA32 {
+    pub Fcw: UINT16,
+    pub Fsw: UINT16,
+    pub Ftw: UINT16,
+    pub Opcode: UINT16,
+    pub Eip: UINT32,
+    pub Cs: UINT16,
+    Reserved1: UINT16,
+    pub DataOffset: UINT32,
+    pub Ds: UINT16,
+    Reserved2: [UINT8; 10],
+    pub St0Mm0: [UINT8; 10],
+    Reserved3: [UINT8; 6],
+    pub St0Mm1: [UINT8; 10],
+    Reserved4: [UINT8; 6],
+    pub St0Mm2: [UINT8; 10],
+    Reserved5: [UINT8; 6],
+    pub St0Mm3: [UINT8; 10],
+    Reserved6: [UINT8; 6],
+    pub St0Mm4: [UINT8; 10],
+    Reserved7: [UINT8; 6],
+    pub St0Mm5: [UINT8; 10],
+    Reserved8: [UINT8; 6],
+    pub St0Mm6: [UINT8; 10],
+    Reserved9: [UINT8; 6],
+    pub St0Mm7: [UINT8; 10],
+    Reserved10: [UINT8; 6],
+    pub Xmm0: [UINT8; 16],
+    pub Xmm1: [UINT8; 16],
+    pub Xmm2: [UINT8; 16],
+    pub Xmm3: [UINT8; 16],
+    pub Xmm4: [UINT8; 16],
+    pub Xmm5: [UINT8; 16],
+    pub Xmm6: [UINT8; 16],
+    pub Xmm7: [UINT8; 16],
+    Reserved11: [UINT8; 224],
+}
+
+#[repr(C)]
+pub struct EFI_SYSTEM_CONTEXT_EBC {
+    pub R0: UINT64,
+    pub R1: UINT64,
+    pub R2: UINT64,
+    pub R3: UINT64,
+    pub R4: UINT64,
+    pub R5: UINT64,
+    pub R6: UINT64,
+    pub R7: UINT64,
+    pub Flags: UINT64,
+    pub ControlFlags: UINT64,
+    pub Ip: UINT64,
+}
+
+#[repr(C)]
+pub struct EFI_SYSTEM_CONTEXT_IA32 {
+    pub ExceptionData: UINT32,
+    pub FxSaveState: EFI_FX_SAVE_STATE_IA32,
+    pub Dr0: UINT32,
+    pub Dr1: UINT32,
+    pub Dr2: UINT32,
+    pub Dr3: UINT32,
+    pub Dr6: UINT32,
+    pub Dr7: UINT32,
+    pub Cr0: UINT32,
+    pub Cr1: UINT32,
+    Reserved: UINT32,
+    pub Cr2: UINT32,
+    pub Cr3: UINT32,
+    pub Cr4: UINT32,
+    pub Eflags: UINT32,
+    pub Ldtr: UINT32,
+    pub Tr: UINT32,
+    pub Gdtr: [UINT32; 2],
+    pub Idtr: [UINT32; 2],
+    pub Eip: UINT32,
+    pub Gs: UINT32,
+    pub Fs: UINT32,
+    pub Es: UINT32,
+    pub Ds: UINT32,
+    pub Cs: UINT32,
+    pub Ss: UINT32,
+    pub Edi: UINT32,
+    pub Esi: UINT32,
+    pub Ebp: UINT32,
+    pub Esp: UINT32,
+    pub Ebx: UINT32,
+    pub Edx: UINT32,
+    pub Ecx: UINT32,
+    pub Eax: UINT32,
+}
+
+pub type EFI_PERIODIC_CALLBACK =
+    unsafe extern "efiapi" fn(SystemContext: EFI_SYSTEM_CONTEXT) -> EFI_STATUS;
+
+#[repr(C)]
+pub union EFI_SYSTEM_CONTEXT {
+    pub SystemContextEbc: *mut EFI_SYSTEM_CONTEXT_EBC,
+    pub SystemContextIa32: *mut EFI_SYSTEM_CONTEXT_IA32,
 }
