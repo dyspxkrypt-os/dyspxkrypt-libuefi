@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "compress")]
+#[cfg_attr(doc, doc(cfg(feature = "compress")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "compress")))]
+pub mod compress;
 pub mod console;
 #[cfg(any(
     feature = "debug-debug",

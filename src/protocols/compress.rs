@@ -16,29 +16,31 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const EFI_DEBUGPORT_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_DECOMPRESS_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
-        0xEBA4E8D2,
-        0x3858,
-        0x41EC,
-        [0xA2, 0x81, 0x26, 0x47, 0xBA, 0x96, 0x60, 0xD0],
+        0xD8117CFE,
+        0x94A6,
+        0x11D4,
+        [0x9A, 0x3A, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D],
     )
 };
 
 #[repr(C)]
-pub struct EFI_DEBUGPORT_PROTOCOL {
-    pub Reset: unsafe extern "efiapi" fn(This: *mut EFI_DEBUGPORT_PROTOCOL) -> EFI_STATUS,
-    pub Write: unsafe extern "efiapi" fn(
-        This: *mut EFI_DEBUGPORT_PROTOCOL,
-        Timeout: UINT32,
-        BufferSize: *mut UINTN,
-        Buffer: *mut VOID,
+pub struct EFI_DECOMPRESS_PROTOCOL {
+    pub GetInfo: unsafe extern "efiapi" fn(
+        This: *mut EFI_DECOMPRESS_PROTOCOL,
+        Source: *mut VOID,
+        SourceSize: UINT32,
+        DestinationSize: *mut UINT32,
+        ScratchSize: *mut UINT32,
     ) -> EFI_STATUS,
-    pub Read: unsafe extern "efiapi" fn(
-        This: *mut EFI_DEBUGPORT_PROTOCOL,
-        Timeout: UINT32,
-        BufferSize: *mut UINTN,
-        Buffer: *mut VOID,
+    pub Decompress: unsafe extern "efiapi" fn(
+        This: *mut EFI_DECOMPRESS_PROTOCOL,
+        Source: *mut VOID,
+        SourceSize: UINT32,
+        Destination: *mut VOID,
+        DestinationSize: UINT32,
+        Scratch: *mut VOID,
+        ScratchSize: UINT32,
     ) -> EFI_STATUS,
-    pub Poll: unsafe extern "efiapi" fn(This: *mut EFI_DEBUGPORT_PROTOCOL) -> EFI_STATUS,
 }
