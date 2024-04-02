@@ -6,6 +6,7 @@
 - EFI USB function protocol and its associating constants and structures (`EFI_USBFN_IO_PROTOCOL`) (behind `usb-function` or `usb-full` feature flags)
 - EFI debug support protocol and its associating constants and structures (`EFI_DEBUG_SUPPORT_PROTOCOL`) (behind `debug-debug` or `debug-full` feature flags)
 - EFI debug port protocol and its associating constants and structures (`EFI_DEBUGPORT_PROTOCOL`) (behind `debug-port` or `debug-full` feature flags)
+- EFI decompression protocol and its associating constants and structures (`EFI_DECOMPRESS_PROTOCOL`) (behind `compress` feature flag)
 
 ## Changed
 
