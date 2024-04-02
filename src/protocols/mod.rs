@@ -16,6 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "acpi")]
+#[cfg_attr(doc, doc(cfg(feature = "acpi")))]
+#[cfg_attr(docsrs, doc(cfg(feature = "acpi")))]
+pub mod acpi;
 #[cfg(feature = "compress")]
 #[cfg_attr(doc, doc(cfg(feature = "compress")))]
 #[cfg_attr(docsrs, doc(cfg(feature = "compress")))]
