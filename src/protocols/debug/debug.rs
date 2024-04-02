@@ -130,6 +130,30 @@ pub struct EFI_FX_SAVE_STATE_X64 {
 }
 
 #[repr(C)]
+pub struct EFI_SYSTEM_CONTEXT_ARM {
+    pub R0: UINT32,
+    pub R1: UINT32,
+    pub R2: UINT32,
+    pub R3: UINT32,
+    pub R4: UINT32,
+    pub R5: UINT32,
+    pub R6: UINT32,
+    pub R7: UINT32,
+    pub R8: UINT32,
+    pub R9: UINT32,
+    pub R10: UINT32,
+    pub R11: UINT32,
+    pub R12: UINT32,
+    pub SP: UINT32,
+    pub LR: UINT32,
+    pub PC: UINT32,
+    pub CPSR: UINT32,
+    pub DFSR: UINT32,
+    pub DFAR: UINT32,
+    pub IFSR: UINT32,
+}
+
+#[repr(C)]
 pub struct EFI_SYSTEM_CONTEXT_EBC {
     pub R0: UINT64,
     pub R1: UINT64,
@@ -360,4 +384,5 @@ pub union EFI_SYSTEM_CONTEXT {
     pub SystemContextIa32: *mut EFI_SYSTEM_CONTEXT_IA32,
     pub SystemContextX64: *mut EFI_SYSTEM_CONTEXT_X64,
     pub SystemContextIpf: *mut EFI_SYSTEM_CONTEXT_IPF,
+    pub SystemContextArm: *mut EFI_SYSTEM_CONTEXT_ARM,
 }
