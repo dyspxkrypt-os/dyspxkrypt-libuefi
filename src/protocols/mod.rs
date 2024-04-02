@@ -138,6 +138,40 @@ pub mod iscsi;
     )))
 )]
 pub mod media;
+#[cfg(any(
+    feature = "network-boot-integ",
+    feature = "network-http-callback",
+    feature = "network-interface-id",
+    feature = "network-simple",
+    feature = "network-pxe",
+    feature = "network-pxe-callback",
+    feature = "network-full"
+))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(
+        feature = "network-boot-integ",
+        feature = "network-http-callback",
+        feature = "network-interface-id",
+        feature = "network-simple",
+        feature = "network-pxe",
+        feature = "network-pxe-callback",
+        feature = "network-full"
+    )))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "network-boot-integ",
+        feature = "network-http-callback",
+        feature = "network-interface-id",
+        feature = "network-simple",
+        feature = "network-pxe",
+        feature = "network-pxe-callback",
+        feature = "network-full"
+    )))
+)]
+pub mod network;
 #[cfg(any(feature = "pci-full", feature = "pci-io", feature = "pci-rbio"))]
 #[cfg_attr(
     doc,
