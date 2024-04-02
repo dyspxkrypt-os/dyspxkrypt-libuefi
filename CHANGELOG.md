@@ -2,6 +2,8 @@
 
 ## Added
 
+- EFI string collation protocol and its associating constants and structures (`EFI_UNICODE_COLLATION_PROTOCOL`) (behind `string-collation` or `string-full` feature flags)
+
 ## Changed
 
 ## Fixed

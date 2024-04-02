@@ -26,6 +26,13 @@
     doc(cfg(any(feature = "string-collation", feature = "string-full")))
 )]
 pub mod collation;
+#[cfg(feature = "string-regex")]
+#[cfg_attr(doc, doc(cfg(any(feature = "string-regex", feature = "string-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "string-regex", feature = "string-full")))
+)]
+pub mod regex;
 
 #[cfg(feature = "string-collation")]
 #[cfg_attr(
@@ -37,3 +44,10 @@ pub mod collation;
     doc(cfg(any(feature = "string-collation", feature = "string-full")))
 )]
 pub use collation::EFI_UNICODE_COLLATION_PROTOCOL;
+#[cfg(feature = "string-regex")]
+#[cfg_attr(doc, doc(cfg(any(feature = "string-regex", feature = "string-full"))))]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "string-regex", feature = "string-full")))
+)]
+pub use regex::EFI_REGULAR_EXPRESSION_PROTOCOL;
