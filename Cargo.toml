@@ -34,6 +34,10 @@ console-serial = []
 console-serial-v1p1 = ["console-serial"]
 console-pointer = []
 
+debug-full = ["debug-debug", "debug-port"]
+debug-debug = []
+debug-port = []
+
 dev-path-full = []
 
 image-full = ["image", "image-dev-path"]

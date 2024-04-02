@@ -17,6 +17,24 @@
  */
 
 pub mod console;
+#[cfg(feature = "image")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(
+        feature = "debug-debug",
+        feature = "debug-port",
+        feature = "debug-full"
+    )))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "debug-debug",
+        feature = "debug-port",
+        feature = "debug-full"
+    )))
+)]
+pub mod debug;
 pub mod device_path;
 #[cfg(feature = "image")]
 #[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
