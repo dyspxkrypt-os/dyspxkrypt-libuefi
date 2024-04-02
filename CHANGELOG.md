@@ -2,18 +2,22 @@
 
 ## Added
 
+## Changed
+
+## Fixed
+
+## Removed
+
+# Dyspxkrypt LibUEFI 0.6.0 (02-04-2024)
+
+## Added
+
 - EFI USB I/O protocol and its associating constants and structures (`EFI_USB_IO_PROTOCOL`) (behind `usb-io` or `usb-full` feature flags)
 - EFI USB function protocol and its associating constants and structures (`EFI_USBFN_IO_PROTOCOL`) (behind `usb-function` or `usb-full` feature flags)
 - EFI debug support protocol and its associating constants and structures (`EFI_DEBUG_SUPPORT_PROTOCOL`) (behind `debug-debug` or `debug-full` feature flags)
 - EFI debug port protocol and its associating constants and structures (`EFI_DEBUGPORT_PROTOCOL`) (behind `debug-port` or `debug-full` feature flags)
 - EFI decompression protocol and its associating constants and structures (`EFI_DECOMPRESS_PROTOCOL`) (behind `compress` feature flag)
 - EFI ACPI table protocol and its associating constants and structures (`EFI_ACPI_TABLE_PROTOCOL`) (behind `acpi` feature flag)
-
-## Changed
-
-## Fixed
-
-## Removed
 
 # Dyspxkrypt LibUEFI 0.5.0 (31-03-2024)
 
