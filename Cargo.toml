@@ -17,6 +17,7 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 default = []
 full = [
     "console-full",
+    "debug-full",
     "dev-path-full",
     "image-full",
     "iscsi",
