@@ -17,7 +17,11 @@
  */
 
 pub mod console;
-#[cfg(any(feature = "debug-debug", feature = "debug-port", feature = "debug-full"))]
+#[cfg(any(
+    feature = "debug-debug",
+    feature = "debug-port",
+    feature = "debug-full"
+))]
 #[cfg_attr(
     doc,
     doc(cfg(any(
