@@ -24,6 +24,7 @@ full = [
     "image-full",
     "iscsi",
     "media-full",
+    "network-full",
     "partition",
     "pci-full",
     "scsi-full",
@@ -97,6 +98,14 @@ media-sd-mmc = []
 media-storesec = []
 media-tape = []
 media-ufs = []
+
+network-full = []
+network-boot-integ = []
+network-http-callback = []
+network-interface-id = []
+network-simple = []
+network-pxe = []
+network-pxe-callback = []
 
 partition = ["media-block"]
 
