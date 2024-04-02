@@ -80,6 +80,14 @@ pub enum EFI_USBFN_MESSAGE {
 }
 
 #[repr(C)]
+pub enum EFI_USBFN_POLICY_TYPE {
+    EfiUsbPolicyUndefined,
+    EfiUsbPolicyMaxTransactionSize,
+    EfiUsbPolicyZeroLengthTerminationSupport,
+    EfiUsbPolicyZeroLengthTermination,
+}
+
+#[repr(C)]
 pub enum EFI_USBFN_PORT_TYPE {
     EfiUsbUnknownPort,
     EfiUsbStandardDownstreamPort,
@@ -188,6 +196,22 @@ pub struct EFI_USBFN_IO_PROTOCOL {
     ) -> EFI_STATUS,
     pub StartController: unsafe extern "efiapi" fn(This: *mut EFI_USBFN_IO_PROTOCOL) -> EFI_STATUS,
     pub StopController: unsafe extern "efiapi" fn(This: *mut EFI_USBFN_IO_PROTOCOL) -> EFI_STATUS,
+    pub SetEndpointPolicy: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+        PolicyType: EFI_USBFN_POLICY_TYPE,
+        BufferSize: UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    pub GetEndpointPolicy: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+        PolicyType: EFI_USBFN_POLICY_TYPE,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
 }
 
 #[repr(C)]
