@@ -32,6 +32,7 @@ pub const EFI_USBFN_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
 
 pub const EFI_USBFN_IO_PROTOCOL_REVISION: UINT32 = 0x00010001;
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub enum EFI_USB_BUS_SPEED {
     UsbBusSpeedUnknown,
@@ -58,6 +59,7 @@ pub enum EFI_USBFN_DEVICE_INFO_ID {
     EfiUsbDeviceInfoProductName,
 }
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub enum EFI_USBFN_ENDPOINT_DIRECTION {
     EfiUsbEndpointDirectionHostOut = 0,
@@ -96,6 +98,7 @@ pub enum EFI_USBFN_PORT_TYPE {
     EfiUsbInvalidDedicatedChargingPort,
 }
 
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub enum EFI_USBFN_TRANSFER_STATUS {
     UsbTransferStatusUnknown,
@@ -214,7 +217,7 @@ pub struct EFI_USBFN_IO_PROTOCOL {
     ) -> EFI_STATUS,
 }
 
-#[derive(Copy)]
+#[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_USBFN_TRANSFER_RESULT {
     pub BytesTransferred: UINTN,
