@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::usb::io::{EFI_USB_CONFIG_DESCRIPTOR, EFI_USB_DEVICE_DESCRIPTOR, EFI_USB_ENDPOINT_DESCRIPTOR, EFI_USB_INTERFACE_DESCRIPTOR};
+use crate::protocols::usb::io::{EFI_USB_CONFIG_DESCRIPTOR, EFI_USB_DEVICE_DESCRIPTOR, EFI_USB_DEVICE_REQUEST, EFI_USB_ENDPOINT_DESCRIPTOR, EFI_USB_INTERFACE_DESCRIPTOR};
 
 pub const EFI_USBFN_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -64,12 +64,34 @@ pub enum EFI_USBFN_ENDPOINT_DIRECTION {
 }
 
 #[repr(C)]
+pub enum EFI_USBFN_MESSAGE {
+    EfiUsbMsgSetupPacket,
+    EfiUsbMsgEndpointStatusChangedRx,
+    EfiUsbMsgEndpointStatusChangedTx,
+    EfiUsbMsgBusEventDetach,
+    EfiUsbMsgBusEventAttach,
+    EfiUsbMsgBusEventReset,
+    EfiUsbMsgBusEventSuspend,
+    EfiUsbMsgBusEventResume,
+    EfiUsbMsgBusEventSpeed,
+}
+
+#[repr(C)]
 pub enum EFI_USBFN_PORT_TYPE {
     EfiUsbUnknownPort,
     EfiUsbStandardDownstreamPort,
     EfiUsbChargingDownstreamPort,
     EfiUsbDedicatedChargingPort,
     EfiUsbInvalidDedicatedChargingPort,
+}
+
+#[repr(C)]
+pub enum EFI_USBFN_TRANSFER_STATUS {
+    UsbTransferStatusUnknown,
+    UsbTransferStatusComplete,
+    UsbTransferStatusAborted,
+    UsbTransferStatusActive,
+    UsbTransferStatusNone,
 }
 
 #[repr(C)]
@@ -135,4 +157,52 @@ pub struct EFI_USBFN_IO_PROTOCOL {
         Direction: EFI_USBFN_ENDPOINT_DIRECTION,
         State: BOOLEAN,
     ) -> EFI_STATUS,
+    pub EventHandler: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        Message: *mut EFI_USBFN_MESSAGE,
+        PayloadSize: *mut UINTN,
+        Payload: *mut EFI_USBFN_MESSAGE_PAYLOAD,
+    ) -> EFI_STATUS,
+    pub Transfer: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        EndpointIndex: UINT8,
+        Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+        BufferSize: *mut UINTN,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    pub GetMaxTransferSize: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        MaxTransferSize: *mut UINTN,
+    ) -> EFI_STATUS,
+    pub AllocateTransferBuffer: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        Size: UINTN,
+        Buffer: *mut *mut VOID,
+    ) -> EFI_STATUS,
+    pub FreeTransferBuffer: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+        Buffer: *mut VOID,
+    ) -> EFI_STATUS,
+    pub StartController: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+    ) -> EFI_STATUS,
+    pub StopController: unsafe extern "efiapi" fn(
+        This: *mut EFI_USBFN_IO_PROTOCOL,
+    ) -> EFI_STATUS,
+}
+
+#[repr(C)]
+pub struct EFI_USBFN_TRANSFER_RESULT {
+    pub BytesTransferred: UINTN,
+    pub TransferStatus: EFI_USBFN_TRANSFER_STATUS,
+    pub EndpointIndex: UINT8,
+    pub Direction: EFI_USBFN_ENDPOINT_DIRECTION,
+    pub Buffer: *mut VOID,
+}
+
+#[repr(C)]
+pub union EFI_USBFN_MESSAGE_PAYLOAD {
+    pub udr: EFI_USB_DEVICE_REQUEST,
+    pub utr: EFI_USBFN_TRANSFER_RESULT,
+    pub ubs: EFI_USB_BUS_SPEED,
 }
