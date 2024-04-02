@@ -3,7 +3,7 @@ name = "dyspxkrypt-libuefi"
 description = "Raw bindings of UEFI that conforms to the definitions of the UEFI Specification."
 categories = ["external-ffi-bindings", "no-std"]
 keywords = ["efi", "uefi"]
-version = "0.5.0"
+version = "0.6.0"
 edition = "2021"
 authors = ["HTGAzureX1212."]
 readme = "README.md"
@@ -16,6 +16,8 @@ repository = "https://github.com/dyspxkrypt-os/dyspxkrypt-libuefi/"
 [features]
 default = []
 full = [
+    "acpi",
+    "compress",
     "console-full",
     "debug-full",
     "dev-path-full",
@@ -27,6 +29,10 @@ full = [
     "scsi-full",
     "usb-full"
 ]
+
+acpi = []
+
+compress = []
 
 console-full = ["console", "console-gop", "console-pointer", "console-serial-v1p1"]
 console = []
