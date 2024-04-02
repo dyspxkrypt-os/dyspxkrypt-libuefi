@@ -15,3 +15,25 @@
  * You should have received a copy of the GNU General Public License
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
+
+#[cfg(feature = "string-collation")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "string-collation", feature = "string-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "string-collation", feature = "string-full")))
+)]
+pub mod collation;
+
+#[cfg(feature = "string-collation")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "string-collation", feature = "string-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "string-collation", feature = "string-full")))
+)]
+pub use collation::EFI_UNICODE_COLLATION_PROTOCOL;
