@@ -3,7 +3,7 @@ name = "dyspxkrypt-libuefi"
 description = "Raw bindings of UEFI that conforms to the definitions of the UEFI Specification."
 categories = ["external-ffi-bindings", "no-std"]
 keywords = ["efi", "uefi"]
-version = "0.6.3"
+version = "0.7.0"
 edition = "2021"
 authors = ["HTGAzureX1212."]
 readme = "README.md"
@@ -27,6 +27,7 @@ full = [
     "partition",
     "pci-full",
     "scsi-full",
+    "string-full",
     "usb-full"
 ]
 
@@ -106,6 +107,10 @@ pci-rbio = []
 scsi-full = ["scsi-io", "scsi-passthru"]
 scsi-io = []
 scsi-passthru = []
+
+string-full = ["string-collation", "string-regex"]
+string-collation = []
+string-regex = []
 
 usb-full = ["usb-controller", "usb-function", "usb-io"]
 usb-controller = []

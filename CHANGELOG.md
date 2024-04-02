@@ -8,12 +8,6 @@
 
 ## Removed
 
-# Dyspxkrypt LibUEFI 0.6.1 (02-04-2024)
-
-## Fixed
-
-- derived `Clone` and `Copy` traits to fix docs.rs errors
-
 # Dyspxkrypt LibUEFI 0.6.0 (02-04-2024)
 
 ## Added
@@ -35,12 +29,6 @@
 - EFI SCSI pass thru protocol and its associating constants and structures (`EFI_EXT_SCSI_PASS_THRU_PROTOCOL`) (behind `scsi-passthru` or `scsi-full` feature flags)
 - EFI ISCSI initiator name protocol and its associating constants and structures (`EFI_ISCSI_INITIATOR_NAME_PROTOCOL`) (behind `iscsi` feature flag)
 - EFI USB controller protocol and its associating constants and structures (`EFI_USB2_HC_PROTOCOL`) (behind `usb-controller` or `usb-full` feature flags)
-
-# Dyspxkrypt LibUEFI 0.4.1 (12-02-2024)
-
-## Fixed
-
-- derived `Clone` and `Copy` traits to fix docs.rs errors
 
 # Dyspxkrypt LibUEFI 0.4.0 (12-02-2024)
 

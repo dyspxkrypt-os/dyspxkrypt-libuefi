@@ -159,6 +159,28 @@ pub mod pci;
 )]
 pub mod scsi;
 #[cfg(any(
+    feature = "string-full",
+    feature = "string-collation",
+    feature = "string-regex"
+))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(
+        feature = "string-full",
+        feature = "string-collation",
+        feature = "string-regex"
+    )))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "string-full",
+        feature = "string-collation",
+        feature = "string-regex"
+    )))
+)]
+pub mod string;
+#[cfg(any(
     feature = "usb-full",
     feature = "usb-controller",
     feature = "usb-function",
