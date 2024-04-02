@@ -17,7 +17,7 @@
  */
 
 pub mod console;
-#[cfg(feature = "image")]
+#[cfg(any(feature = "debug-debug", feature = "debug-port", feature = "debug-full"))]
 #[cfg_attr(
     doc,
     doc(cfg(any(
