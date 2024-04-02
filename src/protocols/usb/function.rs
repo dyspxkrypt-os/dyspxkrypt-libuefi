@@ -214,6 +214,7 @@ pub struct EFI_USBFN_IO_PROTOCOL {
     ) -> EFI_STATUS,
 }
 
+#[derive(Copy)]
 #[repr(C)]
 pub struct EFI_USBFN_TRANSFER_RESULT {
     pub BytesTransferred: UINTN,

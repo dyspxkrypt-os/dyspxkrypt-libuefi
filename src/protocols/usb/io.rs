@@ -73,6 +73,7 @@ pub struct EFI_USB_DEVICE_DESCRIPTOR {
     pub NumConfigurations: UINT8,
 }
 
+#[derive(Copy)]
 #[repr(C)]
 pub struct EFI_USB_DEVICE_REQUEST {
     pub RequestType: UINT8,
