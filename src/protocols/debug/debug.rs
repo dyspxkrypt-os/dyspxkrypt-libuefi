@@ -94,6 +94,42 @@ pub struct EFI_FX_SAVE_STATE_IA32 {
 }
 
 #[repr(C)]
+pub struct EFI_FX_SAVE_STATE_X64 {
+    pub Fcw: UINT16,
+    pub Fsw: UINT16,
+    pub Ftw: UINT16,
+    pub Opcode: UINT16,
+    pub Rip: UINT64,
+    pub DataOffset: UINT64,
+    Reserved1: [UINT8; 8],
+    pub St0Mm0: [UINT8; 10],
+    Reserved2: [UINT8; 6],
+    pub St0Mm1: [UINT8; 10],
+    Reserved3: [UINT8; 6],
+    pub St0Mm2: [UINT8; 10],
+    Reserved4: [UINT8; 6],
+    pub St0Mm3: [UINT8; 10],
+    Reserved5: [UINT8; 6],
+    pub St0Mm4: [UINT8; 10],
+    Reserved6: [UINT8; 6],
+    pub St0Mm5: [UINT8; 10],
+    Reserved7: [UINT8; 6],
+    pub St0Mm6: [UINT8; 10],
+    Reserved8: [UINT8; 6],
+    pub St0Mm7: [UINT8; 10],
+    Reserved9: [UINT8; 6],
+    pub Xmm0: [UINT8; 16],
+    pub Xmm1: [UINT8; 16],
+    pub Xmm2: [UINT8; 16],
+    pub Xmm3: [UINT8; 16],
+    pub Xmm4: [UINT8; 16],
+    pub Xmm5: [UINT8; 16],
+    pub Xmm6: [UINT8; 16],
+    pub Xmm7: [UINT8; 16],
+    Reserved11: [UINT8; 224],
+}
+
+#[repr(C)]
 pub struct EFI_SYSTEM_CONTEXT_EBC {
     pub R0: UINT64,
     pub R1: UINT64,
@@ -146,6 +182,53 @@ pub struct EFI_SYSTEM_CONTEXT_IA32 {
     pub Eax: UINT32,
 }
 
+#[repr(C)]
+pub struct EFI_SYSTEM_CONTEXT_X64 {
+    pub ExceptionData: UINT64,
+    pub FxSaveState: EFI_FX_SAVE_STATE_X64,
+    pub Dr0: UINT32,
+    pub Dr1: UINT32,
+    pub Dr2: UINT32,
+    pub Dr3: UINT32,
+    pub Dr6: UINT32,
+    pub Dr7: UINT32,
+    pub Cr0: UINT32,
+    pub Cr1: UINT32,
+    Reserved: UINT32,
+    pub Cr2: UINT32,
+    pub Cr3: UINT32,
+    pub Cr4: UINT32,
+    pub Cr8: UINT32,
+    pub Rflags: UINT32,
+    pub Ldtr: UINT32,
+    pub Tr: UINT32,
+    pub Gdtr: [UINT32; 2],
+    pub Idtr: [UINT32; 2],
+    pub Rip: UINT32,
+    pub Gs: UINT32,
+    pub Fs: UINT32,
+    pub Es: UINT32,
+    pub Ds: UINT32,
+    pub Cs: UINT32,
+    pub Ss: UINT32,
+    pub Rdi: UINT32,
+    pub Rsi: UINT32,
+    pub Rbp: UINT32,
+    pub Rsp: UINT32,
+    pub Rbx: UINT32,
+    pub Rdx: UINT32,
+    pub Rcx: UINT32,
+    pub Rax: UINT32,
+    pub R8: UINT32,
+    pub R9: UINT32,
+    pub R10: UINT32,
+    pub R11: UINT32,
+    pub R12: UINT32,
+    pub R13: UINT32,
+    pub R14: UINT32,
+    pub R15: UINT32,
+}
+
 pub type EFI_PERIODIC_CALLBACK =
     unsafe extern "efiapi" fn(SystemContext: EFI_SYSTEM_CONTEXT) -> EFI_STATUS;
 
@@ -153,4 +236,5 @@ pub type EFI_PERIODIC_CALLBACK =
 pub union EFI_SYSTEM_CONTEXT {
     pub SystemContextEbc: *mut EFI_SYSTEM_CONTEXT_EBC,
     pub SystemContextIa32: *mut EFI_SYSTEM_CONTEXT_IA32,
+    pub SystemContextX64: *mut EFI_SYSTEM_CONTEXT_X64,
 }
