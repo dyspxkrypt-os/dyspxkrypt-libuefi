@@ -16,7 +16,10 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-use crate::protocols::usb::io::{EFI_USB_CONFIG_DESCRIPTOR, EFI_USB_DEVICE_DESCRIPTOR, EFI_USB_DEVICE_REQUEST, EFI_USB_ENDPOINT_DESCRIPTOR, EFI_USB_INTERFACE_DESCRIPTOR};
+use crate::protocols::usb::io::{
+    EFI_USB_CONFIG_DESCRIPTOR, EFI_USB_DEVICE_DESCRIPTOR, EFI_USB_DEVICE_REQUEST,
+    EFI_USB_ENDPOINT_DESCRIPTOR, EFI_USB_INTERFACE_DESCRIPTOR,
+};
 
 pub const EFI_USBFN_IO_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
@@ -57,7 +60,7 @@ pub enum EFI_USBFN_DEVICE_INFO_ID {
 
 #[repr(C)]
 pub enum EFI_USBFN_ENDPOINT_DIRECTION {
-    EfiUsbEndpointDirectionHostOut  = 0,
+    EfiUsbEndpointDirectionHostOut = 0,
     EfiUsbEndpointDirectionHostIn,
     EfiUsbEndpointDirectionDeviceTx,
     EfiUsbEndpointDirectionDeviceRx,
@@ -183,12 +186,8 @@ pub struct EFI_USBFN_IO_PROTOCOL {
         This: *mut EFI_USBFN_IO_PROTOCOL,
         Buffer: *mut VOID,
     ) -> EFI_STATUS,
-    pub StartController: unsafe extern "efiapi" fn(
-        This: *mut EFI_USBFN_IO_PROTOCOL,
-    ) -> EFI_STATUS,
-    pub StopController: unsafe extern "efiapi" fn(
-        This: *mut EFI_USBFN_IO_PROTOCOL,
-    ) -> EFI_STATUS,
+    pub StartController: unsafe extern "efiapi" fn(This: *mut EFI_USBFN_IO_PROTOCOL) -> EFI_STATUS,
+    pub StopController: unsafe extern "efiapi" fn(This: *mut EFI_USBFN_IO_PROTOCOL) -> EFI_STATUS,
 }
 
 #[repr(C)]
