@@ -16,12 +16,18 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-#[cfg(feature = "network-simple")]
-#[cfg_attr(doc, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-pub mod simple;
+pub const EFI_SIMPLE_NETWORK_PROTOCOL_GUID: EFI_GUID = unsafe {
+    EFI_GUID::from_raw_parts(
+        0xA19832B9,
+        0xAC25,
+        0x11D3,
+        [0x9A, 0x2D, 0x00, 0x90, 0x27, 0x3F, 0xC1, 0x4D],
+    )
+};
 
-#[cfg(feature = "network-simple")]
-#[cfg_attr(doc, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-pub use simple::EFI_SIMPLE_NETWORK_PROTOCOL;
+pub const EFI_SIMPLE_NETWORK_PROTOCOL_REVISION: UINT64 = 0x00010000;
+
+#[repr(C)]
+pub struct EFI_SIMPLE_NETWORK_PROTOCOL {
+    pub Revision: UINT64,
+}
