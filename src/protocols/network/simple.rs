@@ -30,4 +30,35 @@ pub const EFI_SIMPLE_NETWORK_PROTOCOL_REVISION: UINT64 = 0x00010000;
 #[repr(C)]
 pub struct EFI_SIMPLE_NETWORK_PROTOCOL {
     pub Revision: UINT64,
+    pub Start: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+    ) -> EFI_STATUS,
+    pub Stop: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+    ) -> EFI_STATUS,
+    pub Initialize: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+        ExtraRxBufferSize: UINTN,
+        ExtraTxBufferSize: UINTN,
+    ) -> EFI_STATUS,
+    pub Reset: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+        ExtendedVerification: BOOLEAN,
+    ) -> EFI_STATUS,
+    pub Shutdown: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+    ) -> EFI_STATUS,
+    pub ReceiveFilters: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+        Enable: UINT32,
+        Disable: UINT32,
+        ResetMCastFilter: BOOLEAN,
+        MCastFilterCnt: UINTN,
+        MCastFilter: EFI_MAC_ADDRESS,
+    ) -> EFI_STATUS,
+    pub StationAddress: unsafe extern "efiapi" fn(
+        This: *mut EFI_SIMPLE_NETWORK_PROTOCOL,
+        Reset: BOOLEAN,
+        New: *mut EFI_MAC_ADDRESS,
+    ) -> EFI_STATUS,
 }
