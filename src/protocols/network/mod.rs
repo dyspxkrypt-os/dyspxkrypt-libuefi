@@ -17,11 +17,23 @@
  */
 
 #[cfg(feature = "network-simple")]
-#[cfg_attr(doc, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "network-simple", feature = "network-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "network-simple", feature = "network-full")))
+)]
 pub mod simple;
 
 #[cfg(feature = "network-simple")]
-#[cfg_attr(doc, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
-#[cfg_attr(docsrs, doc(cfg(any(feature = "network-simple", feature = "network-full"))))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "network-simple", feature = "network-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "network-simple", feature = "network-full")))
+)]
 pub use simple::EFI_SIMPLE_NETWORK_PROTOCOL;
