@@ -16,6 +16,16 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
+#[cfg(feature = "network-interface-id")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "network-interface-id", feature = "network-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "network-interface-id", feature = "network-full")))
+)]
+pub mod interface_id;
 #[cfg(feature = "network-simple")]
 #[cfg_attr(
     doc,
@@ -27,6 +37,16 @@
 )]
 pub mod simple;
 
+#[cfg(feature = "network-interface-id")]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(feature = "network-interface-id", feature = "network-full")))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(feature = "network-interface-id", feature = "network-full")))
+)]
+pub use interface_id::EFI_NETWORK_INTERFACE_IDENTIFIER_PROTOCOL;
 #[cfg(feature = "network-simple")]
 #[cfg_attr(
     doc,

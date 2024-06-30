@@ -5,6 +5,7 @@
 - EFI string collation protocol and its associating constants and structures (`EFI_UNICODE_COLLATION_PROTOCOL`) (behind `string-collation` or `string-full` feature flags)
 - EFI string regex protocol and its associating constants and structures (`EFI_REGULAR_EXPRESSION_PROTOCOL`) (behind `string-regex` or `string-full` feature flags)
 - EFI simple network protocol and its associating constants and structures (`EFI_SIMPLE_NETWORK_PROTOCOL`) (behind `network-simple` or `network-full` feature flags)
+- EFI network interface identifier protocol and its associating constants and structures (`EFI_NETWORK_INTERFACE_IDENTIFIER_PROTOCOL`) (behind `network-interface-id` or `network-full` feature flags)
 
 ## Changed
 
