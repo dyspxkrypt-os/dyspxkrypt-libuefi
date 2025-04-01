@@ -18,6 +18,8 @@
 
 use crate::protocols::media::block::EFI_LBA;
 
+pub mod btt;
+
 #[derive(Clone, Copy)]
 #[repr(C)]
 pub struct EFI_PARTITION_ENTRY {
@@ -27,6 +29,16 @@ pub struct EFI_PARTITION_ENTRY {
     pub EndingLBA: EFI_LBA,
     pub Attributes: UINT64,
     pub PartitionName: [CHAR16; 36],
+}
+
+#[derive(Clone, Copy)]
+#[repr(C)]
+pub struct MASTER_BOOT_RECORD {
+    pub BootStrapCode: [UINT8; 440],
+    pub UniqueMbrSignature: [UINT8; 4],
+    pub Unknown: [UINT8; 2],
+    pub Partition: [MBR_PARTITION_RECORD; 4],
+    pub Signature: UINT16,
 }
 
 #[derive(Clone, Copy)]

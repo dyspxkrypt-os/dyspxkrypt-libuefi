@@ -54,7 +54,6 @@
 #![allow(non_upper_case_globals)]
 #![cfg_attr(doc, feature(doc_cfg))]
 #![feature(extended_varargs_abi_support)]
-#![feature(prelude_2024)]
 #![feature(prelude_import)]
 
 extern crate alloc;
