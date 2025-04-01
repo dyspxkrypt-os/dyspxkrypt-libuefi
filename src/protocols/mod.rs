@@ -48,6 +48,55 @@ pub mod console;
 )]
 pub mod debug;
 pub mod device_path;
+#[cfg(any(
+    feature = "driver-adapter",
+    feature = "driver-binding",
+    feature = "driver-busspec",
+    feature = "driver-comp",
+    feature = "driver-conf",
+    feature = "driver-adapter",
+    feature = "driver-diagnostic",
+    feature = "driver-family-override",
+    feature = "driver-full",
+    feature = "driver-health",
+    feature = "driver-override",
+    feature = "driver-supported-efi"
+))]
+#[cfg_attr(
+    doc,
+    doc(cfg(any(
+        feature = "driver-adapter",
+        feature = "driver-binding",
+        feature = "driver-busspec",
+        feature = "driver-comp",
+        feature = "driver-conf",
+        feature = "driver-adapter",
+        feature = "driver-diagnostic",
+        feature = "driver-family-override",
+        feature = "driver-full",
+        feature = "driver-health",
+        feature = "driver-override",
+        feature = "driver-supported-efi"
+    )))
+)]
+#[cfg_attr(
+    docsrs,
+    doc(cfg(any(
+        feature = "driver-adapter",
+        feature = "driver-binding",
+        feature = "driver-busspec",
+        feature = "driver-comp",
+        feature = "driver-conf",
+        feature = "driver-adapter",
+        feature = "driver-diagnostic",
+        feature = "driver-family-override",
+        feature = "driver-full",
+        feature = "driver-health",
+        feature = "driver-override",
+        feature = "driver-supported-efi"
+    )))
+)]
+pub mod driver;
 #[cfg(feature = "image")]
 #[cfg_attr(doc, doc(cfg(any(feature = "image", feature = "image-full"))))]
 #[cfg_attr(docsrs, doc(cfg(any(feature = "image", feature = "image-full"))))]
