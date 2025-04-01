@@ -16,7 +16,7 @@
  * along with this program.  If not, see <https://www.gnu.org/licenses/>.
  */
 
-pub const EFI_DECOMPRESS_PROTOCOL_GUID: EFI_GUID = unsafe {
+pub const EFI_ACPI_TABLE_PROTOCOL_GUID: EFI_GUID = unsafe {
     EFI_GUID::from_raw_parts(
         0xFFE06BDD,
         0x6107,
