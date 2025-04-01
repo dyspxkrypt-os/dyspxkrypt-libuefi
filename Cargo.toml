@@ -21,6 +21,7 @@ full = [
     "console-full",
     "debug-full",
     "dev-path-full",
+    "driver-full",
     "image-full",
     "iscsi",
     "media-full",
@@ -36,7 +37,12 @@ acpi = []
 
 compress = []
 
-console-full = ["console", "console-gop", "console-pointer", "console-serial-v1p1"]
+console-full = [
+    "console",
+    "console-gop",
+    "console-pointer",
+    "console-serial-v1p1"
+]
 console = []
 console-gop = []
 console-serial = []
@@ -48,6 +54,30 @@ debug-debug = []
 debug-port = []
 
 dev-path-full = []
+
+driver-full = [
+    "driver-adapter",
+    "driver-binding",
+    "driver-busspec",
+    "driver-comp",
+    "driver-conf",
+    "driver-diagnostic",
+    "driver-family-override",
+    "driver-health",
+    "driver-override",
+    "driver-supported-efi"
+]
+driver-adapter = []
+driver-binding = []
+driver-busspec = []
+driver-comp = []
+driver-conf = []
+driver-diagnostic = []
+driver-family-override = []
+driver-health = []
+driver-override = []
+driver-servbind = []
+driver-supported-efi = []
 
 image-full = ["image", "image-dev-path"]
 image = []
